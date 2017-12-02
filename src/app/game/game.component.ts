@@ -37,23 +37,19 @@ export class GameComponent implements OnInit {
    */
   drawnConnections: Connection[] = [];
 
-  private getConnectionsOnTile(tile): Connection[] {
+  private getConnectionsFromCursorPos(e): Connection[] {
     let values = [];
     this.drawnConnections.forEach(value => {
-      let tileFieldStart = '';
-      let tileFieldEnd = '';
+      let offsetType = '';
       if (value.direction === BoardDirections.VERTICAL) {
-        tileFieldStart = 'yStart';
-        tileFieldEnd = 'yEnd';
+        offsetType = 'offsetY';
       } else {
-        tileFieldStart = 'xStart';
-        tileFieldEnd = 'xEnd';
+        offsetType = 'offsetX';
       }
-
       // the tile should be between the line... also switch start and end as those depend on how the line was drawn...
       if (
-        (tile[tileFieldStart] > value.start && tile[tileFieldEnd] < value.end) ||
-        (tile[tileFieldStart] > value.end && tile[tileFieldEnd] < value.start)
+        (e[offsetType] > value.start && e[offsetType] < value.end) ||
+        (e[offsetType] > value.end && e[offsetType] < value.start)
       ) {
         values.push(value);
       }
@@ -61,13 +57,19 @@ export class GameComponent implements OnInit {
     return values;
   }
 
+  /**
+   * unset "started" here
+   * - as onClick is triggered after onMouseDown
+   * - to avoid removing a line while drawing one and hovering on an existing line while releasing the mouse button
+   * @param e
+   */
   mouseClick(e) {
-    let tile = this.game.getTile(e.offsetX, e.offsetY, false);
-    if (tile === null || tile.bridges != 0) {
+    if (this.started) {
+      this.started = false;
       return;
     }
     // Check for a connection that goes through the tile
-    const connections = this.getConnectionsOnTile(tile);
+    const connections = this.getConnectionsFromCursorPos(e);
     if (connections.length == 0) {
       return;
     }
@@ -89,12 +91,12 @@ export class GameComponent implements OnInit {
   /**
    * Disable "bridge setting" mode and pass the positions to the GameEngine
    * triggered when the the player stops drawing the bridge (mouseup)
+   * Note: disabling "started" was moved to mouseClick as this is triggered after mouseDown...
    */
   stopBridgeDrawing() {
     if (!this.started) {
       return;
     }
-    this.started = false;
 
     try {
       // pass start (prvX, prvY) and stop (lstX, lstY) positions to GameEngine
