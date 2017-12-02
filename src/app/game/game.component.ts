@@ -40,12 +40,21 @@ export class GameComponent implements OnInit {
   private getConnectionsFromCursorPos(e): Connection[] {
     let values = [];
     this.drawnConnections.forEach(value => {
-      let offsetType = '';
+      let offsetType, offsetTypeRange = '';
       if (value.direction === BoardDirections.VERTICAL) {
         offsetType = 'offsetY';
+        offsetTypeRange = 'offsetX';
       } else {
         offsetType = 'offsetX';
+        offsetTypeRange = 'offsetY';
       }
+
+      // skip if other click is not in a specified range
+      // 10 pixel offset
+      if (!(value.otherAxis - 10 < e[offsetTypeRange] && value.otherAxis + 10 > e[offsetTypeRange])) {
+        return;
+      }
+
       // the tile should be between the line... also switch start and end as those depend on how the line was drawn...
       if (
         (e[offsetType] > value.start && e[offsetType] < value.end) ||
