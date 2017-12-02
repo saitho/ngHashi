@@ -1,0 +1,17 @@
+canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+canvas#background {
+  z-index: 0;
+}
+canvas#draw {
+  z-index: 1;
+  border:1px solid #d3d3d3;
+}
+
+.canvas-container {
+  position: relative;
+}
