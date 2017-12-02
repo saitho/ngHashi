@@ -1,7 +1,8 @@
 import {Component, ViewChild, ElementRef, OnInit} from '@angular/core';
-import map from "../maps/GameMaps";
 import {Island} from "../Island";
 import {BoardDirections, GameEngine} from "./GameEngine";
+import {GameGUI} from "./GameGUI";
+import {Connection} from "../Connection";
 
 @Component({
   selector: 'app-game',
@@ -9,9 +10,9 @@ import {BoardDirections, GameEngine} from "./GameEngine";
   styleUrls: ['./game.component.css']
 })
 export class GameComponent implements OnInit {
-  game: GameEngine;
+  game: GameGUI;
   constructor() {
-    this.game = new GameEngine();
+    this.game = new GameGUI( new GameEngine() );
   }
 
   @ViewChild('canvasBg') canvasBg: ElementRef;
@@ -34,10 +35,45 @@ export class GameComponent implements OnInit {
    * saves drawn connections to be able to remove them later
    * @type {Array}
    */
-  drawnConnections: any[] = [];
+  drawnConnections: Connection[] = [];
+
+  private getConnectionsOnTile(tile): Connection[] {
+    let values = [];
+    this.drawnConnections.forEach(value => {
+      let tileFieldStart = '';
+      let tileFieldEnd = '';
+      if (value.direction === BoardDirections.VERTICAL) {
+        tileFieldStart = 'yStart';
+        tileFieldEnd = 'yEnd';
+      } else {
+        tileFieldStart = 'xStart';
+        tileFieldEnd = 'xEnd';
+      }
+
+      // the tile should be between the line... also switch start and end as those depend on how the line was drawn...
+      if (
+        (tile[tileFieldStart] > value.start && tile[tileFieldEnd] < value.end) ||
+        (tile[tileFieldStart] > value.end && tile[tileFieldEnd] < value.start)
+      ) {
+        values.push(value);
+      }
+    });
+    return values;
+  }
 
   mouseClick(e) {
-    console.log('mouseclick', this.game.hasIsland(e.offsetX, e.offsetY));
+    let tile = this.game.getTile(e.offsetX, e.offsetY, false);
+    if (tile === null || tile.bridges != 0) {
+      return;
+    }
+    // Check for a connection that goes through the tile
+    const connections = this.getConnectionsOnTile(tile);
+    if (connections.length == 0) {
+      return;
+    }
+    // drop one connection
+    this.game.removeBridge(connections[0]);
+    this.drawGameBoard();
   }
 
   /**
@@ -98,6 +134,8 @@ export class GameComponent implements OnInit {
    * draws the game board
    */
   drawGameBoard() {
+    const map = this.game.getMap();
+
     // clear drawing canvas
     this.canvasContext.clearRect(0,0, this.gameWidth, this.gameHeight);
     // clear background canvas
@@ -107,10 +145,13 @@ export class GameComponent implements OnInit {
     const xPerRect = this.gameWidth/(map.length+1);
     const yPerRect = this.gameHeight/(map.length+1);
 
+    // clear connections
+    this.drawnConnections = [];
+
     // Draw islands
     for(let i=0; i < map.length; i++) {
       for(let j=0; j < map[i].length; j++) {
-        const island = map[i][j];
+        const island = map[j][i]; // switch j and i to keep the order from array in rendering
         if (island.init == false) {
           island.xStart = xPerRect*3/4 + i*xPerRect;
           island.yStart = yPerRect*3/4 + j*yPerRect;
@@ -131,27 +172,39 @@ export class GameComponent implements OnInit {
   drawConnections(island, direction) {
     let connections = island.connections[direction];
     for (let i = 0; i < connections.length; i++) {
-      let connectedIsland = connections[i];
-      let connection;
+      let boardDirection, islandStartVar, islandOtherAxisVar, connectedIslandEndName;
+
       if (direction == 'right') {
-        connection = {
-          direction: BoardDirections.HORIZONTAL,
-          otherAxis: connections.length == 2 ? island.yStart + this.islandSize/3 : island.yStart + this.islandSize/2,
-          start: island.xEnd,
-          end: connectedIsland.xStart
-        };
+        boardDirection = BoardDirections.HORIZONTAL;
+        islandStartVar = 'xEnd';
+        islandOtherAxisVar = 'yStart';
+        connectedIslandEndName = 'xStart';
       } else if (direction == 'top') {
-        connection = {
-          direction: BoardDirections.VERTICAL,
-          otherAxis: connections.length == 2 ? island.xStart + this.islandSize/3 : island.xStart + this.islandSize/2,
-          start: island.yStart,
-          end: connectedIsland.yEnd
-        };
+        boardDirection = BoardDirections.VERTICAL;
+        islandStartVar = 'yStart';
+        islandOtherAxisVar = 'xStart';
+        connectedIslandEndName = 'yEnd';
       } else {
         throw new Error('Unknown direction.');
       }
 
+      let otherAxis = island[islandOtherAxisVar] + this.islandSize/2;
+      if (connections.length == 2) {
+        otherAxis = island[islandOtherAxisVar] + this.islandSize*(i+1)/3;
+      }
+
+      let connectedIsland = connections[i];
+      let connection = {
+        direction: boardDirection,
+        otherAxis: otherAxis,
+        start: island[islandStartVar],
+        end: connectedIsland[connectedIslandEndName],
+        island: island,
+        connectedIsland: connectedIsland
+      };
+
       this.drawnConnections.push(connection);
+      this.canvasBgContext.beginPath();
       if (connection.direction == BoardDirections.HORIZONTAL) {
         this.canvasBgContext.moveTo(connection.start, connection.otherAxis);
         this.canvasBgContext.lineTo(connection.end, connection.otherAxis);
@@ -160,6 +213,7 @@ export class GameComponent implements OnInit {
         this.canvasBgContext.lineTo(connection.otherAxis, connection.end);
       }
       this.canvasBgContext.stroke();
+      this.canvasBgContext.closePath();
     }
   }
 

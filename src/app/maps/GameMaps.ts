@@ -57,8 +57,8 @@ const map: Array<Array<Island>> = [
   ],
   [
     new Island(2),
-    new Island(4),
     new Island(0),
+    new Island(4),
     new Island(0),
     new Island(0),
     new Island(0),
