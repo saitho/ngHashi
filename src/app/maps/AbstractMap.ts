@@ -1,7 +1,8 @@
 import {Island} from "../Island";
 
 export abstract class AbstractMap {
-  protected data: Array<Array<Island>>;
+  protected abstract title: string;
+  protected abstract data: Array<Array<Island>>;
 
   /**
    * Resets bridges on every island

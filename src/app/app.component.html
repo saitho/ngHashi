@@ -4,5 +4,12 @@
     Welcome to {{title}}!
   </h1>
 
-  <app-game></app-game>
+  <div>
+    <section id="game">
+      <app-game #game></app-game>
+    </section>
+    <section id="settings">
+      <app-game-settings [gameRef]="game"></app-game-settings>
+    </section>
+  </div>
 </div>

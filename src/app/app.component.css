@@ -1,0 +1,17 @@
+div {
+  width: 100%;
+}
+section {
+  float: left;
+  margin: 1rem;
+}
+
+section#game {
+  width: 60%;
+}
+
+section#settings {
+  border: 1px solid;
+  width: 30%;
+  padding: 1rem;
+}

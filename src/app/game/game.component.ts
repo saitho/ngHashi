@@ -1,8 +1,9 @@
 import {Component, ViewChild, ElementRef, OnInit} from '@angular/core';
-import {Island} from "../Island";
 import {BoardDirections, GameEngine} from "./GameEngine";
 import {GameGUI} from "./GameGUI";
 import {Connection} from "../Connection";
+import {AbstractDesign} from "./Designs/AbstractDesign";
+import {DefaultDesign} from "./Designs/DefaultDesign";
 
 @Component({
   selector: 'app-game',
@@ -19,9 +20,10 @@ export class GameComponent implements OnInit {
   @ViewChild('canvasDraw') canvas: ElementRef;
 
   islandSize = 30;
-  islandBorder = 2;
   gameWidth = 600;
   gameHeight = 600;
+
+  design: AbstractDesign;
 
   canvasContext: CanvasRenderingContext2D;
   canvasBgContext: CanvasRenderingContext2D;
@@ -38,7 +40,28 @@ export class GameComponent implements OnInit {
    */
   drawnConnections: Connection[] = [];
 
-  restart() {
+
+  ngOnInit() {
+    // set canvas sizes
+    this.canvas.nativeElement.width = this.gameWidth;
+    this.canvas.nativeElement.height = this.gameHeight;
+    this.canvasBg.nativeElement.width = this.gameWidth;
+    this.canvasBg.nativeElement.height = this.gameHeight;
+
+    // save canvas contexts
+    this.canvasContext = this.canvas.nativeElement.getContext('2d');
+    this.canvasBgContext = this.canvasBg.nativeElement.getContext('2d');
+
+    this.design = new DefaultDesign(this.canvasBgContext, {
+      islandBorder: 2,
+      islandSize: this.islandSize
+    });
+
+    // draw
+    this.drawGameBoard();
+  }
+
+  public restart() {
     if (confirm('Do you really want to restart the game?')) {
       this.game.getMap().reset();
       this.drawGameBoard();
@@ -178,112 +201,9 @@ export class GameComponent implements OnInit {
           island.yEnd = island.yStart + this.islandSize;
           island.init = true;
         }
-        this.drawIsland(island);
+        this.design.drawIsland(island, this.drawnConnections);
       }
     }
-  }
-
-  /**
-   * draws connections of an island on background canvas
-   * @param island
-   * @param direction
-   */
-  drawConnections(island, direction) {
-    let connections = island.connections[direction];
-    for (let i = 0; i < connections.length; i++) {
-      let boardDirection, islandStartVar, islandOtherAxisVar, connectedIslandEndName;
-
-      if (direction == 'right') {
-        boardDirection = BoardDirections.HORIZONTAL;
-        islandStartVar = 'xEnd';
-        islandOtherAxisVar = 'yStart';
-        connectedIslandEndName = 'xStart';
-      } else if (direction == 'top') {
-        boardDirection = BoardDirections.VERTICAL;
-        islandStartVar = 'yStart';
-        islandOtherAxisVar = 'xStart';
-        connectedIslandEndName = 'yEnd';
-      } else {
-        throw new Error('Unknown direction.');
-      }
-
-      let otherAxis = island[islandOtherAxisVar] + this.islandSize/2;
-      if (connections.length == 2) {
-        otherAxis = island[islandOtherAxisVar] + this.islandSize*(i+1)/3;
-      }
-
-      let connectedIsland = connections[i];
-      let connection = {
-        direction: boardDirection,
-        otherAxis: otherAxis,
-        start: island[islandStartVar],
-        end: connectedIsland[connectedIslandEndName],
-        island: island,
-        connectedIsland: connectedIsland
-      };
-
-      this.drawnConnections.push(connection);
-      this.canvasBgContext.beginPath();
-      if (connection.direction == BoardDirections.HORIZONTAL) {
-        this.canvasBgContext.moveTo(connection.start, connection.otherAxis);
-        this.canvasBgContext.lineTo(connection.end, connection.otherAxis);
-      } else if (connection.direction == BoardDirections.VERTICAL) {
-        this.canvasBgContext.moveTo(connection.otherAxis, connection.start);
-        this.canvasBgContext.lineTo(connection.otherAxis, connection.end);
-      }
-      this.canvasBgContext.stroke();
-      this.canvasBgContext.closePath();
-    }
-  }
-
-  /**
-   * draws an island onto the background canvas
-   * @param {Island} island
-   */
-  drawIsland(island: Island) {
-    if (island.bridges == 0) {
-      return;
-    }
-
-    // black ground
-    this.canvasBgContext.strokeStyle = 'black';
-    this.canvasBgContext.fillRect(island.xStart, island.yStart, this.islandSize, this.islandSize);
-
-    // background square
-    this.canvasBgContext.fillStyle = island.isComplete() ? 'lightblue' : 'white';
-    this.canvasBgContext.fillRect(
-      island.xStart+this.islandBorder,
-      island.yStart+this.islandBorder,
-      this.islandSize-this.islandBorder*2,
-      this.islandSize-this.islandBorder*2
-    );
-
-    // text
-    this.canvasBgContext.fillStyle = 'black';
-    this.canvasBgContext.fillText(island.bridges.toString(), island.xStart+this.islandSize/2, island.yStart+this.islandSize/2);
-
-    this.drawConnections(island, 'right');
-    this.drawConnections(island, 'top');
-  }
-
-  ngOnInit() {
-    // set canvas sizes
-    this.canvas.nativeElement.width = this.gameWidth;
-    this.canvas.nativeElement.height = this.gameHeight;
-    this.canvasBg.nativeElement.width = this.gameWidth;
-    this.canvasBg.nativeElement.height = this.gameHeight;
-
-    // save canvas contexts
-    this.canvasContext = this.canvas.nativeElement.getContext('2d');
-    this.canvasBgContext = this.canvasBg.nativeElement.getContext('2d');
-
-    // set font for background canvas
-    this.canvasBgContext.font = '16px sans-serif';
-    this.canvasBgContext.textBaseline = 'middle';
-    this.canvasBgContext.textAlign = 'center';
-
-    // draw
-    this.drawGameBoard();
   }
 
 }
