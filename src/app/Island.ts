@@ -24,4 +24,8 @@ export class Island {
       this.connections.left.length +
       this.connections.right.length;
   }
+
+  isComplete(): boolean {
+    return this.bridges == this.countConnections();
+  }
 }

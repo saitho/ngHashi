@@ -19,6 +19,7 @@ export class GameComponent implements OnInit {
   @ViewChild('canvasDraw') canvas: ElementRef;
 
   islandSize = 30;
+  islandBorder = 2;
   gameWidth = 600;
   gameHeight = 600;
 
@@ -36,6 +37,13 @@ export class GameComponent implements OnInit {
    * @type {Array}
    */
   drawnConnections: Connection[] = [];
+
+  restart() {
+    if (confirm('Do you really want to restart the game?')) {
+      this.game.getMap().reset();
+      this.drawGameBoard();
+    }
+  }
 
   private getConnectionsFromCursorPos(e): Connection[] {
     let values = [];
@@ -145,7 +153,7 @@ export class GameComponent implements OnInit {
    * draws the game board
    */
   drawGameBoard() {
-    const map = this.game.getMap();
+    const map = this.game.getMap().getData();
 
     // clear drawing canvas
     this.canvasContext.clearRect(0,0, this.gameWidth, this.gameHeight);
@@ -236,7 +244,22 @@ export class GameComponent implements OnInit {
     if (island.bridges == 0) {
       return;
     }
-    this.canvasBgContext.strokeRect(island.xStart, island.yStart, this.islandSize, this.islandSize);
+
+    // black ground
+    this.canvasBgContext.strokeStyle = 'black';
+    this.canvasBgContext.fillRect(island.xStart, island.yStart, this.islandSize, this.islandSize);
+
+    // background square
+    this.canvasBgContext.fillStyle = island.isComplete() ? 'lightblue' : 'white';
+    this.canvasBgContext.fillRect(
+      island.xStart+this.islandBorder,
+      island.yStart+this.islandBorder,
+      this.islandSize-this.islandBorder*2,
+      this.islandSize-this.islandBorder*2
+    );
+
+    // text
+    this.canvasBgContext.fillStyle = 'black';
     this.canvasBgContext.fillText(island.bridges.toString(), island.xStart+this.islandSize/2, island.yStart+this.islandSize/2);
 
     this.drawConnections(island, 'right');

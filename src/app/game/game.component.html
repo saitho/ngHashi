@@ -2,17 +2,15 @@
   game works!
 </p>
 
+<button (click)="restart()">Restart game</button>
+
 <div class="canvas-container">
-
-  <canvas #canvasBg
-          id="background"
-  ></canvas>
-
+  <canvas #canvasBg id="background"></canvas>
   <canvas #canvasDraw
           id="draw"
-          (click)="this.mouseClick($event)"
-          (mousedown)="this.startBridgeDrawing($event)"
-          (mouseup)="this.stopBridgeDrawing($event)"
-          (mousemove)="this.duringBridgeDrawing($event)"
+          (click)="mouseClick($event)"
+          (mousedown)="startBridgeDrawing($event)"
+          (mouseup)="stopBridgeDrawing($event)"
+          (mousemove)="duringBridgeDrawing($event)"
   ></canvas>
 </div>

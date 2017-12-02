@@ -1,17 +1,21 @@
 import {InvalidTurnError} from "./Errors";
 import {BoardDirections, GameEngine} from "./GameEngine";
-import map from "../maps/GameMaps";
+import DefaultMap from "../maps/DefaultMap";
 import {Island} from "../Island";
 import {Connection} from "../Connection";
+import {AbstractMap} from "../maps/AbstractMap";
 
 export class GameGUI {
   private game: GameEngine;
+  private map: AbstractMap;
+
   constructor(gameEngine: GameEngine) {
     this.game = gameEngine;
+    this.map = new DefaultMap();
   }
 
   public getMap() {
-    return map;
+    return this.map;
   }
 
   public removeBridge(connection: Connection) {
@@ -33,6 +37,7 @@ export class GameGUI {
   }
 
   public getTile(x, y, islandsOnly = true): Island {
+    const map = this.map.getData();
     for(let i=0; i < map.length; i++) {
       for(let j=0; j < map[i].length; j++) {
         const island = map[i][j];
