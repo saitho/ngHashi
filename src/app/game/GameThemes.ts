@@ -1,11 +1,11 @@
 import {SushiDesign} from "./Designs/SushiDesign";
-import {DefaultDesign} from "./Designs/DefaultDesign";
+import {ClassicDesign} from "./Designs/ClassicDesign";
 import {AbstractDesign, IDesignConfig} from "./Designs/AbstractDesign";
 import {WurzelimperiumDesign} from "./Designs/WurzelimperiumDesign";
 
 export class GameThemes {
   private static themes: {} = {
-    'Default': DefaultDesign,
+    'Nikoli Classic': ClassicDesign,
     'Sushi': SushiDesign,
     'Wurzelimperium': WurzelimperiumDesign,
   };

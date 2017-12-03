@@ -4,7 +4,7 @@ import {BoardDirections} from "../GameEngine";
 import {Connection} from "../../Connection";
 import {ElementRef} from "@angular/core";
 
-export class DefaultDesign extends AbstractDesign {
+export class ClassicDesign extends AbstractDesign {
   constructor(canvas: ElementRef, canvasBg: ElementRef, config: IDesignConfig) {
     super(canvas, canvasBg, config);
   }

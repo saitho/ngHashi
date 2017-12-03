@@ -3,7 +3,6 @@ import {BoardDirections, GameEngine} from "./GameEngine";
 import {GameGUI} from "./GameGUI";
 import {Connection} from "../Connection";
 import {AbstractDesign} from "./Designs/AbstractDesign";
-import {DefaultDesign} from "./Designs/DefaultDesign";
 import {GameThemes} from "./GameThemes";
 
 @Component({
@@ -95,7 +94,7 @@ export class GameComponent implements OnInit {
     this.canvasBgContext = this.canvasBg.nativeElement.getContext('2d');
     this.canvasContext = this.canvas.nativeElement.getContext('2d');
 
-    const design = GameThemes.getTheme('Default', {
+    const design = GameThemes.getTheme('Nikoli Classic', {
       canvas: this.canvas,
       canvasBg: this.canvasBg,
       config: {
