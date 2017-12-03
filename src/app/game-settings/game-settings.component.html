@@ -7,8 +7,7 @@
   <section>
     <h3>Design</h3>
     <select (change)="changeDesign($event.target.value)">
-      <option>Default</option>
-      <option>Sushi</option>
+      <option *ngFor="let theme of themes">{{theme}}</option>
     </select>
   </section>
   <hr />

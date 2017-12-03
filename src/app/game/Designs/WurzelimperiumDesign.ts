@@ -4,7 +4,7 @@ import {BoardDirections} from "../GameEngine";
 import {Connection} from "../../Connection";
 import {ElementRef} from "@angular/core";
 
-export class SushiDesign extends AbstractDesign {
+export class WurzelimperiumDesign extends AbstractDesign {
   constructor(canvas: ElementRef, canvasBg: ElementRef, config: IDesignConfig) {
     super(canvas, canvasBg, config);
 
@@ -13,19 +13,39 @@ export class SushiDesign extends AbstractDesign {
     this.canvasBgContext.textBaseline = 'middle';
     this.canvasBgContext.textAlign = 'center';
   }
+
+
+  public init() {
+    this.canvasBg.width = 720;
+    this.canvasBg.height = 640;
+  }
+
   public beforeDrawGameBoard(): Promise<void> {
     return new Promise<void>((resolve) => {
-      this.canvasContext.lineWidth = 3;
+      this.canvasContext.lineWidth = 5;
+      this.canvasContext.strokeStyle = 'white';
 
-      const island = this.preloadImage('assets/design/sushi/sushi.png');
-      const bridge_horizontal = this.preloadImage('assets/design/sushi/chopsticks_horizontal.png');
-      const bridge_vertical = this.preloadImage('assets/design/sushi/chopsticks.png');
+      const background = this.preloadImage('assets/design/wurzelimperium/garten_hintergrund.png');
+      const island = this.preloadImage('assets/design/wurzelimperium/bauernhof.png');
+      const bridge_horizontal = this.preloadImage('assets/design/wurzelimperium/street_horizontal.jpg');
+      const bridge_vertical = this.preloadImage('assets/design/wurzelimperium/street_vertical.jpg');
 
-      Promise.all([island, bridge_horizontal, bridge_vertical])
+      Promise.all([background, island, bridge_horizontal, bridge_vertical])
         .then((values) => {
-        this.imageStorage.island = values[0];
-        this.imageStorage.bridge_horizontal = values[1];
-        this.imageStorage.bridge_vertical = values[2];
+        this.imageStorage.background = values[0];
+        this.imageStorage.island = values[1];
+        this.imageStorage.bridge_horizontal = values[2];
+        this.imageStorage.bridge_vertical = values[3];
+        this.imageStorage.bridge_horizontal_pattern = this.canvasBgContext.createPattern(
+          this.imageStorage.bridge_horizontal,
+          'repeat'
+        );
+        this.imageStorage.bridge_vertical_pattern = this.canvasBgContext.createPattern(
+          this.imageStorage.bridge_vertical,
+          'repeat'
+        );
+
+        this.canvasBgContext.drawImage(this.imageStorage.background, 0, 0);
         resolve();
       }).catch((error) => {
         console.log(error);
@@ -85,9 +105,13 @@ export class SushiDesign extends AbstractDesign {
     let connections = island.connections[valueName];
     for (let i = 0; i < connections.length; i++) {
 
-      let otherAxis = island[islandOtherAxisVar] + this.config.islandSize/2;
+      let otherAxis = island[islandOtherAxisVar] + this.config.islandSize/4;
       if (connections.length == 2) {
-        otherAxis = island[islandOtherAxisVar] + this.config.islandSize*(i+1)/3;
+        if (i == 0) {
+          otherAxis = island[islandOtherAxisVar] - this.config.islandSize/11;
+        } else {
+          otherAxis = island[islandOtherAxisVar] + this.config.islandSize*5/6;
+        }
       }
 
       let connectedIsland = connections[i];
@@ -102,15 +126,24 @@ export class SushiDesign extends AbstractDesign {
 
       drawnConnections.push(connection);
       this.canvasBgContext.beginPath();
+      let image = this.imageStorage.bridge_horizontal;
+      let pattern = this.imageStorage.bridge_horizontal_pattern;
+      if (connection.direction == BoardDirections.VERTICAL) {
+        pattern = this.imageStorage.bridge_vertical_pattern;
+        image = this.imageStorage.bridge_vertical;
+      }
 
       const length = Math.abs(connection.start-connection.end);
+      let pattern_repeat = 'repeat';
       if (connection.direction == BoardDirections.HORIZONTAL) {
-        const img = this.imageStorage.bridge_horizontal;
-        this.canvasBgContext.drawImage(img, connection.start, connection.otherAxis, length, img.height);
+        this.canvasBgContext.rect(connection.start, connection.otherAxis, length, image.height);
       }else{
-        const img = this.imageStorage.bridge_vertical;
-        this.canvasBgContext.drawImage(img, connection.otherAxis, connection.end, img.width, length);
+        pattern_repeat = 'repeat';
+        this.canvasBgContext.rect(connection.otherAxis, connection.end, image.width, length);
       }
+      this.canvasBgContext.fillStyle = pattern;
+      this.canvasBgContext.fill();
+
       this.canvasBgContext.closePath();
     }
   }

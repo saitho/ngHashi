@@ -4,6 +4,7 @@ import {GameGUI} from "./GameGUI";
 import {Connection} from "../Connection";
 import {AbstractDesign} from "./Designs/AbstractDesign";
 import {DefaultDesign} from "./Designs/DefaultDesign";
+import {GameThemes} from "./GameThemes";
 
 @Component({
   selector: 'app-game',
@@ -20,10 +21,12 @@ export class GameComponent implements OnInit {
   @ViewChild('canvasDraw') canvas: ElementRef;
 
   islandSize = 30;
-  gameWidth = 600;
-  gameHeight = 600;
+  gameWidth_default = 600;
+  gameHeight_default = 600;
+  gameWidth;
+  gameHeight;
 
-  design: AbstractDesign;
+  private design: AbstractDesign;
 
   canvasContext: CanvasRenderingContext2D;
   canvasBgContext: CanvasRenderingContext2D;
@@ -40,25 +43,67 @@ export class GameComponent implements OnInit {
    */
   drawnConnections: Connection[] = [];
 
+  public getDesign() {
+    return this.design;
+  }
 
-  ngOnInit() {
-    // set canvas sizes
-    this.canvas.nativeElement.width = this.gameWidth;
-    this.canvas.nativeElement.height = this.gameHeight;
-    this.canvasBg.nativeElement.width = this.gameWidth;
-    this.canvasBg.nativeElement.height = this.gameHeight;
+  public setDesign(design: AbstractDesign) {
+    this.design = design;
 
-    // save canvas contexts
-    this.canvasContext = this.canvas.nativeElement.getContext('2d');
-    this.canvasBgContext = this.canvasBg.nativeElement.getContext('2d');
+    this.canvasBg.nativeElement.width = 0;
+    this.canvasBg.nativeElement.height = 0;
 
-    this.design = new DefaultDesign(this.canvasBg, {
-      islandBorder: 2,
-      islandSize: this.islandSize
-    });
+    this.design.init();
+
+    // Set default value if no value has been set by design
+    if (this.canvasBg.nativeElement.width == 0) {
+      this.canvasBg.nativeElement.width = this.gameWidth_default;
+    }
+    if (this.canvasBg.nativeElement.height == 0) {
+      this.canvasBg.nativeElement.height = this.gameHeight_default;
+    }
+
+    // if size has change adjust dimensions
+    if (
+      (this.canvasBg.nativeElement.width != this.gameWidth) ||
+      (this.canvasBg.nativeElement.height != this.gameHeight)
+    ) {
+      this.gameWidth = this.canvasBg.nativeElement.width;
+      this.gameHeight = this.canvasBg.nativeElement.height;
+
+      // trigger recalculation of island positions
+      const map = this.game.getMap().getData();
+      for(let i=0; i < map.length; i++) {
+        for (let j = 0; j < map[i].length; j++) {
+          map[i][j].init = false;
+        }
+      }
+      this.canvas.nativeElement.width = this.gameWidth;
+      this.canvas.nativeElement.height = this.gameHeight;
+    }
 
     // draw
     this.drawGameBoard();
+  }
+
+  ngOnInit() {
+    // set canvas sizes
+    this.canvasBg.nativeElement.width = this.gameWidth_default;
+    this.canvasBg.nativeElement.height = this.gameHeight_default;
+
+    // save canvas contexts
+    this.canvasBgContext = this.canvasBg.nativeElement.getContext('2d');
+    this.canvasContext = this.canvas.nativeElement.getContext('2d');
+
+    const design = GameThemes.getTheme('Default', {
+      canvas: this.canvas,
+      canvasBg: this.canvasBg,
+      config: {
+        islandBorderSize: 2,
+        islandSize: this.islandSize
+      }
+    });
+    this.setDesign(design);
   }
 
   public restart() {
@@ -183,27 +228,32 @@ export class GameComponent implements OnInit {
     // clear background canvas
     this.canvasBgContext.clearRect(0,0, this.gameWidth, this.gameHeight);
 
-    // distribute game window size amongst all map tiles and keep some space around (length+1)
-    const xPerRect = this.gameWidth/(map.length+1);
-    const yPerRect = this.gameHeight/(map.length+1);
+    this.design.beforeDrawGameBoard()
+      .then(() => {
+        // distribute game window size amongst all map tiles and keep some space around (length+1)
+        const xPerRect = this.gameWidth/(map.length+1);
+        const yPerRect = this.gameHeight/(map.length+1);
 
-    // clear connections
-    this.drawnConnections = [];
+        // clear connections
+        this.drawnConnections = [];
 
-    // Draw islands
-    for(let i=0; i < map.length; i++) {
-      for(let j=0; j < map[i].length; j++) {
-        const island = map[j][i]; // switch j and i to keep the order from array in rendering
-        if (island.init == false) {
-          island.xStart = xPerRect*3/4 + i*xPerRect;
-          island.yStart = yPerRect*3/4 + j*yPerRect;
-          island.xEnd = island.xStart + this.islandSize;
-          island.yEnd = island.yStart + this.islandSize;
-          island.init = true;
+        // Draw islands
+        for(let i=0; i < map.length; i++) {
+          for(let j=0; j < map[i].length; j++) {
+            const island = map[j][i]; // switch j and i to keep the order from array in rendering
+            if (island.init == false) {
+              island.xStart = xPerRect*3/4 + i*xPerRect;
+              island.yStart = yPerRect*3/4 + j*yPerRect;
+              island.xEnd = island.xStart + this.islandSize;
+              island.yEnd = island.yStart + this.islandSize;
+              island.init = true;
+            }
+            this.design.drawIsland(island, this.drawnConnections);
+          }
         }
-        this.design.drawIsland(island, this.drawnConnections);
-      }
-    }
+    })
+      .catch(() => {
+      console.log('Error in beforeDrawGameBoard hook');
+      });
   }
-
 }

@@ -1,6 +1,5 @@
-import {Class, Component, ElementRef, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {GameComponent} from "../game/game.component";
-import {SushiDesign} from "../game/Designs/SushiDesign";
 import {GameThemes} from "../game/GameThemes";
 
 @Component({
@@ -11,6 +10,7 @@ import {GameThemes} from "../game/GameThemes";
 export class GameSettingsComponent implements OnInit {
   @Input()
   gameRef: GameComponent;
+  themes = GameThemes.getThemes();
 
   constructor() { }
 
@@ -18,7 +18,7 @@ export class GameSettingsComponent implements OnInit {
   }
 
   changeDesign(value) {
-    this.gameRef.design = GameThemes.getTheme(value, this.gameRef.design);
+    this.gameRef.setDesign(GameThemes.getTheme(value, this.gameRef.getDesign()));
     this.gameRef.drawGameBoard();
   }
   restart() {

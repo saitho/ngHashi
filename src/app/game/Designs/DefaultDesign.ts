@@ -5,13 +5,21 @@ import {Connection} from "../../Connection";
 import {ElementRef} from "@angular/core";
 
 export class DefaultDesign extends AbstractDesign {
-  constructor(canvas: ElementRef, config: IDesignConfig) {
-    super(canvas, config);
+  constructor(canvas: ElementRef, canvasBg: ElementRef, config: IDesignConfig) {
+    super(canvas, canvasBg, config);
+  }
 
-    // set font for background canvas
-    this.canvasBgContext.font = '16px sans-serif';
-    this.canvasBgContext.textBaseline = 'middle';
-    this.canvasBgContext.textAlign = 'center';
+  public init() {
+  }
+
+  public beforeDrawGameBoard(): Promise<void> {
+    return new Promise<void>((resolve) => {
+      // set font for background canvas
+      this.canvasBgContext.font = '16px sans-serif';
+      this.canvasBgContext.textBaseline = 'middle';
+      this.canvasBgContext.textAlign = 'center';
+      resolve();
+    });
   }
 
   /**
@@ -31,10 +39,10 @@ export class DefaultDesign extends AbstractDesign {
     // background square
     this.canvasBgContext.fillStyle = island.isComplete() ? 'lightblue' : 'white';
     this.canvasBgContext.fillRect(
-      island.xStart+this.config.islandBorder,
-      island.yStart+this.config.islandBorder,
-      this.config.islandSize-this.config.islandBorder*2,
-      this.config.islandSize-this.config.islandBorder*2
+      island.xStart+this.config.islandBorderSize,
+      island.yStart+this.config.islandBorderSize,
+      this.config.islandSize-this.config.islandBorderSize*2,
+      this.config.islandSize-this.config.islandBorderSize*2
     );
 
     // text
