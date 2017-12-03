@@ -6,7 +6,7 @@
 
   <section>
     <h3>Design</h3>
-    <select #design>
+    <select (change)="changeDesign($event.target.value)">
       <option>Default</option>
       <option>Sushi</option>
     </select>

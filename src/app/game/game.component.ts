@@ -52,7 +52,7 @@ export class GameComponent implements OnInit {
     this.canvasContext = this.canvas.nativeElement.getContext('2d');
     this.canvasBgContext = this.canvasBg.nativeElement.getContext('2d');
 
-    this.design = new DefaultDesign(this.canvasBgContext, {
+    this.design = new DefaultDesign(this.canvasBg, {
       islandBorder: 2,
       islandSize: this.islandSize
     });

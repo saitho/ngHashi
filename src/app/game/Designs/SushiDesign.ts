@@ -4,7 +4,7 @@ import {BoardDirections} from "../GameEngine";
 import {Connection} from "../../Connection";
 import {ElementRef} from "@angular/core";
 
-export class DefaultDesign extends AbstractDesign {
+export class SushiDesign extends AbstractDesign {
   constructor(canvas: ElementRef, config: IDesignConfig) {
     super(canvas, config);
 
@@ -24,29 +24,22 @@ export class DefaultDesign extends AbstractDesign {
       return;
     }
 
-    // black ground
-    this.canvasBgContext.strokeStyle = 'black';
-    this.canvasBgContext.fillRect(island.xStart, island.yStart, this.config.islandSize, this.config.islandSize);
+    const img = new Image(50, 50);
+    img.addEventListener('load', () => {
+      this.canvasBgContext.drawImage(img, island.xStart-img.width/5, island.yStart-img.height/5);
 
-    // background square
-    this.canvasBgContext.fillStyle = island.isComplete() ? 'lightblue' : 'white';
-    this.canvasBgContext.fillRect(
-      island.xStart+this.config.islandBorder,
-      island.yStart+this.config.islandBorder,
-      this.config.islandSize-this.config.islandBorder*2,
-      this.config.islandSize-this.config.islandBorder*2
-    );
+      // text
+      this.canvasBgContext.fillStyle = 'white';
+      this.canvasBgContext.fillText(
+        island.bridges.toString(),
+        island.xStart+img.width/4,
+        island.yStart+img.height/2
+      );
 
-    // text
-    this.canvasBgContext.fillStyle = 'black';
-    this.canvasBgContext.fillText(
-      island.bridges.toString(),
-      island.xStart+this.config.islandSize/2,
-      island.yStart+this.config.islandSize/2
-    );
-
-    this.drawConnections(island, BoardDirections.HORIZONTAL, drawnConnections);
-    this.drawConnections(island, BoardDirections.VERTICAL, drawnConnections);
+      this.drawConnections(island, BoardDirections.HORIZONTAL, drawnConnections);
+      this.drawConnections(island, BoardDirections.VERTICAL, drawnConnections);
+    }, false);
+    img.src = 'assets/design/sushi/sushi.png';
   }
 
   /**
@@ -93,14 +86,20 @@ export class DefaultDesign extends AbstractDesign {
 
       drawnConnections.push(connection);
       this.canvasBgContext.beginPath();
+      const length = Math.abs(connection.start-connection.end);
       if (connection.direction == BoardDirections.HORIZONTAL) {
-        this.canvasBgContext.moveTo(connection.start, connection.otherAxis);
-        this.canvasBgContext.lineTo(connection.end, connection.otherAxis);
+        const img = new Image();
+        img.addEventListener('load', () => {
+          this.canvasBgContext.drawImage(img, connection.start, connection.otherAxis, length, img.height);
+        }, false);
+        img.src = 'assets/design/sushi/chopsticks_horizontal.png';
       } else if (connection.direction == BoardDirections.VERTICAL) {
-        this.canvasBgContext.moveTo(connection.otherAxis, connection.start);
-        this.canvasBgContext.lineTo(connection.otherAxis, connection.end);
+        const img = new Image();
+         img.addEventListener('load', () => {
+           this.canvasBgContext.drawImage(img, connection.otherAxis, connection.end, img.width, length);
+         }, false);
+         img.src = 'assets/design/sushi/chopsticks.png';
       }
-      this.canvasBgContext.stroke();
       this.canvasBgContext.closePath();
     }
   }
