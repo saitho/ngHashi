@@ -32,18 +32,21 @@ export class DefaultDesign extends AbstractDesign {
       return;
     }
 
-    // black ground
-    this.canvasBgContext.strokeStyle = 'black';
-    this.canvasBgContext.fillRect(island.xStart, island.yStart, this.config.islandSize, this.config.islandSize);
-
-    // background square
-    this.canvasBgContext.fillStyle = island.isComplete() ? 'lightblue' : 'white';
-    this.canvasBgContext.fillRect(
-      island.xStart+this.config.islandBorderSize,
-      island.yStart+this.config.islandBorderSize,
-      this.config.islandSize-this.config.islandBorderSize*2,
-      this.config.islandSize-this.config.islandBorderSize*2
+    // circle
+    this.canvasBgContext.beginPath();
+    this.canvasBgContext.arc(
+      island.xStart+this.config.islandSize/2,
+      island.yStart+this.config.islandSize/2,
+      this.config.islandSize/2,
+      0,
+      2 * Math.PI
     );
+    this.canvasBgContext.fillStyle = island.isComplete() ? 'lightblue' : 'white';
+    this.canvasBgContext.fill();
+    this.canvasBgContext.lineWidth = 2;
+    this.canvasBgContext.strokeStyle = 'black';
+    this.canvasBgContext.stroke();
+    this.canvasBgContext.closePath();
 
     // text
     this.canvasBgContext.fillStyle = 'black';
