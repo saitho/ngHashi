@@ -4,6 +4,7 @@ import {GameGUI} from "./GameGUI";
 import {Connection} from "../Connection";
 import {AbstractDesign} from "./Designs/AbstractDesign";
 import {GameThemes} from "./GameThemes";
+import {HashiSolver} from "./HashiSolver";
 
 @Component({
   selector: 'app-game',
@@ -82,6 +83,7 @@ export class GameComponent implements OnInit {
     }
 
     // draw
+    new HashiSolver(this.game.getMap()).solve();
     this.drawGameBoard();
   }
 
@@ -250,9 +252,9 @@ export class GameComponent implements OnInit {
             this.design.drawIsland(island, this.drawnConnections);
           }
         }
-    })
+      })
       .catch(() => {
-      console.log('Error in beforeDrawGameBoard hook');
+        console.log('Error in beforeDrawGameBoard hook');
       });
   }
 }

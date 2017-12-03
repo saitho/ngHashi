@@ -11,6 +11,8 @@ export class Island {
   yStart: number;
   yEnd: number;
 
+  map: {x: number, y: number};
+
   connections: {top: Array<Island>; bottom: Array<Island>; left: Array<Island>; right: Array<Island>} = {
     top: [],
     bottom: [],
@@ -27,5 +29,9 @@ export class Island {
 
   isComplete(): boolean {
     return this.bridges == this.countConnections();
+  }
+
+  requiredBriges(): number {
+    return this.bridges - this.countConnections();
   }
 }
