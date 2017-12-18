@@ -1,7 +1,7 @@
 import {Island} from "../Island";
 
 export abstract class AbstractMap {
-  protected abstract title: string;
+  public abstract title: string;
   protected abstract data: Array<Array<Island>>;
 
   /**

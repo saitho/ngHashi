@@ -2,7 +2,7 @@ import {Island} from "../Island";
 import {AbstractMap} from "./AbstractMap";
 
 export default class DefaultMap extends AbstractMap {
-  protected title = 'Wikipedia Example';
+  public title = 'Wikipedia Example';
   protected data: Array<Array<Island>> = [
     [
       new Island(3),
