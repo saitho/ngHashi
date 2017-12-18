@@ -1,10 +1,12 @@
 {
-  "name": "project",
+  "name": "hashi",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "preinstall": "npm install -g @angular/cli http-server",
+    "postinstall": "ng build --aot --prod",
+    "start": "http-server dist/",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
