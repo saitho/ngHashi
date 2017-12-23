@@ -1,0 +1,40 @@
+image: node:latest
+
+variables:
+  HEROKU_DEPLOY: "ittalents-hashi"
+
+stages:
+- build
+- test
+- deploy
+
+build:
+  stage: build
+  script:
+   - npm install --unsafe-perm
+   - npm install -g @angular/cli --unsafe-perm
+   - ng build --prod
+  artifacts:
+    paths:
+    - dist/
+  only:
+  - master
+
+deploy:
+  type: deploy
+  script:
+  - rm -r .git
+  - git init
+  - git config user.name "GitLab CI"
+  - git config user.email "info@virtual-soft.de"
+  - 'echo "{\"root\": \"dist/\", \"clean_urls\": true, \"routes\": { \"/**\": \"index.html\" }}" > ./static.json'
+  - git add ./dist static.json -f
+  - git commit -m "GitLab CI deployment from branch $CI_COMMIT_REF_NAME ($CI_COMMIT_SHA)"
+  - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_DEPLOY.git
+  - git push heroku master --force
+  only:
+  - master
+  environment:
+    name: production
+    url: https://$HEROKU_DEPLOY.herokuapp.com/
+  when: manual
