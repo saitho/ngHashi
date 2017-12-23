@@ -6,7 +6,9 @@ canvas {
 
 canvas#background {
   z-index: 0;
+  background-color: white;
 }
+
 canvas#draw {
   z-index: 1;
   border:1px solid #d3d3d3;

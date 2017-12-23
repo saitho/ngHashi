@@ -1,9 +1,10 @@
-import {Component, ViewChild, ElementRef, OnInit} from '@angular/core';
-import {BoardDirections, GameEngine} from "./GameEngine";
-import {GameGUI} from "./GameGUI";
+import {Component, ViewChild, ElementRef, OnInit, Input} from '@angular/core';
+import {BoardDirections} from "../../shared/helper/GameEngine";
+import {GameGUI} from "../../shared/helper/GameGUI";
 import {Connection} from "../Connection";
 import {AbstractDesign} from "./Designs/AbstractDesign";
-import {GameThemes} from "./GameThemes";
+import {GameThemes} from "../../shared/helper/GameThemes";
+import {AbstractMap} from "../maps/AbstractMap";
 
 @Component({
   selector: 'app-game',
@@ -11,14 +12,22 @@ import {GameThemes} from "./GameThemes";
   styleUrls: ['./game.component.css']
 })
 export class GameComponent implements OnInit {
-  game: GameGUI;
+  gui: GameGUI = new GameGUI();
+
+  @Input()
+  protected map: AbstractMap = null;
+
   constructor() {
-    this.game = new GameGUI( new GameEngine() );
+    if (!this.map) {
+      return;
+    }
+    this.setMap(this.map);
   }
 
   @ViewChild('canvasBg') canvasBg: ElementRef;
   @ViewChild('canvasDraw') canvas: ElementRef;
 
+  message: string = 'Have fun! :)';
   islandSize = 30;
   gameWidth_default = 600;
   gameHeight_default = 600;
@@ -31,10 +40,8 @@ export class GameComponent implements OnInit {
   canvasBgContext: CanvasRenderingContext2D;
 
   started = false;
-  prvX = -300;
-  prvY = -300;
-  lstX = -300;
-  lstY = -300;
+  startPosition = {x: -300, y: -300};
+  stopPosition = {x: -300, y: -300};
 
   /**
    * saves drawn connections to be able to remove them later
@@ -48,9 +55,26 @@ export class GameComponent implements OnInit {
 
   public setDesign(design: AbstractDesign) {
     this.design = design;
+    this.initGame();
+  }
 
-    this.canvasBg.nativeElement.width = 0;
-    this.canvasBg.nativeElement.height = 0;
+  public setMap(map: AbstractMap) {
+    this.gui.setMap(map);
+    this.initGame();
+  }
+
+  private initGame() {
+    if (this.gui.getMap() === null) {
+      return;
+    }
+    console.log('initGame');
+    // set canvas sizes
+    this.canvasBg.nativeElement.width = this.gameWidth_default;
+    this.canvasBg.nativeElement.height = this.gameHeight_default;
+
+    // save canvas contexts
+    this.canvasBgContext = this.canvasBg.nativeElement.getContext('2d');
+    this.canvasContext = this.canvas.nativeElement.getContext('2d');
 
     this.design.init();
 
@@ -71,7 +95,7 @@ export class GameComponent implements OnInit {
       this.gameHeight = this.canvasBg.nativeElement.height;
 
       // trigger recalculation of island positions
-      const map = this.game.getMap().getData();
+      const map = this.gui.getMap().getData();
       for(let i=0; i < map.length; i++) {
         for (let j = 0; j < map[i].length; j++) {
           map[i][j].init = false;
@@ -86,28 +110,19 @@ export class GameComponent implements OnInit {
   }
 
   ngOnInit() {
-    // set canvas sizes
-    this.canvasBg.nativeElement.width = this.gameWidth_default;
-    this.canvasBg.nativeElement.height = this.gameHeight_default;
-
-    // save canvas contexts
-    this.canvasBgContext = this.canvasBg.nativeElement.getContext('2d');
-    this.canvasContext = this.canvas.nativeElement.getContext('2d');
-
-    const design = GameThemes.getTheme('Nikoli Classic', {
+    this.setDesign(GameThemes.getTheme('Nikoli Classic', {
       canvas: this.canvas,
       canvasBg: this.canvasBg,
       config: {
         islandBorderSize: 2,
         islandSize: this.islandSize
       }
-    });
-    this.setDesign(design);
+    }));
   }
 
   public restart() {
     if (confirm('Do you really want to restart the game?')) {
-      this.game.getMap().reset();
+      this.gui.getMap().reset();
       this.drawGameBoard();
     }
   }
@@ -158,7 +173,7 @@ export class GameComponent implements OnInit {
       return;
     }
     // drop one connection
-    this.game.removeBridge(connections[0]);
+    this.gui.removeBridge(connections[0]);
     this.drawGameBoard();
   }
 
@@ -167,9 +182,9 @@ export class GameComponent implements OnInit {
    * triggered when the the player starts drawing the bridge (mousedown)
    */
   startBridgeDrawing(e) {
-    this.prvX = e.offsetX;
-    this.prvY = e.offsetY;
-    this.started = this.game.hasIsland(e.offsetX, e.offsetY);
+    this.startPosition.x = e.offsetX;
+    this.startPosition.y = e.offsetY;
+    this.started = this.gui.hasIsland(e.offsetX, e.offsetY);
   }
 
   /**
@@ -183,10 +198,14 @@ export class GameComponent implements OnInit {
     }
 
     try {
-      // pass start (prvX, prvY) and stop (lstX, lstY) positions to GameEngine
-      this.game.putBridge(this.prvX, this.prvY, this.lstX, this.lstY);
+      // pass start and stop ositions to GameEngine
+      this.gui.putBridge(this.startPosition.x, this.startPosition.y, this.stopPosition.x, this.stopPosition.y);
     } catch(e) {
-      console.log('Invalid turn: ', e);
+      if (e.message) {
+        this.message = e.message;
+      } else {
+        this.message = 'Invalid turn.';
+      }
     }
 
     this.drawGameBoard();
@@ -200,17 +219,17 @@ export class GameComponent implements OnInit {
     if (!this.started) return;
     this.canvasContext.clearRect(0,0, this.gameWidth, this.gameHeight);
     this.canvasContext.beginPath();
-    this.canvasContext.moveTo(this.prvX, this.prvY);
-    const dx = e.offsetX - this.prvX;
-    const dy = e.offsetY - this.prvY;
+    this.canvasContext.moveTo(this.startPosition.x, this.startPosition.y);
+    const dx = e.offsetX - this.startPosition.x;
+    const dy = e.offsetY - this.startPosition.y;
     if (Math.abs(dx) > Math.abs(dy)) {
-      this.canvasContext.lineTo(e.offsetX, this.prvY);
-      this.lstX = e.offsetX;
-      this.lstY = this.prvY;
+      this.canvasContext.lineTo(e.offsetX, this.startPosition.y);
+      this.stopPosition.x = e.offsetX;
+      this.stopPosition.y = this.startPosition.y;
     } else {
-      this.canvasContext.lineTo(this.prvX, e.offsetY);
-      this.lstX = this.prvX;
-      this.lstY = e.offsetY;
+      this.canvasContext.lineTo(this.startPosition.x, e.offsetY);
+      this.stopPosition.x = this.startPosition.x;
+      this.stopPosition.y = e.offsetY;
     }
     this.canvasContext.stroke();
     this.canvasContext.closePath();
@@ -220,7 +239,7 @@ export class GameComponent implements OnInit {
    * draws the game board
    */
   drawGameBoard() {
-    const map = this.game.getMap().getData();
+    const map = this.gui.getMap().getData();
 
     // clear drawing canvas
     this.canvasContext.clearRect(0,0, this.gameWidth, this.gameHeight);
@@ -250,9 +269,14 @@ export class GameComponent implements OnInit {
             this.design.drawIsland(island, this.drawnConnections);
           }
         }
+
+        // Check if game is completed
+        if (this.gui.getMap().isSolved()) {
+          this.message = 'Level solved.';
+        }
     })
-      .catch(() => {
-      console.log('Error in beforeDrawGameBoard hook');
+      .catch((error) => {
+      console.log('Error in beforeDrawGameBoard hook', error);
       });
   }
 }

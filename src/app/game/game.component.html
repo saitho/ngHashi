@@ -1,4 +1,6 @@
-<div class="canvas-container">
+<h2 *ngIf="gui.getMap()">{{gui.getMap().title}}</h2>
+<div [innerText]="message"></div>
+<div class="canvas-container" [hidden]="!gui.getMap()">
   <canvas #canvasBg id="background"></canvas>
   <canvas #canvasDraw
           id="draw"
@@ -7,4 +9,7 @@
           (mouseup)="stopBridgeDrawing()"
           (mousemove)="duringBridgeDrawing($event)"
   ></canvas>
+</div>
+<div [hidden]="gui.getMap()">
+  Loading...
 </div>

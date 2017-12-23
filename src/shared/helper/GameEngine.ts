@@ -1,5 +1,5 @@
-import {Island} from "../Island";
-import {NoAvailableIslandConnectionsError} from "./Errors";
+import {Island} from "../../app/Island";
+import {NoAvailableIslandConnectionsError} from "../../app/game/Errors";
 
 export enum BoardDirections {
   HORIZONTAL = 1,
@@ -8,7 +8,7 @@ export enum BoardDirections {
 
 export class GameEngine {
 
-  private getIslandPos(island1: Island, island2: Island, direction: BoardDirections) {
+  private static getIslandPos(island1: Island, island2: Island, direction: BoardDirections) {
     let island1_pos = '';
     let island2_pos = '';
     switch(direction) {
@@ -40,7 +40,7 @@ export class GameEngine {
     return [island1_pos, island2_pos];
   }
 
-  public disconnectIslands(island1: Island, island2: Island, direction: BoardDirections) {
+  public static disconnectIslands(island1: Island, island2: Island, direction: BoardDirections) {
     const islandPos = this.getIslandPos(island1, island2, direction);
     const island1_pos = islandPos[0];
     const island2_pos = islandPos[1];
@@ -51,23 +51,17 @@ export class GameEngine {
     island2.connections[island2_pos].splice(index2, 1);
   }
 
-  public connectIslands(island1: Island, island2: Island, direction: BoardDirections) {
+  public static connectIslands(island1: Island, island2: Island, direction: BoardDirections) {
     // Check if maximum connections are reached
-    if (island1.countConnections() == island1.bridges) {
-      throw new NoAvailableIslandConnectionsError('Island 1 reached ' + island1.bridges +' connections.');
-    }
-    if (island2.countConnections() == island2.bridges) {
-      throw new NoAvailableIslandConnectionsError('Island 2 reached ' + island2.bridges +' connections.');
+    if (island1.isComplete() || island2.isComplete()) {
+      throw new NoAvailableIslandConnectionsError('An island reached its maximum connections.');
     }
 
     const islandPos = this.getIslandPos(island1, island2, direction);
     const island1_pos = islandPos[0];
     const island2_pos = islandPos[1];
-    if (island1.connections[island1_pos].length == 2) {
-      throw new NoAvailableIslandConnectionsError(island1_pos+ ' side of island 1 reached 2 connections.');
-    }
-    if (island2.connections[island2_pos].length == 2) {
-      throw new NoAvailableIslandConnectionsError(island2_pos+ 'side of island 2 reached 2 connections.');
+    if (island1.connections[island1_pos].length == 2 || island2.connections[island2_pos].length == 2) {
+      throw new NoAvailableIslandConnectionsError('A side of an island reached its maximum connections.');
     }
     island1.connections[island1_pos].push(island2);
     island2.connections[island2_pos].push(island1);

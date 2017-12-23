@@ -20,6 +20,18 @@ export abstract class AbstractMap {
     });
   }
 
+  public isSolved(): boolean {
+    for(let i=0; i < this.data.length; i++) {
+      for (let j = 0; j < this.data[i].length; j++) {
+        const island: Island = this.data[i][j];
+        if (!island.isComplete()) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   public getData() {
     return this.data;
   }

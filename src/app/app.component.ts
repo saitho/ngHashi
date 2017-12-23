@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import {Component, ElementRef, ViewChild} from '@angular/core';
+import {GameComponent} from "./game/game.component";
 
 @Component({
   selector: 'app-root',

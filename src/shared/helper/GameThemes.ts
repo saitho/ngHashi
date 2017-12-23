@@ -1,7 +1,7 @@
-import {SushiDesign} from "./Designs/SushiDesign";
-import {ClassicDesign} from "./Designs/ClassicDesign";
-import {AbstractDesign, IDesignConfig} from "./Designs/AbstractDesign";
-import {WurzelimperiumDesign} from "./Designs/WurzelimperiumDesign";
+import {SushiDesign} from "../../app/game/Designs/SushiDesign";
+import {ClassicDesign} from "../../app/game/Designs/ClassicDesign";
+import {AbstractDesign, IDesignConfig} from "../../app/game/Designs/AbstractDesign";
+import {WurzelimperiumDesign} from "../../app/game/Designs/WurzelimperiumDesign";
 
 export class GameThemes {
   private static themes: {} = {

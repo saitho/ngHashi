@@ -1,6 +1,6 @@
 import {AbstractDesign, IDesignConfig} from "./AbstractDesign";
 import {Island} from "../../Island";
-import {BoardDirections} from "../GameEngine";
+import {BoardDirections} from "../../../shared/helper/GameEngine";
 import {Connection} from "../../Connection";
 import {ElementRef} from "@angular/core";
 

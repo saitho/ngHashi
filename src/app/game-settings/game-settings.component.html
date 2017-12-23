@@ -1,17 +1,12 @@
-<div>
-  <section>
-  <h3>Current Level</h3>
-  <h4>{{gameRef.game.getMap().title}}</h4>
-  </section>
-
-  <section>
-    <h3>Design</h3>
-    <select (change)="changeDesign($event.target.value)">
-      <option *ngFor="let theme of themes">{{theme}}</option>
-    </select>
-  </section>
-  <hr />
-  <section>
-    <button (click)="restart()">Restart game</button>
-  </section>
-</div>
+<section>
+  <h2>Settings</h2>
+  <h3>Design</h3>
+  <select (change)="changeDesign($event.target.value)">
+    <option *ngFor="let theme of themes">{{theme}}</option>
+  </select>
+</section>
+<hr />
+<section>
+  <button (click)="restart()">Restart game</button>
+  <button routerLink="/level_select">Go to level selection</button>
+</section>

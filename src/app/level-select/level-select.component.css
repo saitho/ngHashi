@@ -1,0 +1,68 @@
+.grid {
+  list-style: none;
+}
+
+.grid_item {
+  background: #ebebeb;
+  display: block;
+  float: left;
+  position: relative;
+  -moz-transform: translate3d(0,0,0);
+  -webkit-transform: translate3d(0,0,0);
+  transform: translate3d(0,0,0);
+  -moz-transition: all .2s cubic-bezier(.4,0,.2,1);
+  -webkit-transition: all .2s cubic-bezier(.4,0,.2,1);
+  transition: all .2s cubic-bezier(.4,0,.2,1);
+}
+
+.grid_link {
+  display: block;
+  color: black;
+  position: relative;
+  overflow: hidden;
+  border: 4px solid #FFF;
+}
+
+.tile {
+  font-size: 14px;
+  font-family: "Segoe UI";
+  line-height: 18px;
+  padding: 12px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  -webkit-transform: translate(0%,0%);
+  -ms-transform: translate(0%,0%);
+  transform: translate(0%,0%);
+  width: 100%;
+}
+
+.new { background: #da4033; }
+.solved { background: #bada55; }
+
+@media all and (max-width: 320px) {
+  .grid_item {
+    width: 50%;
+  }
+  .grid_link {
+    padding-bottom: 100%;
+  }
+}
+
+@media all and (min-width: 321px) and (max-width: 480px) {
+  .grid_item {
+    width: 25%;
+  }
+  .grid_link {
+    padding-bottom: 100%;
+  }
+}
+
+@media all and (min-width: 481px) {
+  .grid_item {
+    width: 12.5%;
+  }
+  .grid_link {
+    padding-bottom: 100%;
+  }
+}

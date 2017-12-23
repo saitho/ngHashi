@@ -1,0 +1,9 @@
+<h2>Please select a level</h2>
+
+<ul class="grid">
+  <li class="grid_item {{level.isSolved() ? 'solved' : 'new'}}" *ngFor="let level of levels; let i = index">
+    <a routerLink="/play/{{i+1}}" class="grid_link">
+      <div class="tile">{{level.title}}</div>
+    </a>
+  </li>
+</ul>

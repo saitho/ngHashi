@@ -1,17 +1,17 @@
-import {InvalidTurnError} from "./Errors";
+import {InvalidTurnError} from "../../app/game/Errors";
 import {BoardDirections, GameEngine} from "./GameEngine";
-import DefaultMap from "../maps/DefaultMap";
-import {Island} from "../Island";
-import {Connection} from "../Connection";
-import {AbstractMap} from "../maps/AbstractMap";
+import {Island} from "../../app/Island";
+import {Connection} from "../../app/Connection";
+import {AbstractMap} from "../../app/maps/AbstractMap";
 
 export class GameGUI {
-  private game: GameEngine;
-  private map: AbstractMap;
+  private map: AbstractMap = null;
 
-  constructor(gameEngine: GameEngine) {
-    this.game = gameEngine;
-    this.map = new DefaultMap();
+  constructor() {
+  }
+
+  public setMap(map: AbstractMap) {
+    this.map = map;
   }
 
   public getMap() {
@@ -19,7 +19,7 @@ export class GameGUI {
   }
 
   public removeBridge(connection: Connection) {
-    this.game.disconnectIslands(connection.island, connection.connectedIsland, connection.direction);
+    GameEngine.disconnectIslands(connection.island, connection.connectedIsland, connection.direction);
   }
 
   public putBridge(x1, y1, x2, y2) {
@@ -33,7 +33,7 @@ export class GameGUI {
     const iter = islands.entries();
     const island1 = iter.next().value[0];
     const island2 = iter.next().value[0];
-    this.game.connectIslands(island1, island2, direction);
+    GameEngine.connectIslands(island1, island2, direction);
   }
 
   public getTile(x, y, islandsOnly = true): Island {
