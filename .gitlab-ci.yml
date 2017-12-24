@@ -37,4 +37,3 @@ deploy:
   environment:
     name: production
     url: https://$HEROKU_DEPLOY.herokuapp.com/
-  when: manual
