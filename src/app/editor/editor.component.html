@@ -1,7 +1,13 @@
 <section [style.width.px]="gameWidth" [style.height.px]="gameHeight">
   <section>
-    <button (click)="setTool('islands')" [disabled]="!setBridges">Islands</button>
-    <button (click)="setTool('bridges')" [disabled]="setBridges">Bridges</button>
+
+    <fieldset>
+      <legend>Tools</legend>
+      <button (click)="setTool('islands')" [disabled]="!setBridges">Islands</button>
+      <button (click)="setTool('bridges')" [disabled]="setBridges">Bridges</button>
+    </fieldset>
+
+    <button (click)="save()" [disabled]="!valid">Save map</button>
     <button routerLink="/level_select">Go to level selection</button>
   </section>
   <section>

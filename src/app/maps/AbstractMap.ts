@@ -15,6 +15,22 @@ export class AbstractMap {
     this.themeName = themeName;
   }
 
+  public exportJSON() {
+    const data = [];
+    for(let i=0; i < this.data.length; i++) {
+      const subarray = [];
+      for (let j = 0; j < this.data[i].length; j++) {
+        subarray.push(this.data[i][j].bridges);
+      }
+      data.push(subarray);
+    }
+    return {
+      "title": this.title,
+      "themeName": this.themeName,
+      "data": data,
+    };
+  }
+
   /**
    * Resets bridges on every island
    */

@@ -181,6 +181,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
 
   private isEditorMapValid(): boolean {
     const map = this.gui.getMap().getData();
+    let totalConnections = 0;
     for(let i=0; i < map.length; i++) {
       for (let j = 0; j < map[i].length; j++) {
         if (!map[i][j].bridges) {
@@ -189,9 +190,10 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
         if (!map[i][j].countConnections()) {
           return false;
         }
+        totalConnections += map[i][j].countConnections();
       }
     }
-    return true;
+    return totalConnections > 0;
   }
 
   /**
@@ -235,5 +237,18 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
       .catch((error) => {
         console.log('Error in beforeDrawGameBoard hook', error);
       });
+  }
+
+  save() {
+    console.log('save');
+
+    const title = prompt("Map title?");
+
+    if (title == null || title == "") {
+      alert('Missing title, saving aborted.');
+      return;
+    }
+    this.map.title = title;
+    console.log(this.map.exportJSON());
   }
 }
