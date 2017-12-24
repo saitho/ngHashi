@@ -21,6 +21,14 @@ export abstract class AbstractDesign {
   protected canvasBg: HTMLCanvasElement;
   protected canvasContext: CanvasRenderingContext2D;
   protected canvas: HTMLCanvasElement;
+  protected editorMode = false;
+
+  public enableEditorMode() {
+    this.editorMode = true;
+  }
+  public disableEditorMode() {
+    this.editorMode = false;
+  }
 
   protected imageStorage: IImageStorage = {
     background: null,

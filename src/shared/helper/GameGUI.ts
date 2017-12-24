@@ -3,6 +3,7 @@ import {BoardDirections, GameEngine} from "./GameEngine";
 import {Island} from "../../app/Island";
 import {Connection} from "../../app/Connection";
 import {AbstractMap} from "../../app/maps/AbstractMap";
+import BlankMap from "../../app/maps/BlankMap";
 
 export class GameGUI {
   private map: AbstractMap = null;
@@ -25,7 +26,10 @@ export class GameGUI {
   public putBridge(x1, y1, x2, y2) {
     const direction = this.getLineDirection(x1, y1, x2, y2);
     const islands = this.getIslandInRange(x1, y1, x2, y2);
-    if (islands.size !== 2 || direction === null) {
+    if (
+      (islands.size !== 2 || direction === null) &&
+      !(this.map instanceof BlankMap)
+    ) {
       throw new InvalidTurnError();
     }
 
@@ -33,7 +37,7 @@ export class GameGUI {
     const iter = islands.entries();
     const island1 = iter.next().value[0];
     const island2 = iter.next().value[0];
-    GameEngine.connectIslands(island1, island2, direction);
+    GameEngine.connectIslands(island1, island2, direction, (this.map instanceof BlankMap));
   }
 
   public getTile(x, y, islandsOnly = true): Island {

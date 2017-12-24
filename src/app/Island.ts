@@ -28,4 +28,11 @@ export class Island {
   isComplete(): boolean {
     return this.bridges == this.countConnections();
   }
+
+  getSymbol() {
+    if (this.bridges) {
+      return this.bridges;
+    }
+    return '';
+  }
 }

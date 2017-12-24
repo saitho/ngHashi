@@ -49,12 +49,14 @@ export class ClassicDesign extends AbstractDesign {
     this.canvasBgContext.closePath();
 
     // text
-    this.canvasBgContext.fillStyle = 'black';
-    this.canvasBgContext.fillText(
-      island.bridges.toString(),
-      island.xStart+this.config.islandSize/2,
-      island.yStart+this.config.islandSize/2
-    );
+    if (!this.editorMode || (island.bridges == island.countConnections())) {
+      this.canvasBgContext.fillStyle = 'black';
+      this.canvasBgContext.fillText(
+        island.bridges.toString(),
+        island.xStart+this.config.islandSize/2,
+        island.yStart+this.config.islandSize/2
+      );
+    }
 
     this.drawConnections(island, BoardDirections.HORIZONTAL, drawnConnections);
     this.drawConnections(island, BoardDirections.VERTICAL, drawnConnections);

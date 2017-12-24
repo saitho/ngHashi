@@ -51,9 +51,11 @@ export class GameEngine {
     island2.connections[island2_pos].splice(index2, 1);
   }
 
-  public static connectIslands(island1: Island, island2: Island, direction: BoardDirections) {
+  public static connectIslands(island1: Island, island2: Island, direction: BoardDirections, editorMode = false) {
     // Check if maximum connections are reached
-    if (island1.isComplete() || island2.isComplete()) {
+    if (
+      (island1.isComplete() || island2.isComplete()) && !editorMode
+    ) {
       throw new NoAvailableIslandConnectionsError('An island reached its maximum connections.');
     }
 
@@ -65,5 +67,10 @@ export class GameEngine {
     }
     island1.connections[island1_pos].push(island2);
     island2.connections[island2_pos].push(island1);
+
+    if (editorMode) {
+      island1.bridges = island1.countConnections();
+      island2.bridges = island2.countConnections();
+    }
   }
 }

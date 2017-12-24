@@ -1,45 +1,32 @@
-import {Component, AfterViewInit, ElementRef, ViewChild, OnInit} from '@angular/core';
+import {Component, AfterViewInit} from '@angular/core';
 import BlankMap from "../maps/BlankMap";
 import {GameGUI} from "../../shared/helper/GameGUI";
+import AbstractGameBoardComponent from "../AbstractGameBoardComponent";
+import {AbstractDesign} from "../game/Designs/AbstractDesign";
 
 @Component({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.css']
 })
-export class EditorComponent implements OnInit, AfterViewInit {
+export class EditorComponent extends AbstractGameBoardComponent implements AfterViewInit {
   gui: GameGUI = new GameGUI();
+  design: AbstractDesign;
   protected map = new BlankMap();
   protected setBridges: boolean = false;
 
-  ngAfterViewInit() {
-    setTimeout(() => {
-      this.gui.setMap(this.map);
-    });
-  }
+  islandSize = 50;
+  gameWidth = 600;
+  gameHeight = 600;
 
-  clickColumn(x, y) {
-    if (this.setBridges) {
-      return;
-    }
-    this.map.data[x][y].bridges = !this.map.data[x][y].bridges ? 1 : 0;
+  protected initGame(design: AbstractDesign) {
+    design.enableEditorMode();
+    super.initGame(design);
   }
 
   setTool(tool: string) {
     this.setBridges = (tool === 'bridges');
   }
-
-  ngOnInit() {
-    this.canvasContext = this.canvas.nativeElement.getContext('2d');
-  }
-
-
-  started = false;
-  startPosition = {x: -300, y: -300};
-  stopPosition = {x: -300, y: -300};
-
-  @ViewChild('canvasDraw') canvas: ElementRef;
-  canvasContext: CanvasRenderingContext2D;
 
   /**
    * Save current position and enable "bridge setting" mode
@@ -55,8 +42,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
     const x = Math.floor(e.offsetX/60);
     const y = Math.floor(e.offsetY/60);
 
-    console.log(x, y);
-    this.started = this.map.data[x][y].bridges > 0;
+    this.started = true;
   }
 
   /**
@@ -68,11 +54,14 @@ export class EditorComponent implements OnInit, AfterViewInit {
     if (!this.setBridges || !this.started) {
       return;
     }
-    console.log('stopBridgeDrawing');
 
-    // todo: put bridge
-    // this.gui.putBridge(this.startPosition.x, this.startPosition.y, this.stopPosition.x, this.stopPosition.y);
-    console.log(this.startPosition.x, this.startPosition.y, this.stopPosition.x, this.stopPosition.y);
+    try {
+      // pass start and stop ositions to GameEngine
+      this.gui.putBridge(this.startPosition.x, this.startPosition.y, this.stopPosition.x, this.stopPosition.y);
+    } catch(e) {
+
+    }
+    this.drawGameBoard();
   }
 
   /**
@@ -83,7 +72,6 @@ export class EditorComponent implements OnInit, AfterViewInit {
     if (!this.setBridges || !this.started) {
       return;
     }
-    console.log('during');
     this.canvasContext.clearRect(0,0, 448, 448);
     this.canvasContext.beginPath();
     this.canvasContext.moveTo(this.startPosition.x, this.startPosition.y);
@@ -100,5 +88,98 @@ export class EditorComponent implements OnInit, AfterViewInit {
     }
     this.canvasContext.stroke();
     this.canvasContext.closePath();
+  }
+
+  mouseClick(e) {
+    if (this.setBridges) {
+      return;
+    }
+
+    let x = Math.floor(e.offsetX / (600/7));
+    let y = Math.floor(e.offsetY / (600/7));
+
+    this.map.getData()[y][x].bridges = this.map.getData()[y][x].bridges ? 0 : 1;
+    this.drawGameBoard();
+  }
+
+  protected drawGrid() {
+    this.canvasBgContext.lineWidth = 2;
+    this.canvasBgContext.beginPath();
+
+    // top border
+    this.canvasBgContext.moveTo(0, 1);
+    this.canvasBgContext.lineTo(this.gameWidth, 1);
+    this.canvasBgContext.stroke();
+
+    // bottom border
+    this.canvasBgContext.moveTo(0, this.gameHeight - 2);
+    this.canvasBgContext.lineTo(this.gameWidth, this.gameHeight - 2);
+    this.canvasBgContext.stroke();
+
+    // left border
+    this.canvasBgContext.moveTo(1, 0);
+    this.canvasBgContext.lineTo(1, this.gameHeight);
+    this.canvasBgContext.stroke();
+
+    // right border
+    this.canvasBgContext.moveTo(this.gameWidth - 2, 0);
+    this.canvasBgContext.lineTo(this.gameWidth - 2, this.gameHeight);
+    this.canvasBgContext.stroke();
+
+    for (let i = 0; i < this.map.getData().length; i++) {
+      // vertical lines
+      this.canvasBgContext.moveTo(this.gameWidth * (i+1) / this.map.getData().length, 0);
+      this.canvasBgContext.lineTo(this.gameWidth * (i+1) / this.map.getData().length, this.gameHeight);
+      this.canvasBgContext.stroke();
+
+      // horizontal lines
+      this.canvasBgContext.moveTo(0, this.gameHeight * (i+1) / this.map.getData().length);
+      this.canvasBgContext.lineTo(this.gameWidth, this.gameHeight * (i+1) / this.map.getData().length);
+      this.canvasBgContext.stroke();
+    }
+
+    this.canvasBgContext.closePath();
+  }
+
+  /**
+   * draws the game board
+   */
+  drawGameBoard() {
+    this.started = false;
+    const map = this.gui.getMap().getData();
+
+    // clear drawing canvas
+    this.canvasContext.clearRect(0,0, this.gameWidth, this.gameHeight);
+    // clear background canvas
+    this.canvasBgContext.clearRect(0,0, this.gameWidth, this.gameHeight);
+    this.drawGrid();
+
+    this.design.beforeDrawGameBoard()
+      .then(() => {
+        // distribute game window size amongst all map tiles and keep some space around (length+1)
+        const xPerRect = this.gameWidth/(map.length+1);
+        const yPerRect = this.gameHeight/(map.length+1);
+
+        // clear connections
+        this.drawnConnections = [];
+
+        // Draw islands
+        for(let i=0; i < map.length; i++) {
+          for(let j=0; j < map[i].length; j++) {
+            const island = map[j][i]; // switch j and i to keep the order from array in rendering
+            if (island.init == false) {
+              island.xStart = xPerRect/4 + i*(xPerRect+10);
+              island.yStart = yPerRect/4 + j*(yPerRect+10);
+              island.xEnd = island.xStart + this.islandSize;
+              island.yEnd = island.yStart + this.islandSize;
+              island.init = true;
+            }
+            this.design.drawIsland(island, this.drawnConnections);
+          }
+        }
+      })
+      .catch((error) => {
+        console.log('Error in beforeDrawGameBoard hook', error);
+      });
   }
 }

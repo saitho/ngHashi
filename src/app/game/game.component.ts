@@ -25,17 +25,18 @@ export class GameComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.route.params.subscribe((params) => {
-      const map: AbstractMap = gameLevels.default[params.id - 1];
-      let defaultTheme = GameThemes.getTheme(map.themeName, {
-        canvas: this.canvas,
-        canvasBg: this.canvasBg,
-        config: {
-          islandBorderSize: 2,
-          islandSize: this.islandSize
-        }
+      setTimeout(() => {
+        this.map = gameLevels.default[params.id - 1];
+        let defaultTheme = GameThemes.getTheme(this.map.themeName, {
+          canvas: this.canvas,
+          canvasBg: this.canvasBg,
+          config: {
+            islandBorderSize: 2,
+            islandSize: this.islandSize
+          }
+        });
+        this.initGame(defaultTheme);
       });
-
-      this.initGame(defaultTheme, map);
     });
   }
 
@@ -68,10 +69,9 @@ export class GameComponent implements AfterViewInit {
     return this.design;
   }
 
-  private initGame(design: AbstractDesign, map: AbstractMap) {
+  private initGame(design: AbstractDesign) {
     this.design = design;
-    this.gui.setMap(map);
-    console.log('initGame');
+    this.gui.setMap(this.map);
     // set canvas sizes
     this.canvasBg.nativeElement.width = this.gameWidth_default;
     this.canvasBg.nativeElement.height = this.gameHeight_default;
