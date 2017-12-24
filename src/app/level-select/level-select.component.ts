@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import * as gameLevels from "../../shared/helper/GameLevels";
+import {GameLevelsService} from "../../shared/services/GameLevelsService";
+import {AbstractMap} from "../maps/AbstractMap";
 
 @Component({
   selector: 'app-level-select',
@@ -7,9 +8,14 @@ import * as gameLevels from "../../shared/helper/GameLevels";
   styleUrls: ['./level-select.component.css']
 })
 export class LevelSelectComponent implements OnInit {
-  levels = gameLevels.default;
+  levels: AbstractMap[];
 
-  constructor() { }
+  constructor(
+    private gameLevels: GameLevelsService
+  ) {
+    this.levels = gameLevels.getLevels();
+    console.log(this.levels);
+  }
 
   ngOnInit() {
   }

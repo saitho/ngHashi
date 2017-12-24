@@ -6,6 +6,8 @@ import { GameComponent } from './game/game.component';
 import {AppRoutingModule} from "./app-routing.module";
 import { LevelSelectComponent } from './level-select/level-select.component';
 import { EditorComponent } from './editor/editor.component';
+import {HttpClientModule} from "@angular/common/http";
+import {GameLevelsService} from "../shared/services/GameLevelsService";
 
 @NgModule({
   declarations: [
@@ -16,9 +18,12 @@ import { EditorComponent } from './editor/editor.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule
   ],
-  providers: [],
+  providers: [
+    GameLevelsService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

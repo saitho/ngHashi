@@ -6,7 +6,7 @@ import {AbstractDesign} from "./Designs/AbstractDesign";
 import {GameThemes} from "../../shared/helper/GameThemes";
 import {AbstractMap} from "../maps/AbstractMap";
 import {ActivatedRoute} from "@angular/router";
-import * as gameLevels from "../../shared/helper/GameLevels"
+import {GameLevelsService} from "../../shared/services/GameLevelsService";
 
 @Component({
   selector: 'app-game',
@@ -20,13 +20,15 @@ export class GameComponent implements AfterViewInit {
   protected map: AbstractMap = null;
 
   constructor(
-    private route: ActivatedRoute
-  ) {}
+    private route: ActivatedRoute,
+    private gameLevels: GameLevelsService
+  ) {
+  }
 
   ngAfterViewInit() {
     this.route.params.subscribe((params) => {
       setTimeout(() => {
-        this.map = gameLevels.default[params.id - 1];
+        this.map = this.gameLevels.getLevel(params.id - 1);
         let defaultTheme = GameThemes.getTheme(this.map.themeName, {
           canvas: this.canvas,
           canvasBg: this.canvasBg,

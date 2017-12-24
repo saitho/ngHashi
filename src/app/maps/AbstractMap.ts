@@ -1,9 +1,19 @@
 import {Island} from "../Island";
 
-export abstract class AbstractMap {
-  public abstract title: string;
-  public themeName: string = 'Nikoli Classic';
-  protected abstract data: Array<Array<Island>>;
+export class AbstractMap {
+  public title: string;
+  public themeName: string;
+  protected data: Array<Array<Island>>;
+
+  constructor(
+    title: string,
+    data: Array<Array<Island>>,
+    themeName: string = 'Nikoli Classic'
+  ) {
+    this.title = title;
+    this.data = data;
+    this.themeName = themeName;
+  }
 
   /**
    * Resets bridges on every island
@@ -35,5 +45,9 @@ export abstract class AbstractMap {
 
   public getData() {
     return this.data;
+  }
+
+  public setData(data: Array<Array<Island>>) {
+    this.data = data;
   }
 }
