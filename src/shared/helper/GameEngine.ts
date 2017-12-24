@@ -40,7 +40,7 @@ export class GameEngine {
     return [island1_pos, island2_pos];
   }
 
-  public static disconnectIslands(island1: Island, island2: Island, direction: BoardDirections) {
+  public static disconnectIslands(island1: Island, island2: Island, direction: BoardDirections, editorMode = false) {
     const islandPos = this.getIslandPos(island1, island2, direction);
     const island1_pos = islandPos[0];
     const island2_pos = islandPos[1];
@@ -49,6 +49,11 @@ export class GameEngine {
     island1.connections[island1_pos].splice(index1, 1);
     const index2 = island2.connections[island2_pos].indexOf(island1);
     island2.connections[island2_pos].splice(index2, 1);
+
+    if (editorMode) {
+      island1.bridges = island1.countConnections() ? island1.countConnections() : 1;
+      island2.bridges = island2.countConnections() ? island2.countConnections() : 1;
+    }
   }
 
   public static connectIslands(island1: Island, island2: Island, direction: BoardDirections, editorMode = false) {

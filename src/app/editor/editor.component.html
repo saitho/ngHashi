@@ -4,6 +4,10 @@
     <button (click)="setTool('bridges')" [disabled]="setBridges">Bridges</button>
     <button routerLink="/level_select">Go to level selection</button>
   </section>
+  <section>
+    <div *ngIf="valid" class="valid">Puzzle is valid.</div>
+    <div *ngIf="!valid" class="invalid">Puzzle is invalid.</div>
+  </section>
   <div class="canvas-container">
     <canvas #canvasBg id="background"></canvas>
     <canvas #canvasDraw

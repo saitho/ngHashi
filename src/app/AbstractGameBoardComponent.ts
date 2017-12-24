@@ -4,6 +4,7 @@ import {AfterViewInit, ElementRef, OnInit, ViewChild} from "@angular/core";
 import {AbstractDesign} from "./game/Designs/AbstractDesign";
 import {Connection} from "./Connection";
 import {GameThemes} from "../shared/helper/GameThemes";
+import {BoardDirections} from "../shared/helper/GameEngine";
 
 export default abstract class AbstractGameBoardComponent implements OnInit, AfterViewInit {
   protected map: AbstractMap = null;
@@ -31,18 +32,47 @@ export default abstract class AbstractGameBoardComponent implements OnInit, Afte
 
 
   ngAfterViewInit() {
-    let defaultTheme = GameThemes.getTheme(this.map.themeName, {
-      canvas: this.canvas,
-      canvasBg: this.canvasBg,
-      config: {
-        islandBorderSize: 2,
-        islandSize: this.islandSize
-      }
+    setTimeout(() => {
+      let defaultTheme = GameThemes.getTheme(this.map.themeName, {
+        canvas: this.canvas,
+        canvasBg: this.canvasBg,
+        config: {
+          islandBorderSize: 2,
+          islandSize: this.islandSize
+        }
+      });
+      this.initGame(defaultTheme);
     });
-
-    this.initGame(defaultTheme);
   }
 
+  protected getConnectionsFromCursorPos(e): Connection[] {
+    let values = [];
+    this.drawnConnections.forEach(value => {
+      let offsetType, offsetTypeRange = '';
+      if (value.direction === BoardDirections.VERTICAL) {
+        offsetType = 'offsetY';
+        offsetTypeRange = 'offsetX';
+      } else {
+        offsetType = 'offsetX';
+        offsetTypeRange = 'offsetY';
+      }
+
+      // skip if other click is not in a specified range
+      // 10 pixel offset
+      if (!(value.otherAxis - 10 < e[offsetTypeRange] && value.otherAxis + 10 > e[offsetTypeRange])) {
+        return;
+      }
+
+      // the tile should be between the line... also switch start and end as those depend on how the line was drawn...
+      if (
+        (e[offsetType] > value.start && e[offsetType] < value.end) ||
+        (e[offsetType] > value.end && e[offsetType] < value.start)
+      ) {
+        values.push(value);
+      }
+    });
+    return values;
+  }
 
   protected initGame(design: AbstractDesign) {
     this.design = design;

@@ -11,13 +11,14 @@ import {AbstractDesign} from "../game/Designs/AbstractDesign";
 })
 export class EditorComponent extends AbstractGameBoardComponent implements AfterViewInit {
   gui: GameGUI = new GameGUI();
-  design: AbstractDesign;
   protected map = new BlankMap();
   protected setBridges: boolean = false;
 
   islandSize = 50;
   gameWidth = 600;
   gameHeight = 600;
+
+  valid = false;
 
   protected initGame(design: AbstractDesign) {
     design.enableEditorMode();
@@ -92,13 +93,50 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
 
   mouseClick(e) {
     if (this.setBridges) {
-      return;
+      // Remove bridges...
+      if (this.started) {
+        this.started = false;
+        return;
+      }
+      // Check for a connection that goes through the tile
+      const connections = this.getConnectionsFromCursorPos(e);
+      if (connections.length == 0) {
+        return;
+      }
+      // drop one connection
+      this.gui.removeBridge(connections[0]);
+    } else {
+      let x = Math.floor(e.offsetX / (600/7));
+      let y = Math.floor(e.offsetY / (600/7));
+      const island = this.map.getData()[y][x];
+
+      if (island.bridges) {
+        // remove island
+
+        if (island.countConnections() > 0) {
+          const connectedIslandList = [];
+          ['left', 'right', 'top', 'bottom'].forEach(direction => {
+            this.map.getData()[y][x].connections[direction].forEach(
+              (island2) => connectedIslandList.push(island2)
+            );
+          });
+          connectedIslandList.forEach((island2) => {
+            this.drawnConnections.forEach(connection => {
+              if (
+                (connection.island === island && connection.connectedIsland === island2) ||
+                (connection.connectedIsland === island && connection.island === island2)
+              ) {
+                this.gui.removeBridge(connection);
+              }
+            });
+          });
+        }
+
+        this.map.getData()[y][x].bridges = 0;
+      } else {
+        this.map.getData()[y][x].bridges = 1;
+      }
     }
-
-    let x = Math.floor(e.offsetX / (600/7));
-    let y = Math.floor(e.offsetY / (600/7));
-
-    this.map.getData()[y][x].bridges = this.map.getData()[y][x].bridges ? 0 : 1;
     this.drawGameBoard();
   }
 
@@ -141,11 +179,27 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
     this.canvasBgContext.closePath();
   }
 
+  private isEditorMapValid(): boolean {
+    const map = this.gui.getMap().getData();
+    for(let i=0; i < map.length; i++) {
+      for (let j = 0; j < map[i].length; j++) {
+        if (!map[i][j].bridges) {
+          continue;
+        }
+        if (!map[i][j].countConnections()) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   /**
    * draws the game board
    */
   drawGameBoard() {
     this.started = false;
+    this.valid = this.isEditorMapValid();
     const map = this.gui.getMap().getData();
 
     // clear drawing canvas

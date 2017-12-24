@@ -20,7 +20,7 @@ export class GameGUI {
   }
 
   public removeBridge(connection: Connection) {
-    GameEngine.disconnectIslands(connection.island, connection.connectedIsland, connection.direction);
+    GameEngine.disconnectIslands(connection.island, connection.connectedIsland, connection.direction, (this.map instanceof BlankMap));
   }
 
   public putBridge(x1, y1, x2, y2) {
