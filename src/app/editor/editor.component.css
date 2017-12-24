@@ -1,0 +1,28 @@
+table {
+  border-collapse: collapse;
+  width: 450px;
+  height: 450px;
+}
+table, td {
+  border: 2px solid;
+}
+td {
+  width: 60px;
+  height: 60px;
+}
+
+td.mode-islands {
+  cursor: pointer;
+}
+
+canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 448px;
+  height: 448px;
+}
+
+.container {
+  position: relative;
+}

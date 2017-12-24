@@ -1,0 +1,28 @@
+<section>
+  <button routerLink="/level_select">Go to level selection</button>
+</section>
+<section class="container">
+  <canvas #canvasDraw
+          [hidden]="!setBridges"
+          id="draw"
+          style="border: 1px solid;"
+          (mousedown)="startBridgeDrawing($event)"
+          (mouseup)="stopBridgeDrawing()"
+          (mousemove)="duringBridgeDrawing($event)"
+  ></canvas>
+  <table>
+    <tr *ngFor="let i of [0,1,2,3,4,5,6]">
+      <td
+        *ngFor="let j of [0,1,2,3,4,5,6]"
+        class="{{setBridges ? 'mode-bridges' : 'mode-islands'}}"
+        (click)="clickColumn(i, j)"
+      >
+        <svg *ngIf="map.data[i][j].bridges" height="50" width="50">
+          <circle cx="25" cy="25" r="15" stroke="black" stroke-width="2" fill="white" />
+        </svg>
+      </td>
+    </tr>
+  </table>
+  <button (click)="setTool('islands')" [disabled]="!setBridges">Islands</button>
+  <button (click)="setTool('bridges')" [disabled]="setBridges">Bridges</button>
+</section>

@@ -5,12 +5,14 @@ import { AppComponent } from './app.component';
 import { GameComponent } from './game/game.component';
 import {AppRoutingModule} from "./app-routing.module";
 import { LevelSelectComponent } from './level-select/level-select.component';
+import { EditorComponent } from './editor/editor.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     GameComponent,
-    LevelSelectComponent
+    LevelSelectComponent,
+    EditorComponent
   ],
   imports: [
     BrowserModule,
