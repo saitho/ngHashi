@@ -2,7 +2,8 @@ import {Island} from "../Island";
 import {AbstractMap} from "./AbstractMap";
 
 export default class Level1Map extends AbstractMap {
-  public title: string = 'Level 1';
+  public title: string = 'Sushi 1';
+  public themeName: string = 'Sushi';
   protected data: Array<Array<Island>> = [
     [
       new Island(4),

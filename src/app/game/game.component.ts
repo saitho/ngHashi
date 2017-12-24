@@ -25,8 +25,8 @@ export class GameComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.route.params.subscribe((params) => {
-
-      let defaultTheme = GameThemes.getTheme('Nikoli Classic', {
+      const map: AbstractMap = gameLevels.default[params.id - 1];
+      let defaultTheme = GameThemes.getTheme(map.themeName, {
         canvas: this.canvas,
         canvasBg: this.canvasBg,
         config: {
@@ -35,7 +35,7 @@ export class GameComponent implements AfterViewInit {
         }
       });
 
-      this.initGame(defaultTheme, gameLevels.default[params.id - 1]);
+      this.initGame(defaultTheme, map);
     });
   }
 

@@ -2,6 +2,7 @@ import {Island} from "../Island";
 
 export abstract class AbstractMap {
   public abstract title: string;
+  public themeName: string = 'Nikoli Classic';
   protected abstract data: Array<Array<Island>>;
 
   /**
