@@ -2,20 +2,28 @@ import {Island} from "../Island";
 
 export class AbstractMap {
   public title: string;
-  public themeName: string;
+  public themeName: string = 'Nikoli Classic';
   protected data: Array<Array<Island>>;
 
-  constructor(
-    title: string,
-    data: Array<Array<Island>>,
-    themeName: string = 'Nikoli Classic'
-  ) {
-    this.title = title;
+  public importFromJSON(object: any) {
+    const data: Array<Array<Island>> = [];
+    let i = 0;
+    object.data.forEach((row) => {
+      const innerArray: Island[] = [];
+      row.forEach((column) => {
+        innerArray.push(new Island(column));
+      });
+      data.push(innerArray);
+      i++;
+    });
+    this.title = object.title;
     this.data = data;
-    this.themeName = themeName;
+    if (object.hasOwnProperty('themeName')) {
+      this.themeName = object.themeName;
+    }
   }
 
-  public exportJSON() {
+  public exportObject() {
     const data = [];
     for(let i=0; i < this.data.length; i++) {
       const subarray = [];
@@ -24,11 +32,11 @@ export class AbstractMap {
       }
       data.push(subarray);
     }
-    return {
+    return JSON.stringify({
       "title": this.title,
       "themeName": this.themeName,
       "data": data,
-    };
+    });
   }
 
   /**

@@ -3,7 +3,9 @@ import {AbstractMap} from "./AbstractMap";
 
 export default class BlankMap extends AbstractMap {
   constructor() {
-    super('', [
+    super();
+    this.title = '';
+    this.data = [
       [
         new Island(0),
         new Island(0),
@@ -67,6 +69,6 @@ export default class BlankMap extends AbstractMap {
         new Island(0),
         new Island(0)
       ],
-    ]);
+    ];
   }
 }

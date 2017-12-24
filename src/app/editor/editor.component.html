@@ -1,27 +1,45 @@
 <section [style.width.px]="gameWidth" [style.height.px]="gameHeight">
-  <section>
 
-    <fieldset>
-      <legend>Tools</legend>
-      <button (click)="setTool('islands')" [disabled]="!setBridges">Islands</button>
-      <button (click)="setTool('bridges')" [disabled]="setBridges">Bridges</button>
-    </fieldset>
+  <div *ngIf="exportData">
+    <h2>Map saved.</h2>
 
-    <button (click)="save()" [disabled]="!valid">Save map</button>
-    <button routerLink="/level_select">Go to level selection</button>
-  </section>
-  <section>
-    <div *ngIf="valid" class="valid">Puzzle is valid.</div>
-    <div *ngIf="!valid" class="invalid">Puzzle is invalid.</div>
-  </section>
-  <div class="canvas-container">
-    <canvas #canvasBg id="background"></canvas>
-    <canvas #canvasDraw
-            id="draw"
-            (click)="mouseClick($event)"
-            (mousedown)="startBridgeDrawing($event)"
-            (mouseup)="stopBridgeDrawing()"
-            (mousemove)="duringBridgeDrawing($event)"
-    ></canvas>
+    <p>
+      <a href="{{exportData.path}}">
+        Click here to play or share your map.
+      </a>
+    </p>
+
+    <p>
+      <a href="https://github.com/saitho/hashi/issues/new?title=[Level]%20{{exportData.title|urlencode}}&body=```{{exportData.json|urlencode}}```">
+        Or post your level to our GitHub page and contribute to the project
+      </a>
+    </p>
   </div>
+  <div [hidden]="exportData !== null">
+    <section>
+      <fieldset>
+        <legend>Tools</legend>
+        <button (click)="setTool('islands')" [disabled]="!setBridges">Islands</button>
+        <button (click)="setTool('bridges')" [disabled]="setBridges">Bridges</button>
+      </fieldset>
+
+      <button (click)="save()" [disabled]="!valid">Save map</button>
+      <button routerLink="/level_select">Go to level selection</button>
+    </section>
+    <section>
+      <div *ngIf="valid" class="valid">Puzzle is valid.</div>
+      <div *ngIf="!valid" class="invalid">Puzzle is invalid.</div>
+    </section>
+    <div class="canvas-container">
+      <canvas #canvasBg id="background"></canvas>
+      <canvas #canvasDraw
+              id="draw"
+              (click)="mouseClick($event)"
+              (mousedown)="startBridgeDrawing($event)"
+              (mouseup)="stopBridgeDrawing()"
+              (mousemove)="duringBridgeDrawing($event)"
+      ></canvas>
+    </div>
+  </div>
+
 </section>

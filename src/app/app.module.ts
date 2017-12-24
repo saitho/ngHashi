@@ -8,13 +8,15 @@ import { LevelSelectComponent } from './level-select/level-select.component';
 import { EditorComponent } from './editor/editor.component';
 import {HttpClientModule} from "@angular/common/http";
 import {GameLevelsService} from "../shared/services/GameLevelsService";
+import UrlEncodePipe from "../shared/pipes/UrlEncodePipe";
 
 @NgModule({
   declarations: [
     AppComponent,
     GameComponent,
     LevelSelectComponent,
-    EditorComponent
+    EditorComponent,
+    UrlEncodePipe
   ],
   imports: [
     BrowserModule,

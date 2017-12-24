@@ -3,6 +3,7 @@ import BlankMap from "../maps/BlankMap";
 import {GameGUI} from "../../shared/helper/GameGUI";
 import AbstractGameBoardComponent from "../AbstractGameBoardComponent";
 import {AbstractDesign} from "../game/Designs/AbstractDesign";
+import {LocationStrategy} from "@angular/common";
 
 @Component({
   selector: 'app-editor',
@@ -19,6 +20,13 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
   gameHeight = 600;
 
   valid = false;
+  exportData = null;
+
+  constructor(
+    private locationStrategy: LocationStrategy
+  ) {
+    super();
+  }
 
   protected initGame(design: AbstractDesign) {
     design.enableEditorMode();
@@ -249,6 +257,13 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
       return;
     }
     this.map.title = title;
-    console.log(this.map.exportJSON());
+    const json = this.map.exportObject();
+    const path = '/play/' + btoa(json);
+    this.exportData = {
+      title: title,
+      json: json,
+      path: path,
+      url: this.locationStrategy.prepareExternalUrl(path)
+    };
   }
 }

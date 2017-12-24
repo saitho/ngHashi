@@ -28,7 +28,15 @@ export class GameComponent implements AfterViewInit {
   ngAfterViewInit() {
     this.route.params.subscribe((params) => {
       setTimeout(() => {
-        this.map = this.gameLevels.getLevel(params.id - 1);
+        if (isNaN(params.id)) {
+          // treat as mapdata hash
+          const mapData = JSON.parse(atob(params.id));
+          this.map = new AbstractMap();
+          this.map.importFromJSON(mapData);
+        } else {
+          // treat as id
+          this.map = this.gameLevels.getLevel(params.id - 1);
+        }
         let defaultTheme = GameThemes.getTheme(this.map.themeName, {
           canvas: this.canvas,
           canvasBg: this.canvasBg,

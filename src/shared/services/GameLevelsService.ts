@@ -13,19 +13,9 @@ export class GameLevelsService {
     let observable = this.http.get(path, {responseType: 'json'}).toPromise();
     observable
       .then((result: any) => {
-      const data: Array<Array<Island>> = [];
-      let i = 0;
-      result.data.forEach((row) => {
-        const innerArray: Island[] = [];
-        row.forEach((column) => {
-          innerArray.push(new Island(column));
-        });
-        data.push(innerArray);
-        i++;
-      });
-      this.maps.push(
-        new AbstractMap(result.title, data, result.themeName)
-      );
+      const map = new AbstractMap();
+      map.importFromJSON(result);
+      this.maps.push(map);
     })
       .catch((error) => console.log(error));
     return observable;
