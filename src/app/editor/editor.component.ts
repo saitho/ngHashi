@@ -13,7 +13,7 @@ import {LocationStrategy} from "@angular/common";
 export class EditorComponent extends AbstractGameBoardComponent implements AfterViewInit {
   gui: GameGUI = new GameGUI();
   protected map = new BlankMap();
-  protected setBridges: boolean = false;
+  public setBridges: boolean = false;
 
   islandSize = 50;
   gameWidth = 600;

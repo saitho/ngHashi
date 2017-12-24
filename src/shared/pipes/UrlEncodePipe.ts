@@ -6,7 +6,7 @@ import {Pipe} from '@angular/core';
 @Pipe({
   name: 'urlencode'
 })
-export default class UrlEncodePipe {
+export class UrlEncodePipe {
   transform(value: string): string {
     return encodeURI(value);
   }
