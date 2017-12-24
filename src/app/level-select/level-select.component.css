@@ -42,25 +42,28 @@
 
 @media all and (max-width: 320px) {
   .grid_item {
-    width: 50%;
+    width: 49.5%;
+    margin: 0 0.25%;
   }
   .grid_link {
     padding-bottom: 100%;
   }
 }
 
-@media all and (min-width: 321px) and (max-width: 480px) {
+@media all and (min-width: 421px) and (max-width: 940px) {
   .grid_item {
-    width: 25%;
+    width: 24.5%;
+    margin: 0 0.25%;
   }
   .grid_link {
     padding-bottom: 100%;
   }
 }
 
-@media all and (min-width: 481px) {
+@media all and (min-width: 941px) {
   .grid_item {
-    width: 12.5%;
+    width: 12%;
+    margin: 0 0.25%;
   }
   .grid_link {
     padding-bottom: 100%;

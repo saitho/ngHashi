@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {LevelSelectComponent} from "./level-select/level-select.component";
-import {GameScreenComponent} from "./game-screen/game-screen.component";
+import {GameComponent} from "./game/game.component";
 
 const routes: Routes = [
   {
@@ -10,7 +10,7 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   { path: 'level_select', component: LevelSelectComponent },
-  { path: 'play/:id', component: GameScreenComponent},
+  { path: 'play/:id', component: GameComponent},
 ];
 
 @NgModule({

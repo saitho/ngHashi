@@ -1,27 +1,42 @@
-import {Component, ViewChild, ElementRef, OnInit, Input} from '@angular/core';
+import {Component, ViewChild, ElementRef, Input, AfterViewInit} from '@angular/core';
 import {BoardDirections} from "../../shared/helper/GameEngine";
 import {GameGUI} from "../../shared/helper/GameGUI";
 import {Connection} from "../Connection";
 import {AbstractDesign} from "./Designs/AbstractDesign";
 import {GameThemes} from "../../shared/helper/GameThemes";
 import {AbstractMap} from "../maps/AbstractMap";
+import {ActivatedRoute} from "@angular/router";
+import * as gameLevels from "../../shared/helper/GameLevels"
 
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.css']
 })
-export class GameComponent implements OnInit {
+export class GameComponent implements AfterViewInit {
   gui: GameGUI = new GameGUI();
 
   @Input()
   protected map: AbstractMap = null;
 
-  constructor() {
-    if (!this.map) {
-      return;
-    }
-    this.setMap(this.map);
+  constructor(
+    private route: ActivatedRoute
+  ) {}
+
+  ngAfterViewInit() {
+    this.route.params.subscribe((params) => {
+
+      let defaultTheme = GameThemes.getTheme('Nikoli Classic', {
+        canvas: this.canvas,
+        canvasBg: this.canvasBg,
+        config: {
+          islandBorderSize: 2,
+          islandSize: this.islandSize
+        }
+      });
+
+      this.initGame(defaultTheme, gameLevels.default[params.id - 1]);
+    });
   }
 
   @ViewChild('canvasBg') canvasBg: ElementRef;
@@ -53,20 +68,9 @@ export class GameComponent implements OnInit {
     return this.design;
   }
 
-  public setDesign(design: AbstractDesign) {
+  private initGame(design: AbstractDesign, map: AbstractMap) {
     this.design = design;
-    this.initGame();
-  }
-
-  public setMap(map: AbstractMap) {
     this.gui.setMap(map);
-    this.initGame();
-  }
-
-  private initGame() {
-    if (this.gui.getMap() === null) {
-      return;
-    }
     console.log('initGame');
     // set canvas sizes
     this.canvasBg.nativeElement.width = this.gameWidth_default;
@@ -107,17 +111,6 @@ export class GameComponent implements OnInit {
 
     // draw
     this.drawGameBoard();
-  }
-
-  ngOnInit() {
-    this.setDesign(GameThemes.getTheme('Nikoli Classic', {
-      canvas: this.canvas,
-      canvasBg: this.canvasBg,
-      config: {
-        islandBorderSize: 2,
-        islandSize: this.islandSize
-      }
-    }));
   }
 
   public restart() {

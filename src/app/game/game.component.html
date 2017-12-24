@@ -1,15 +1,21 @@
-<h2 *ngIf="gui.getMap()">{{gui.getMap().title}}</h2>
-<div [innerText]="message"></div>
-<div class="canvas-container" [hidden]="!gui.getMap()">
-  <canvas #canvasBg id="background"></canvas>
-  <canvas #canvasDraw
-          id="draw"
-          (click)="mouseClick($event)"
-          (mousedown)="startBridgeDrawing($event)"
-          (mouseup)="stopBridgeDrawing()"
-          (mousemove)="duringBridgeDrawing($event)"
-  ></canvas>
-</div>
-<div [hidden]="gui.getMap()">
-  Loading...
-</div>
+<section id="game" [style.width.px]="gameWidth" [style.height.px]="gameHeight">
+  <h2 *ngIf="gui.getMap()">{{gui.getMap().title}}</h2>
+  <div [innerText]="message"></div>
+  <section>
+    <button (click)="restart()">Restart game</button>
+    <button routerLink="/level_select">Go to level selection</button>
+  </section>
+  <div class="canvas-container" [hidden]="!gui.getMap()">
+    <canvas #canvasBg id="background"></canvas>
+    <canvas #canvasDraw
+            id="draw"
+            (click)="mouseClick($event)"
+            (mousedown)="startBridgeDrawing($event)"
+            (mouseup)="stopBridgeDrawing()"
+            (mousemove)="duringBridgeDrawing($event)"
+    ></canvas>
+  </div>
+  <div [hidden]="gui.getMap()">
+    Loading...
+  </div>
+</section>
