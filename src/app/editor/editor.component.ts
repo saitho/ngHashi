@@ -3,7 +3,6 @@ import BlankMap from "../maps/BlankMap";
 import {GameGUI} from "../../shared/helper/GameGUI";
 import AbstractGameBoardComponent from "../AbstractGameBoardComponent";
 import {AbstractDesign} from "../game/Designs/AbstractDesign";
-import {LocationStrategy} from "@angular/common";
 
 @Component({
   selector: 'app-editor',
@@ -21,12 +20,6 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
 
   valid = false;
   exportData = null;
-
-  constructor(
-    private locationStrategy: LocationStrategy
-  ) {
-    super();
-  }
 
   protected initGame(design: AbstractDesign) {
     design.enableEditorMode();
@@ -47,9 +40,6 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
     }
     this.startPosition.x = e.offsetX;
     this.startPosition.y = e.offsetY;
-
-    const x = Math.floor(e.offsetX/60);
-    const y = Math.floor(e.offsetY/60);
 
     this.started = true;
   }
@@ -262,8 +252,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
     this.exportData = {
       title: title,
       json: json,
-      path: path,
-      url: this.locationStrategy.prepareExternalUrl(path)
+      path: path
     };
   }
 }

@@ -14,7 +14,6 @@ export class LevelSelectComponent implements OnInit {
     private gameLevels: GameLevelsService
   ) {
     this.levels = gameLevels.getLevels();
-    console.log(this.levels);
   }
 
   ngOnInit() {
