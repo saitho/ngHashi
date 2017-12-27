@@ -49,7 +49,7 @@ export abstract class AbstractDesign {
       throw new Error('Unknown direction.');
     }
 
-    return {
+    let connection = {
       direction: direction,
       island: island,
       connectedIsland: connectedIsland,
@@ -60,6 +60,13 @@ export abstract class AbstractDesign {
       endPx: connectedIsland[connectedIslandEndName],
       otherAxisPx: otherAxis,
     };
+    if (connection.start > connection.end) {
+      // make sure the smallest number is start point
+      const tmp = connection.end;
+      connection.end = connection.start;
+      connection.start = tmp;
+    }
+    return connection;
   }
 
   protected imageStorage: IImageStorage = {

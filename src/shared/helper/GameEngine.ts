@@ -1,6 +1,6 @@
 import {Island} from "../../app/Island";
 import {NoAvailableIslandConnectionsError} from "../../app/game/Errors";
-import {Connection, IGameEngineConnection} from "../../app/Connection";
+import {IGameEngineConnection} from "../../app/Connection";
 
 export enum BoardDirections {
   HORIZONTAL = 1,
@@ -81,14 +81,6 @@ export class GameEngine {
     }
 
     for (let connection of relevantConnections) {
-      if (connection.start > connection.end) {
-        // make sure the smallest number is start point
-        // todo: move to better place
-        const tmp = connection.end;
-        connection.end = connection.start;
-        connection.start = tmp;
-      }
-
       let start = connection.start;
       let end = connection.end;
 
