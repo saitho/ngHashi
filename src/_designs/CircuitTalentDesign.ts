@@ -27,15 +27,17 @@ export class CircuitTalentDesign extends AbstractDesign {
 
       const background = this.preloadImage('assets/design/circuittalent/background.jpg');
       const island = this.preloadImage('assets/design/circuittalent/chip.jpg');
+      const island_completed = this.preloadImage('assets/design/circuittalent/chip_completed.jpg');
       const bridge_horizontal = this.preloadImage('assets/design/circuittalent/connection_horizontal.jpg');
       const bridge_vertical = this.preloadImage('assets/design/circuittalent/connection.jpg');
 
-      Promise.all([background, island, bridge_horizontal, bridge_vertical])
+      Promise.all([background, island, island_completed, bridge_horizontal, bridge_vertical])
         .then((values) => {
           this.imageStorage.background = values[0];
           this.imageStorage.island = values[1];
-          this.imageStorage.bridge_horizontal = values[2];
-          this.imageStorage.bridge_vertical = values[3];
+          this.imageStorage.island_completed = values[2];
+          this.imageStorage.bridge_horizontal = values[3];
+          this.imageStorage.bridge_vertical = values[4];
           this.imageStorage.bridge_horizontal_pattern = this.canvasBgContext.createPattern(
             this.imageStorage.bridge_horizontal,
             'repeat'
@@ -63,7 +65,10 @@ export class CircuitTalentDesign extends AbstractDesign {
       return;
     }
 
-    const img = this.imageStorage.island;
+    let img = this.imageStorage.island;
+    if (island.isComplete()) {
+      img = this.imageStorage.island_completed;
+    }
     this.canvasBgContext.drawImage(img, island.xStart - img.width / 5, island.yStart - img.height / 5);
 
     // text

@@ -5,6 +5,7 @@ import {BoardDirections} from "../../../shared/helper/GameEngine";
 interface IImageStorage {
   background: HTMLImageElement,
   island: HTMLImageElement,
+  island_completed: HTMLImageElement,
   bridge_horizontal: HTMLImageElement,
   bridge_vertical: HTMLImageElement,
   bridge_horizontal_pattern: CanvasPattern,
@@ -72,6 +73,7 @@ export abstract class AbstractDesign {
   protected imageStorage: IImageStorage = {
     background: null,
     island: null,
+    island_completed: null,
     bridge_horizontal: null,
     bridge_vertical: null,
     bridge_horizontal_pattern: null,
