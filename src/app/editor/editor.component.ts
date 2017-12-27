@@ -4,6 +4,7 @@ import {GameGUI} from "../../shared/helper/GameGUI";
 import AbstractGameBoardComponent from "../AbstractGameBoardComponent";
 import {AbstractDesign} from "../game/Designs/AbstractDesign";
 import {BoardDirections, GameEngine} from "../../shared/helper/GameEngine";
+import {Coords, Island} from "../Island";
 
 @Component({
   selector: 'app-editor',
@@ -204,21 +205,47 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
     this.canvasBgContext.closePath();
   }
 
+
+  depthSearchMarkers = new Set<Coords>();
+
+  private depthSearch(island: Island) {
+    if (this.depthSearchMarkers.has(island.tileCoords)) {
+      return;
+    }
+    this.depthSearchMarkers.add(island.tileCoords);
+    island.connections.top.forEach((island2) => this.depthSearch(island2));
+    island.connections.bottom.forEach((island2) => this.depthSearch(island2));
+    island.connections.left.forEach((island2) => this.depthSearch(island2));
+    island.connections.right.forEach((island2) => this.depthSearch(island2));
+  }
+
   private isEditorMapValid(): boolean {
+    // use depth search to also check if we have a connected graph
     const map = this.gui.getMap().getData();
-    let totalConnections = 0;
-    for(let i=0; i < map.length; i++) {
+    this.depthSearchMarkers.clear();
+
+    let start = null;
+    let counter = 0;
+    // remove maps without bridges (= empty entries)
+    for (let i=0; i < map.length; i++) {
       for (let j = 0; j < map[i].length; j++) {
         if (!map[i][j].bridges) {
           continue;
         }
-        if (!map[i][j].countConnections()) {
-          return false;
+        if (start === null) {
+          start = map[i][j];
         }
-        totalConnections += map[i][j].countConnections();
+        counter++;
       }
     }
-    return totalConnections > 0;
+
+    if (counter < 2) {
+      return false;
+    }
+
+    this.depthSearch(start);
+
+    return this.depthSearchMarkers.size === counter;
   }
 
   /**
