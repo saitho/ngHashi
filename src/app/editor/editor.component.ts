@@ -106,22 +106,23 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
     if (island.bridges) {
       // if bridges are set: remove island
       if (island.countConnections() > 0) {
-        const connectedIslandList = [];
         ['left', 'right', 'top', 'bottom'].forEach(direction => {
-          this.map.getData()[y][x].connections[direction].forEach(
-            (island2) => connectedIslandList.push(island2)
+          island.connections[direction].forEach(
+            (island2) => {
+              this.drawnConnections.filter((connection) => {
+                return (
+                  (connection.island === island && connection.connectedIsland === island2) ||
+                  (connection.island === island2 && connection.connectedIsland === island)
+                );
+              }).forEach((connection) => {
+                this.gui.removeBridge(connection);
+              });
+            }
           );
-        });
-        connectedIslandList.forEach((island2) => {
-          this.drawnConnections.filter((connection) => {
-            return (connection.island === island && connection.connectedIsland === island2);
-          }).forEach((connection) => {
-            this.gui.removeBridge(connection);
-          });
         });
       }
 
-      this.map.getData()[y][x].bridges = 0;
+      island.bridges = 0;
     } else {
       // if no bridges are set: set one "imaginary" bridge to make it show on the editor
 
@@ -130,7 +131,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
         return;
       }
 
-      this.map.getData()[y][x].bridges = 1;
+      island.bridges = 1;
     }
     this.drawGameBoard();
   }
@@ -213,10 +214,9 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
       return;
     }
     this.depthSearchMarkers.add(island.tileCoords);
-    island.connections.top.forEach((island2) => this.depthSearch(island2));
-    island.connections.bottom.forEach((island2) => this.depthSearch(island2));
-    island.connections.left.forEach((island2) => this.depthSearch(island2));
-    island.connections.right.forEach((island2) => this.depthSearch(island2));
+    ['left', 'right', 'top', 'bottom'].forEach(direction => {
+      island.connections[direction].forEach((island2) => this.depthSearch(island2));
+    });
   }
 
   private isEditorMapValid(): boolean {
