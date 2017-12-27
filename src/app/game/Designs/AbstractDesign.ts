@@ -1,5 +1,6 @@
 import {Island} from "../../Island";
 import {ElementRef} from "@angular/core";
+import {BoardDirections} from "../../../shared/helper/GameEngine";
 
 interface IImageStorage {
   background: HTMLImageElement,
@@ -28,6 +29,37 @@ export abstract class AbstractDesign {
   }
   public disableEditorMode() {
     this.editorMode = false;
+  }
+
+  protected generateConnection(island: Island, connectedIsland: Island, direction: BoardDirections, otherAxis: number) {
+    let islandStartVar, connectedIslandEndName, tileVar, tileVarOtherAxis;
+    if (direction == BoardDirections.HORIZONTAL) {
+      // draw right connections on vertical horizontal
+      islandStartVar = 'xEnd';
+      connectedIslandEndName = 'xStart';
+      tileVar = 'y';
+      tileVarOtherAxis = 'x';
+    } else if (direction == BoardDirections.VERTICAL) {
+      // draw top connections on vertical direction
+      islandStartVar = 'yStart';
+      connectedIslandEndName = 'yEnd';
+      tileVar = 'x';
+      tileVarOtherAxis = 'y';
+    } else {
+      throw new Error('Unknown direction.');
+    }
+
+    return {
+      direction: direction,
+      island: island,
+      connectedIsland: connectedIsland,
+      start: island.tileCoords[tileVar],
+      end: connectedIsland.tileCoords[tileVar],
+      otherAxis: island.tileCoords[tileVarOtherAxis],
+      startPx: island[islandStartVar],
+      endPx: connectedIsland[connectedIslandEndName],
+      otherAxisPx: otherAxis,
+    };
   }
 
   protected imageStorage: IImageStorage = {

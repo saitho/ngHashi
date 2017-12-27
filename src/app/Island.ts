@@ -1,3 +1,8 @@
+export interface Coords {
+  x: number;
+  y: number;
+}
+
 export class Island {
   constructor(bridges: number = 0) {
     this.bridges = bridges;
@@ -5,6 +10,8 @@ export class Island {
   init = false;
 
   bridges: number;
+
+  tileCoords: Coords;
 
   xStart: number;
   xEnd: number;

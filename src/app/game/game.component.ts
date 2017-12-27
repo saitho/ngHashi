@@ -1,5 +1,5 @@
 import {Component, ViewChild, ElementRef, Input, AfterViewInit} from '@angular/core';
-import {BoardDirections} from "../../shared/helper/GameEngine";
+import {BoardDirections, GameEngine} from "../../shared/helper/GameEngine";
 import {GameGUI} from "../../shared/helper/GameGUI";
 import {Connection} from "../Connection";
 import {AbstractDesign} from "./Designs/AbstractDesign";
@@ -267,11 +267,13 @@ export class GameComponent implements AfterViewInit {
               island.yStart = yPerRect*3/4 + j*yPerRect;
               island.xEnd = island.xStart + this.islandSize;
               island.yEnd = island.yStart + this.islandSize;
+              island.tileCoords = {x: j, y: i};
               island.init = true;
             }
             this.design.drawIsland(island, this.drawnConnections);
           }
         }
+        GameEngine.setConnections(this.drawnConnections);
 
         // Check if game is completed
         if (this.gui.getMap().isSolved()) {

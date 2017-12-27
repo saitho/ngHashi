@@ -3,6 +3,7 @@ import BlankMap from "../maps/BlankMap";
 import {GameGUI} from "../../shared/helper/GameGUI";
 import AbstractGameBoardComponent from "../AbstractGameBoardComponent";
 import {AbstractDesign} from "../game/Designs/AbstractDesign";
+import {GameEngine} from "../../shared/helper/GameEngine";
 
 @Component({
   selector: 'app-editor',
@@ -102,6 +103,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
         return;
       }
       // drop one connection
+      console.log('Remove bridge');
       this.gui.removeBridge(connections[0]);
     } else {
       let x = Math.floor(e.offsetX / (600/7));
@@ -226,11 +228,13 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
               island.yStart = yPerRect/4 + j*(yPerRect+10);
               island.xEnd = island.xStart + this.islandSize;
               island.yEnd = island.yStart + this.islandSize;
+              island.tileCoords = {x: j, y: i};
               island.init = true;
             }
             this.design.drawIsland(island, this.drawnConnections);
           }
         }
+        GameEngine.setConnections(this.drawnConnections);
       })
       .catch((error) => {
         console.log('Error in beforeDrawGameBoard hook', error);

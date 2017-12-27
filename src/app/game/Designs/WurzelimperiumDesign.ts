@@ -85,19 +85,15 @@ export class WurzelimperiumDesign extends AbstractDesign {
    * @param drawnConnections
    */
   drawConnections(island: Island, direction: BoardDirections, drawnConnections: Connection[]) {
-    let islandStartVar, islandOtherAxisVar, connectedIslandEndName, valueName;
+    let islandOtherAxisVar, valueName;
     if (direction == BoardDirections.HORIZONTAL) {
       // draw right connections on vertical horizontal
       valueName = 'right';
-      islandStartVar = 'xEnd';
       islandOtherAxisVar = 'yStart';
-      connectedIslandEndName = 'xStart';
     } else if (direction == BoardDirections.VERTICAL) {
       // draw top connections on vertical direction
       valueName = 'top';
-      islandStartVar = 'yStart';
       islandOtherAxisVar = 'xStart';
-      connectedIslandEndName = 'yEnd';
     } else {
       throw new Error('Unknown direction.');
     }
@@ -114,16 +110,7 @@ export class WurzelimperiumDesign extends AbstractDesign {
         }
       }
 
-      let connectedIsland = connections[i];
-      let connection = {
-        direction: direction,
-        otherAxis: otherAxis,
-        start: island[islandStartVar],
-        end: connectedIsland[connectedIslandEndName],
-        island: island,
-        connectedIsland: connectedIsland
-      };
-
+      const connection = this.generateConnection(island, connections[i], direction, otherAxis);
       drawnConnections.push(connection);
       this.canvasBgContext.beginPath();
       let image = this.imageStorage.bridge_horizontal;
@@ -133,13 +120,13 @@ export class WurzelimperiumDesign extends AbstractDesign {
         image = this.imageStorage.bridge_vertical;
       }
 
-      const length = Math.abs(connection.start-connection.end);
+      const length = Math.abs(connection.startPx-connection.endPx);
       let pattern_repeat = 'repeat';
       if (connection.direction == BoardDirections.HORIZONTAL) {
-        this.canvasBgContext.rect(connection.start, connection.otherAxis, length, image.height);
+        this.canvasBgContext.rect(connection.startPx, connection.otherAxisPx, length, image.height);
       }else{
         pattern_repeat = 'repeat';
-        this.canvasBgContext.rect(connection.otherAxis, connection.end, image.width, length);
+        this.canvasBgContext.rect(connection.otherAxisPx, connection.endPx, image.width, length);
       }
       this.canvasBgContext.fillStyle = pattern;
       this.canvasBgContext.fill();

@@ -69,19 +69,15 @@ export class ClassicDesign extends AbstractDesign {
    * @param drawnConnections
    */
   drawConnections(island: Island, direction: BoardDirections, drawnConnections: Connection[]) {
-    let islandStartVar, islandOtherAxisVar, connectedIslandEndName, valueName;
+    let islandOtherAxisVar, valueName;
     if (direction == BoardDirections.HORIZONTAL) {
       // draw right connections on vertical horizontal
       valueName = 'right';
-      islandStartVar = 'xEnd';
       islandOtherAxisVar = 'yStart';
-      connectedIslandEndName = 'xStart';
     } else if (direction == BoardDirections.VERTICAL) {
       // draw top connections on vertical direction
       valueName = 'top';
-      islandStartVar = 'yStart';
       islandOtherAxisVar = 'xStart';
-      connectedIslandEndName = 'yEnd';
     } else {
       throw new Error('Unknown direction.');
     }
@@ -94,24 +90,16 @@ export class ClassicDesign extends AbstractDesign {
         otherAxis = island[islandOtherAxisVar] + this.config.islandSize*(i+1)/3;
       }
 
-      let connectedIsland = connections[i];
-      let connection = {
-        direction: direction,
-        otherAxis: otherAxis,
-        start: island[islandStartVar],
-        end: connectedIsland[connectedIslandEndName],
-        island: island,
-        connectedIsland: connectedIsland
-      };
-
+      const connection = this.generateConnection(island, connections[i], direction, otherAxis);
       drawnConnections.push(connection);
+
       this.canvasBgContext.beginPath();
       if (connection.direction == BoardDirections.HORIZONTAL) {
-        this.canvasBgContext.moveTo(connection.start, connection.otherAxis);
-        this.canvasBgContext.lineTo(connection.end, connection.otherAxis);
+        this.canvasBgContext.moveTo(connection.startPx, connection.otherAxisPx);
+        this.canvasBgContext.lineTo(connection.endPx, connection.otherAxisPx);
       } else if (connection.direction == BoardDirections.VERTICAL) {
-        this.canvasBgContext.moveTo(connection.otherAxis, connection.start);
-        this.canvasBgContext.lineTo(connection.otherAxis, connection.end);
+        this.canvasBgContext.moveTo(connection.otherAxisPx, connection.startPx);
+        this.canvasBgContext.lineTo(connection.otherAxisPx, connection.endPx);
       }
       this.canvasBgContext.stroke();
       this.canvasBgContext.closePath();

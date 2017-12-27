@@ -46,10 +46,9 @@ export default abstract class AbstractGameBoardComponent implements OnInit, Afte
   }
 
   protected getConnectionsFromCursorPos(e): Connection[] {
-    let values = [];
-    this.drawnConnections.forEach(value => {
+    return this.drawnConnections.filter((connection) => {
       let offsetType, offsetTypeRange = '';
-      if (value.direction === BoardDirections.VERTICAL) {
+      if (connection.direction === BoardDirections.VERTICAL) {
         offsetType = 'offsetY';
         offsetTypeRange = 'offsetX';
       } else {
@@ -57,21 +56,15 @@ export default abstract class AbstractGameBoardComponent implements OnInit, Afte
         offsetTypeRange = 'offsetY';
       }
 
-      // skip if other click is not in a specified range
-      // 10 pixel offset
-      if (!(value.otherAxis - 10 < e[offsetTypeRange] && value.otherAxis + 10 > e[offsetTypeRange])) {
-        return;
+      // skip if other click is not in a specified range (10 pixel offset)
+      if (!(connection.otherAxisPx - 10 < e[offsetTypeRange] && connection.otherAxisPx + 10 > e[offsetTypeRange])) {
+        return false;
       }
 
       // the tile should be between the line... also switch start and end as those depend on how the line was drawn...
-      if (
-        (e[offsetType] > value.start && e[offsetType] < value.end) ||
-        (e[offsetType] > value.end && e[offsetType] < value.start)
-      ) {
-        values.push(value);
-      }
+      return (e[offsetType] > connection.startPx && e[offsetType] < connection.endPx) ||
+        (e[offsetType] > connection.endPx && e[offsetType] < connection.startPx);
     });
-    return values;
   }
 
   protected initGame(design: AbstractDesign) {

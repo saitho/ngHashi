@@ -5,6 +5,9 @@ import {Connection} from "../../app/Connection";
 import {AbstractMap} from "../../app/maps/AbstractMap";
 import BlankMap from "../../app/maps/BlankMap";
 
+/**
+ * Deals with position (pixels...) related tasks
+ */
 export class GameGUI {
   private map: AbstractMap = null;
 

@@ -65,19 +65,15 @@ export class SushiDesign extends AbstractDesign {
    * @param drawnConnections
    */
   drawConnections(island: Island, direction: BoardDirections, drawnConnections: Connection[]) {
-    let islandStartVar, islandOtherAxisVar, connectedIslandEndName, valueName;
+    let islandOtherAxisVar, valueName;
     if (direction == BoardDirections.HORIZONTAL) {
       // draw right connections on vertical horizontal
       valueName = 'right';
-      islandStartVar = 'xEnd';
       islandOtherAxisVar = 'yStart';
-      connectedIslandEndName = 'xStart';
     } else if (direction == BoardDirections.VERTICAL) {
       // draw top connections on vertical direction
       valueName = 'top';
-      islandStartVar = 'yStart';
       islandOtherAxisVar = 'xStart';
-      connectedIslandEndName = 'yEnd';
     } else {
       throw new Error('Unknown direction.');
     }
@@ -89,27 +85,17 @@ export class SushiDesign extends AbstractDesign {
       if (connections.length == 2) {
         otherAxis = island[islandOtherAxisVar] + this.config.islandSize*(i+1)/3;
       }
-
-      let connectedIsland = connections[i];
-      let connection = {
-        direction: direction,
-        otherAxis: otherAxis,
-        start: island[islandStartVar],
-        end: connectedIsland[connectedIslandEndName],
-        island: island,
-        connectedIsland: connectedIsland
-      };
-
+      const connection = this.generateConnection(island, connections[i], direction, otherAxis);
       drawnConnections.push(connection);
       this.canvasBgContext.beginPath();
 
-      const length = Math.abs(connection.start-connection.end);
+      const length = Math.abs(connection.startPx-connection.endPx);
       if (connection.direction == BoardDirections.HORIZONTAL) {
         const img = this.imageStorage.bridge_horizontal;
-        this.canvasBgContext.drawImage(img, connection.start, connection.otherAxis, length, img.height);
+        this.canvasBgContext.drawImage(img, connection.startPx, connection.otherAxisPx, length, img.height);
       }else{
         const img = this.imageStorage.bridge_vertical;
-        this.canvasBgContext.drawImage(img, connection.otherAxis, connection.end, img.width, length);
+        this.canvasBgContext.drawImage(img, connection.otherAxisPx, connection.endPx, img.width, length);
       }
       this.canvasBgContext.closePath();
     }
