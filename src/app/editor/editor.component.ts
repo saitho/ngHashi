@@ -206,9 +206,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
     this.canvasBgContext.closePath();
   }
 
-
-  depthSearchMarkers = new Set<Coords>();
-
+  private depthSearchMarkers = new Set<Coords>();
   private depthSearch(island: Island) {
     if (this.depthSearchMarkers.has(island.tileCoords)) {
       return;
@@ -219,7 +217,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
     });
   }
 
-  private isEditorMapValid(): boolean {
+  protected isConnectedGraph() {
     // use depth search to also check if we have a connected graph
     const map = this.gui.getMap().getData();
     this.depthSearchMarkers.clear();
@@ -253,7 +251,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
    */
   drawGameBoard() {
     this.started = false;
-    this.valid = this.isEditorMapValid();
+    this.valid = this.isConnectedGraph();
     const map = this.gui.getMap().getData();
 
     // clear drawing canvas

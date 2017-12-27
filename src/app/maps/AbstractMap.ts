@@ -55,6 +55,10 @@ export class AbstractMap {
     });
   }
 
+  /**
+   * No need to check for connected graphs here as we assume all levels were validated through the editor before.
+   * @return {boolean}
+   */
   public isSolved(): boolean {
     for(let i=0; i < this.data.length; i++) {
       for (let j = 0; j < this.data[i].length; j++) {

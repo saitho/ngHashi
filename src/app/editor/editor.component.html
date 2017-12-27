@@ -1,16 +1,12 @@
 <section [style.width.px]="gameWidth" [style.height.px]="gameHeight">
 
   <div *ngIf="exportData">
-    <h2>Map saved.</h2>
+    <h2>Map created.</h2>
+
+    <h3><a href="{{exportData.path}}">Click here to play or share your map.</a></h3>
 
     <p>
-      <a href="{{exportData.path}}">
-        Click here to play or share your map.
-      </a>
-    </p>
-
-    <p>
-      <a href="https://github.com/saitho/hashi/issues/new?title=[Level]%20{{exportData.title|urlencode}}&body=```{{exportData.json|urlencode}}```">
+      <a href="https://github.com/saitho/hashi/issues/new?title=[Level]%20{{exportData.title|urlencode}}&body=```{{exportData.json|urlencode}}```Path: {{exportData.path}}">
         Or post your level to our GitHub page and contribute to the project
       </a>
     </p>
