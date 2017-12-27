@@ -1,7 +1,7 @@
-import {AbstractDesign, IDesignConfig} from "./AbstractDesign";
-import {Island} from "../../Island";
-import {BoardDirections} from "../../../shared/helper/GameEngine";
-import {Connection} from "../../Connection";
+import {AbstractDesign, IDesignConfig} from "../app/game/Designs/AbstractDesign";
+import {Island} from "../app/Island";
+import {BoardDirections} from "../shared/helper/GameEngine";
+import {Connection} from "../app/Connection";
 import {ElementRef} from "@angular/core";
 
 export class ClassicDesign extends AbstractDesign {

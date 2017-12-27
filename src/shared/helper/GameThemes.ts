@@ -1,11 +1,13 @@
-import {SushiDesign} from "../../app/game/Designs/SushiDesign";
-import {ClassicDesign} from "../../app/game/Designs/ClassicDesign";
+import {SushiDesign} from "../../_designs/SushiDesign";
+import {ClassicDesign} from "../../_designs/ClassicDesign";
 import {AbstractDesign, IDesignConfig} from "../../app/game/Designs/AbstractDesign";
-import {WurzelimperiumDesign} from "../../app/game/Designs/WurzelimperiumDesign";
+import {WurzelimperiumDesign} from "../../_designs/WurzelimperiumDesign";
+import {CircuitTalentDesign} from "../../_designs/CircuitTalentDesign";
 
 export class GameThemes {
   private static themes: {} = {
     'Nikoli Classic': ClassicDesign,
+    'Circuit-Talent': CircuitTalentDesign,
     'Sushi': SushiDesign,
     'Wurzelimperium': WurzelimperiumDesign,
   };

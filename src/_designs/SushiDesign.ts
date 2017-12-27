@@ -1,10 +1,10 @@
-import {AbstractDesign, IDesignConfig} from "./AbstractDesign";
-import {Island} from "../../Island";
-import {BoardDirections} from "../../../shared/helper/GameEngine";
-import {Connection} from "../../Connection";
+import {AbstractDesign, IDesignConfig} from "../app/game/Designs/AbstractDesign";
+import {Island} from "../app/Island";
+import {BoardDirections} from "../shared/helper/GameEngine";
+import {Connection} from "../app/Connection";
 import {ElementRef} from "@angular/core";
 
-export class WurzelimperiumDesign extends AbstractDesign {
+export class SushiDesign extends AbstractDesign {
   constructor(canvas: ElementRef, canvasBg: ElementRef, config: IDesignConfig) {
     super(canvas, canvasBg, config);
 
@@ -13,39 +13,19 @@ export class WurzelimperiumDesign extends AbstractDesign {
     this.canvasBgContext.textBaseline = 'middle';
     this.canvasBgContext.textAlign = 'center';
   }
-
-
-  public init() {
-    this.canvasBg.width = 720;
-    this.canvasBg.height = 640;
-  }
-
   public beforeDrawGameBoard(): Promise<void> {
     return new Promise<void>((resolve) => {
-      this.canvasContext.lineWidth = 5;
-      this.canvasContext.strokeStyle = 'white';
+      this.canvasContext.lineWidth = 3;
 
-      const background = this.preloadImage('assets/design/wurzelimperium/garten_hintergrund.png');
-      const island = this.preloadImage('assets/design/wurzelimperium/bauernhof.png');
-      const bridge_horizontal = this.preloadImage('assets/design/wurzelimperium/street_horizontal.jpg');
-      const bridge_vertical = this.preloadImage('assets/design/wurzelimperium/street_vertical.jpg');
+      const island = this.preloadImage('assets/design/sushi/sushi.png');
+      const bridge_horizontal = this.preloadImage('assets/design/sushi/chopsticks_horizontal.png');
+      const bridge_vertical = this.preloadImage('assets/design/sushi/chopsticks.png');
 
-      Promise.all([background, island, bridge_horizontal, bridge_vertical])
+      Promise.all([island, bridge_horizontal, bridge_vertical])
         .then((values) => {
-        this.imageStorage.background = values[0];
-        this.imageStorage.island = values[1];
-        this.imageStorage.bridge_horizontal = values[2];
-        this.imageStorage.bridge_vertical = values[3];
-        this.imageStorage.bridge_horizontal_pattern = this.canvasBgContext.createPattern(
-          this.imageStorage.bridge_horizontal,
-          'repeat'
-        );
-        this.imageStorage.bridge_vertical_pattern = this.canvasBgContext.createPattern(
-          this.imageStorage.bridge_vertical,
-          'repeat'
-        );
-
-        this.canvasBgContext.drawImage(this.imageStorage.background, 0, 0);
+        this.imageStorage.island = values[0];
+        this.imageStorage.bridge_horizontal = values[1];
+        this.imageStorage.bridge_vertical = values[2];
         resolve();
       }).catch((error) => {
         console.log(error);
@@ -101,36 +81,22 @@ export class WurzelimperiumDesign extends AbstractDesign {
     let connections = island.connections[valueName];
     for (let i = 0; i < connections.length; i++) {
 
-      let otherAxis = island[islandOtherAxisVar] + this.config.islandSize/4;
+      let otherAxis = island[islandOtherAxisVar] + this.config.islandSize/2;
       if (connections.length == 2) {
-        if (i == 0) {
-          otherAxis = island[islandOtherAxisVar] - this.config.islandSize/11;
-        } else {
-          otherAxis = island[islandOtherAxisVar] + this.config.islandSize*5/6;
-        }
+        otherAxis = island[islandOtherAxisVar] + this.config.islandSize*(i+1)/3;
       }
-
       const connection = this.generateConnection(island, connections[i], direction, otherAxis);
       drawnConnections.push(connection);
       this.canvasBgContext.beginPath();
-      let image = this.imageStorage.bridge_horizontal;
-      let pattern = this.imageStorage.bridge_horizontal_pattern;
-      if (connection.direction == BoardDirections.VERTICAL) {
-        pattern = this.imageStorage.bridge_vertical_pattern;
-        image = this.imageStorage.bridge_vertical;
-      }
 
       const length = Math.abs(connection.startPx-connection.endPx);
-      let pattern_repeat = 'repeat';
       if (connection.direction == BoardDirections.HORIZONTAL) {
-        this.canvasBgContext.rect(connection.startPx, connection.otherAxisPx, length, image.height);
+        const img = this.imageStorage.bridge_horizontal;
+        this.canvasBgContext.drawImage(img, connection.startPx, connection.otherAxisPx, length, img.height);
       }else{
-        pattern_repeat = 'repeat';
-        this.canvasBgContext.rect(connection.otherAxisPx, connection.endPx, image.width, length);
+        const img = this.imageStorage.bridge_vertical;
+        this.canvasBgContext.drawImage(img, connection.otherAxisPx, connection.endPx, img.width, length);
       }
-      this.canvasBgContext.fillStyle = pattern;
-      this.canvasBgContext.fill();
-
       this.canvasBgContext.closePath();
     }
   }

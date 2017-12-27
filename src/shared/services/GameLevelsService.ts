@@ -1,6 +1,5 @@
 import {AbstractMap} from "../../app/maps/AbstractMap";
 import {HttpClient} from "@angular/common/http";
-import {Island} from "../../app/Island";
 import {Injectable} from "@angular/core";
 
 @Injectable()
@@ -25,7 +24,8 @@ export class GameLevelsService {
     return Promise.all([
       this.loadMap("_maps/wikipediaExample.json"),
       this.loadMap("_maps/ngHashi.json"),
-      this.loadMap("_maps/sushi1.json")
+      this.loadMap("_maps/sushi1.json"),
+      this.loadMap("_maps/miniPlatines.json")
     ]);
   }
 
