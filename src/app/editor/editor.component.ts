@@ -3,7 +3,7 @@ import BlankMap from "../maps/BlankMap";
 import {GameGUI} from "../../shared/helper/GameGUI";
 import AbstractGameBoardComponent from "../AbstractGameBoardComponent";
 import {AbstractDesign} from "../game/Designs/AbstractDesign";
-import {GameEngine} from "../../shared/helper/GameEngine";
+import {BoardDirections, GameEngine} from "../../shared/helper/GameEngine";
 
 @Component({
   selector: 'app-editor',
@@ -98,8 +98,8 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
     }
 
     // add/remove island
-    let x = Math.floor(e.offsetX / (600/7));
-    let y = Math.floor(e.offsetY / (600/7));
+    let x = Math.floor(e.offsetX / (this.gameWidth/7));
+    let y = Math.floor(e.offsetY / (this.gameHeight/7));
     const island = this.map.getData()[y][x];
 
     if (island.bridges) {
@@ -123,9 +123,46 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
       this.map.getData()[y][x].bridges = 0;
     } else {
       // if no bridges are set: set one "imaginary" bridge to make it show on the editor
+
+      if (this.hasConnectionOnTile(x, y)) {
+        // do not set bridge if a tile is used by a connection
+        return;
+      }
+
       this.map.getData()[y][x].bridges = 1;
     }
     this.drawGameBoard();
+  }
+
+  private hasConnectionOnTile(x: number, y: number): boolean {
+    const relevantConnections = this.drawnConnections.filter((connection) => {
+      // remove connections where the axis that is perpendicular to the axis
+      // of the  connection itself does not match the requirements
+      return !((connection.direction === BoardDirections.VERTICAL && connection.otherAxis != x) ||
+        (connection.direction === BoardDirections.HORIZONTAL && connection.otherAxis != y));
+    });
+
+    if (!relevantConnections.length) {
+      // no relevant connections found: no obstruction
+      return false;
+    }
+
+    for (let connection of relevantConnections) {
+      let start = connection.start;
+      let end = connection.end;
+
+      let connectionAxis = new Set();
+      for (let i = ++start; i < end; i++) {
+        connectionAxis.add(i);
+      }
+
+      if (connection.direction === BoardDirections.VERTICAL && connectionAxis.has(y)) {
+        return true;
+      } else if (connection.direction === BoardDirections.HORIZONTAL && connectionAxis.has(x)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   protected drawGrid() {
