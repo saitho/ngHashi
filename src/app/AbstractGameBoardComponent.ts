@@ -45,6 +45,21 @@ export default abstract class AbstractGameBoardComponent implements OnInit, Afte
     });
   }
 
+  protected removeConnectionOnCursorPos(e) {
+    if (this.started) {
+      this.started = false;
+      return;
+    }
+    // Check for a connection that goes through the tile
+    const connections = this.getConnectionsFromCursorPos(e);
+    if (connections.length == 0) {
+      return;
+    }
+    // drop one connection
+    this.gui.removeBridge(connections[0]);
+    this.drawGameBoard();
+  }
+
   protected getConnectionsFromCursorPos(e): Connection[] {
     return this.drawnConnections.filter((connection) => {
       let offsetType, offsetTypeRange = '';
@@ -61,9 +76,12 @@ export default abstract class AbstractGameBoardComponent implements OnInit, Afte
         return false;
       }
 
-      // the tile should be between the line... also switch start and end as those depend on how the line was drawn...
-      return (e[offsetType] > connection.startPx && e[offsetType] < connection.endPx) ||
-        (e[offsetType] > connection.endPx && e[offsetType] < connection.startPx);
+      // the tile should be between the line...
+      if (connection.direction === BoardDirections.VERTICAL) {
+        return (e[offsetType] > connection.endPx && e[offsetType] < connection.startPx);
+      } else {
+        return (e[offsetType] > connection.startPx && e[offsetType] < connection.endPx);
+      }
     });
   }
 

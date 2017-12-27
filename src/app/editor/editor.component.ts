@@ -92,50 +92,38 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
 
   mouseClick(e) {
     if (this.setBridges) {
-      // Remove bridges...
-      if (this.started) {
-        this.started = false;
-        return;
+      // in "set bridges" mode only remove connections...
+      this.removeConnectionOnCursorPos(e);
+      return;
+    }
+
+    // add/remove island
+    let x = Math.floor(e.offsetX / (600/7));
+    let y = Math.floor(e.offsetY / (600/7));
+    const island = this.map.getData()[y][x];
+
+    if (island.bridges) {
+      // if bridges are set: remove island
+      if (island.countConnections() > 0) {
+        const connectedIslandList = [];
+        ['left', 'right', 'top', 'bottom'].forEach(direction => {
+          this.map.getData()[y][x].connections[direction].forEach(
+            (island2) => connectedIslandList.push(island2)
+          );
+        });
+        connectedIslandList.forEach((island2) => {
+          this.drawnConnections.filter((connection) => {
+            return (connection.island === island && connection.connectedIsland === island2);
+          }).forEach((connection) => {
+            this.gui.removeBridge(connection);
+          });
+        });
       }
-      // Check for a connection that goes through the tile
-      const connections = this.getConnectionsFromCursorPos(e);
-      if (connections.length == 0) {
-        return;
-      }
-      // drop one connection
-      console.log('Remove bridge');
-      this.gui.removeBridge(connections[0]);
+
+      this.map.getData()[y][x].bridges = 0;
     } else {
-      let x = Math.floor(e.offsetX / (600/7));
-      let y = Math.floor(e.offsetY / (600/7));
-      const island = this.map.getData()[y][x];
-
-      if (island.bridges) {
-        // remove island
-
-        if (island.countConnections() > 0) {
-          const connectedIslandList = [];
-          ['left', 'right', 'top', 'bottom'].forEach(direction => {
-            this.map.getData()[y][x].connections[direction].forEach(
-              (island2) => connectedIslandList.push(island2)
-            );
-          });
-          connectedIslandList.forEach((island2) => {
-            this.drawnConnections.forEach(connection => {
-              if (
-                (connection.island === island && connection.connectedIsland === island2) ||
-                (connection.connectedIsland === island && connection.island === island2)
-              ) {
-                this.gui.removeBridge(connection);
-              }
-            });
-          });
-        }
-
-        this.map.getData()[y][x].bridges = 0;
-      } else {
-        this.map.getData()[y][x].bridges = 1;
-      }
+      // if no bridges are set: set one "imaginary" bridge to make it show on the editor
+      this.map.getData()[y][x].bridges = 1;
     }
     this.drawGameBoard();
   }
