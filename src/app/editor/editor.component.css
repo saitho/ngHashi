@@ -17,3 +17,21 @@ canvas#draw {
 .canvas-container {
   position: relative;
 }
+
+section.buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.invalid, .valid {
+  color: #fff;
+  padding: 5px;
+}
+
+.invalid {
+  background-color: darkred;
+}
+
+.valid {
+  background-color: green;
+}

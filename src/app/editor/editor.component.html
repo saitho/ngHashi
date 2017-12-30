@@ -1,41 +1,73 @@
-<section [style.width.px]="gameWidth" [style.height.px]="gameHeight">
+<section [style.width.px]="gameWidth">
+  <section>
+    With the <strong>Islands</strong> tool you can set the islands on the grid.
+    Then use the <strong>Bridges</strong> tool to connect the islands.
+    All islands must be connected in order for your map to be valid!
+    Once your map is valid you can play it or contribute your map to our GitHub project.
+  </section>
 
-  <div *ngIf="exportData">
-    <h2>Map created.</h2>
-
-    <h3><a href="{{exportData.path}}">Click here to play or share your map.</a></h3>
-
-    <p>
-      <a href="https://github.com/saitho/hashi/issues/new?title=[Level]%20{{exportData.title|urlencode}}&body=```{{exportData.json|urlencode}}```Path: {{exportData.path}}">
-        Or post your level to our GitHub page and contribute to the project
-      </a>
-    </p>
+  <!-- Modal -->
+  <ng-template #content let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Import</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
   </div>
-  <div [hidden]="exportData !== null">
-    <section>
-      <fieldset>
-        <legend>Tools</legend>
-        <button (click)="setTool('islands')" [disabled]="!setBridges">Islands</button>
-        <button (click)="setTool('bridges')" [disabled]="setBridges">Bridges</button>
-      </fieldset>
-
-      <button (click)="save()" [disabled]="!valid">Save map</button>
-      <button routerLink="/level_select">Go to level selection</button>
-    </section>
-    <section>
-      <div *ngIf="valid" class="valid">Puzzle is valid.</div>
-      <div *ngIf="!valid" class="invalid">Puzzle is invalid.</div>
-    </section>
-    <div class="canvas-container">
-      <canvas #canvasBg id="background"></canvas>
-      <canvas #canvasDraw
-              id="draw"
-              (click)="mouseClick($event)"
-              (mousedown)="startBridgeDrawing($event)"
-              (mouseup)="stopBridgeDrawing()"
-              (mousemove)="duringBridgeDrawing($event)"
-      ></canvas>
-    </div>
+  <div class="modal-body">
+    <label for="importData">JSON Data</label>
+    <textarea #importArea id="importData" class="form-control"></textarea>
   </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="import(importArea.value)">Import</button>
+    <button type="button" class="btn btn-outline-dark" (click)="d('Close click')">Close</button>
+  </div>
+  </ng-template>
 
+  <section class="buttons">
+    <fieldset class="tools">
+      <legend>Tools</legend>
+      <button (click)="setTool('islands')" [disabled]="!setBridges">Islands</button>
+      <button (click)="setTool('bridges')" [disabled]="setBridges">Bridges</button>
+      <div *ngIf="valid" class="valid"><i class="fa fa-check" aria-hidden="true"></i> Puzzle is valid.</div>
+      <div *ngIf="!valid" class="invalid"><i class="fa fa-times" aria-hidden="true"></i> Puzzle is invalid.</div>
+    </fieldset>
+    <fieldset class="actions">
+      <legend>Actions</legend>
+      <button (click)="playMap()" [disabled]="!valid" ngbTooltip="Play">
+        <i class="fa fa-play" aria-hidden="true"></i>
+        Play
+      </button>
+      <button (click)="submitGitHub()" [disabled]="!valid" ngbTooltip="Contribute to GitHub">
+        <i class="fa fa-github" aria-hidden="true"></i>
+        Contribute
+      </button><br />
+      <button (click)="export()" [disabled]="!valid" ngbTooltip="Export to JSON file">
+        <i class="fa fa-download" aria-hidden="true"></i>
+        Export
+      </button>
+      <button (click)="importModal(content)" ngbTooltip="Import from JSON file">
+        <i class="fa fa-upload" aria-hidden="true"></i>
+        Import
+      </button>
+    </fieldset>
+  </section>
+  <section>
+    <strong>Map title</strong>
+    <input type="text" [(ngModel)]="map.title" required />
+  </section>
+  <div class="canvas-container" [style.height.px]="gameHeight">
+    <canvas #canvasBg id="background"></canvas>
+    <canvas #canvasDraw
+            id="draw"
+            (click)="mouseClick($event)"
+            (mousedown)="startBridgeDrawing($event)"
+            (mouseup)="stopBridgeDrawing()"
+            (mousemove)="duringBridgeDrawing($event)"
+    ></canvas>
+  </div>
+  <button routerLink="/level_select">
+    <i class="fa fa-list" aria-hidden="true"></i>
+    Go to level selection
+  </button>
 </section>

@@ -3,8 +3,9 @@ import BlankMap from "../maps/BlankMap";
 import {GameGUI} from "../../shared/helper/GameGUI";
 import AbstractGameBoardComponent from "../AbstractGameBoardComponent";
 import {AbstractDesign} from "../game/Designs/AbstractDesign";
-import {BoardDirections, GameEngine} from "../../shared/helper/GameEngine";
-import {Coords, Island} from "../Island";
+import {BoardDirections} from "../../shared/helper/GameEngine";
+import {UrlEncodePipe} from "../../shared/pipes/UrlEncodePipe";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-editor',
@@ -16,7 +17,15 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
   protected map = new BlankMap();
   public setBridges: boolean = false;
 
+  constructor(
+    private modalService: NgbModal
+  ) {
+    super();
+    this.gameBoardConfig = {enableGrid: true, perRectMultiplier: 0.25, perRectOffset: 10};
+  }
+
   islandSize = 50;
+
   gameWidth = 600;
   gameHeight = 600;
 
@@ -51,7 +60,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
    * triggered when the the player stops drawing the bridge (mouseup)
    * Note: disabling "started" was moved to mouseClick as this is triggered after mouseDown...
    */
-  stopBridgeDrawing() {
+  async stopBridgeDrawing() {
     if (!this.setBridges || !this.started) {
       return;
     }
@@ -62,7 +71,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
     } catch(e) {
 
     }
-    this.drawGameBoard();
+    await this.drawGameBoard();
   }
 
   /**
@@ -91,7 +100,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
     this.canvasContext.closePath();
   }
 
-  mouseClick(e) {
+  async mouseClick(e) {
     if (this.setBridges) {
       // in "set bridges" mode only remove connections...
       this.removeConnectionOnCursorPos(e);
@@ -133,7 +142,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
 
       island.bridges = 1;
     }
-    this.drawGameBoard();
+    await this.drawGameBoard();
   }
 
   private hasConnectionOnTile(x: number, y: number): boolean {
@@ -167,146 +176,98 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
     return false;
   }
 
-  protected drawGrid() {
-    this.canvasBgContext.lineWidth = 2;
-    this.canvasBgContext.beginPath();
-
-    // top border
-    this.canvasBgContext.moveTo(0, 1);
-    this.canvasBgContext.lineTo(this.gameWidth, 1);
-    this.canvasBgContext.stroke();
-
-    // bottom border
-    this.canvasBgContext.moveTo(0, this.gameHeight - 2);
-    this.canvasBgContext.lineTo(this.gameWidth, this.gameHeight - 2);
-    this.canvasBgContext.stroke();
-
-    // left border
-    this.canvasBgContext.moveTo(1, 0);
-    this.canvasBgContext.lineTo(1, this.gameHeight);
-    this.canvasBgContext.stroke();
-
-    // right border
-    this.canvasBgContext.moveTo(this.gameWidth - 2, 0);
-    this.canvasBgContext.lineTo(this.gameWidth - 2, this.gameHeight);
-    this.canvasBgContext.stroke();
-
-    for (let i = 0; i < this.map.getData().length; i++) {
-      // vertical lines
-      this.canvasBgContext.moveTo(this.gameWidth * (i+1) / this.map.getData().length, 0);
-      this.canvasBgContext.lineTo(this.gameWidth * (i+1) / this.map.getData().length, this.gameHeight);
-      this.canvasBgContext.stroke();
-
-      // horizontal lines
-      this.canvasBgContext.moveTo(0, this.gameHeight * (i+1) / this.map.getData().length);
-      this.canvasBgContext.lineTo(this.gameWidth, this.gameHeight * (i+1) / this.map.getData().length);
-      this.canvasBgContext.stroke();
-    }
-
-    this.canvasBgContext.closePath();
-  }
-
-  private depthSearchMarkers = new Set<Coords>();
-  private depthSearch(island: Island) {
-    if (this.depthSearchMarkers.has(island.tileCoords)) {
-      return;
-    }
-    this.depthSearchMarkers.add(island.tileCoords);
-    ['left', 'right', 'top', 'bottom'].forEach(direction => {
-      island.connections[direction].forEach((island2) => this.depthSearch(island2));
-    });
-  }
-
-  protected isConnectedGraph() {
-    // use depth search to also check if we have a connected graph
-    const map = this.gui.getMap().getData();
-    this.depthSearchMarkers.clear();
-
-    let start = null;
-    let counter = 0;
-    // remove maps without bridges (= empty entries)
-    for (let i=0; i < map.length; i++) {
-      for (let j = 0; j < map[i].length; j++) {
-        if (!map[i][j].bridges) {
-          continue;
-        }
-        if (start === null) {
-          start = map[i][j];
-        }
-        counter++;
-      }
-    }
-
-    if (counter < 2) {
-      return false;
-    }
-
-    this.depthSearch(start);
-
-    return this.depthSearchMarkers.size === counter;
-  }
-
   /**
    * draws the game board
    */
   drawGameBoard() {
-    this.started = false;
-    this.valid = this.isConnectedGraph();
-    const map = this.gui.getMap().getData();
+    return new Promise<void>(resolve => {
+      super.drawGameBoard()
+        .then(() => {
+          this.valid = this.gui.getMap().isConnectedGraph();
+          resolve();
+        })
+        .catch(e => console.error(e));
+    });
+  }
 
-    // clear drawing canvas
-    this.canvasContext.clearRect(0,0, this.gameWidth, this.gameHeight);
-    // clear background canvas
-    this.canvasBgContext.clearRect(0,0, this.gameWidth, this.gameHeight);
-    this.drawGrid();
+  submitGitHub() {
+    if (!this.save()) {
+      return;
+    }
+    const urlEncode = new UrlEncodePipe();
+    window.open(
+      'https://github.com/saitho/hashi/issues/new?title=[Level]%20' + urlEncode.transform(this.exportData.title) +
+      '&body=```' + urlEncode.transform(this.exportData.json) +'```Path: ' + urlEncode.transform(this.exportData.path),
+      '_blank'
+    );
+  }
 
-    this.design.beforeDrawGameBoard()
-      .then(() => {
-        // distribute game window size amongst all map tiles and keep some space around (length+1)
-        const xPerRect = this.gameWidth/(map.length+1);
-        const yPerRect = this.gameHeight/(map.length+1);
+  playMap() {
+    if (!this.save()) {
+      return;
+    }
+    window.open(this.exportData.path, '_blank');
+  }
 
-        // clear connections
-        this.drawnConnections = [];
+  importModal(content) {
+    this.modalService.open(content).result.then((result) => {
+      console.log(result);
+    }, (reason) => {
+      console.log(reason);
+    });
+  }
 
-        // Draw islands
-        for(let i=0; i < map.length; i++) {
-          for(let j=0; j < map[i].length; j++) {
-            const island = map[j][i]; // switch j and i to keep the order from array in rendering
-            if (island.init == false) {
-              island.xStart = xPerRect/4 + i*(xPerRect+10);
-              island.yStart = yPerRect/4 + j*(yPerRect+10);
-              island.xEnd = island.xStart + this.islandSize;
-              island.yEnd = island.yStart + this.islandSize;
-              island.tileCoords = {x: j, y: i};
-              island.init = true;
-            }
-            this.design.drawIsland(island, this.drawnConnections);
-          }
-        }
-        GameEngine.setConnections(this.drawnConnections);
-      })
-      .catch((error) => {
-        console.log('Error in beforeDrawGameBoard hook', error);
-      });
+  async import(data) {
+    try {
+      let json = JSON.parse(data);
+
+      if (
+        !json.hasOwnProperty('map') ||
+        !json.map.hasOwnProperty('title') ||
+        !json.map.hasOwnProperty('themeName') ||
+        !json.map.hasOwnProperty('data')
+      ) {
+        alert('Malformed JSON file.');
+        return;
+      }
+
+      if (!confirm('Are you sure you want to overwrite your current settings? This can not be undone!')) {
+        return;
+      }
+      this.map.importFromJSON(json);
+      await this.drawGameBoard();
+    } catch(e) {
+      alert('Invalid JSON.');
+    }
+  }
+
+  export() {
+    if (!this.save()) {
+      return;
+    }
+
+    const data = "data:text/json;charset=utf-8," + encodeURIComponent(this.exportData.jsonEditor);
+    const downloader = document.createElement('a');
+
+    downloader.setAttribute('href', data);
+    downloader.setAttribute('download', 'hashi_export.json');
+    downloader.click();
   }
 
   save() {
-    console.log('save');
-
-    const title = prompt("Map title?");
-
-    if (title == null || title == "") {
-      alert('Missing title, saving aborted.');
-      return;
+    if (!this.map.title || this.map.title == "") {
+      alert('Please enter a map title.');
+      return false;
     }
-    this.map.title = title;
     const json = this.map.exportObject();
     const path = '/play/' + btoa(json);
+
     this.exportData = {
-      title: title,
+      title: this.map.title,
       json: json,
+      jsonEditor: this.map.exportEditorObject(),
       path: path
     };
+    return true;
   }
 }

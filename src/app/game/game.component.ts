@@ -1,14 +1,8 @@
-import {Component, ViewChild, ElementRef, Input, AfterViewInit} from '@angular/core';
-import {BoardDirections, GameEngine} from "../../shared/helper/GameEngine";
-import {GameGUI} from "../../shared/helper/GameGUI";
-import {Connection} from "../Connection";
-import {AbstractDesign} from "./Designs/AbstractDesign";
-import {GameThemes} from "../../shared/helper/GameThemes";
+import {Component, Input, AfterViewInit} from '@angular/core';
 import {AbstractMap} from "../maps/AbstractMap";
 import {ActivatedRoute} from "@angular/router";
 import {GameLevelsService} from "../../shared/services/GameLevelsService";
 import AbstractGameBoardComponent from "../AbstractGameBoardComponent";
-
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
@@ -49,10 +43,10 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
     return this.design;
   }
 
-  public restart() {
+  public async restart() {
     if (confirm('Do you really want to restart the game?')) {
       this.gui.getMap().reset();
-      this.drawGameBoard();
+      await this.drawGameBoard();
     }
   }
 
@@ -81,7 +75,7 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
    * triggered when the the player stops drawing the bridge (mouseup)
    * Note: disabling "started" was moved to mouseClick as this is triggered after mouseDown...
    */
-  stopBridgeDrawing() {
+  async stopBridgeDrawing() {
     if (!this.started) {
       return;
     }
@@ -97,7 +91,7 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
       }
     }
 
-    this.drawGameBoard();
+    await this.drawGameBoard();
   }
 
   /**
@@ -128,46 +122,15 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
    * draws the game board
    */
   drawGameBoard() {
-    const map = this.gui.getMap().getData();
-
-    // clear drawing canvas
-    this.canvasContext.clearRect(0,0, this.gameWidth, this.gameHeight);
-    // clear background canvas
-    this.canvasBgContext.clearRect(0,0, this.gameWidth, this.gameHeight);
-
-    this.design.beforeDrawGameBoard()
-      .then(() => {
-        // distribute game window size amongst all map tiles and keep some space around (length+1)
-        const xPerRect = this.gameWidth/(map.length+1);
-        const yPerRect = this.gameHeight/(map.length+1);
-
-        // clear connections
-        this.drawnConnections = [];
-
-        // Draw islands
-        for(let i=0; i < map.length; i++) {
-          for(let j=0; j < map[i].length; j++) {
-            const island = map[j][i]; // switch j and i to keep the order from array in rendering
-            if (island.init == false) {
-              island.xStart = xPerRect*3/4 + i*xPerRect;
-              island.yStart = yPerRect*3/4 + j*yPerRect;
-              island.xEnd = island.xStart + this.islandSize;
-              island.yEnd = island.yStart + this.islandSize;
-              island.tileCoords = {x: j, y: i};
-              island.init = true;
-            }
-            this.design.drawIsland(island, this.drawnConnections);
+    return new Promise<void>(resolve => {
+      super.drawGameBoard()
+        .then(() => {
+          if (this.gui.getMap().isSolved()) {
+            this.message = 'Level solved.';
           }
-        }
-        GameEngine.setConnections(this.drawnConnections);
-
-        // Check if game is completed
-        if (this.gui.getMap().isSolved()) {
-          this.message = 'Level solved.';
-        }
-    })
-      .catch((error) => {
-      console.log('Error in beforeDrawGameBoard hook', error);
-      });
+          resolve();
+        })
+        .catch(e => console.error(e));
+    });
   }
 }
