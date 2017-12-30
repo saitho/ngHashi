@@ -41,6 +41,6 @@ export class Island {
    * @return {boolean}
    */
   isComplete(): boolean {
-    return this.bridges == this.countConnections();
+    return this.bridges === this.countConnections();
   }
 }

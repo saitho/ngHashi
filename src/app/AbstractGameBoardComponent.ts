@@ -1,10 +1,10 @@
-import {GameGUI} from "../shared/helper/GameGUI";
-import {AbstractMap} from "./maps/AbstractMap";
-import {AfterViewInit, ElementRef, OnInit, ViewChild} from "@angular/core";
-import {AbstractDesign} from "../_designs/AbstractDesign";
-import {Connection} from "./Connection";
-import {GameThemes} from "../shared/helper/GameThemes";
-import {BoardDirections, GameEngine} from "../shared/helper/GameEngine";
+import {GameGUI} from '../shared/helper/GameGUI';
+import {AbstractMap} from './maps/AbstractMap';
+import {AfterViewInit, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AbstractDesign} from '../_designs/AbstractDesign';
+import {Connection} from './Connection';
+import {GameThemes} from '../shared/helper/GameThemes';
+import {BoardDirections, GameEngine} from '../shared/helper/GameEngine';
 
 export default abstract class AbstractGameBoardComponent implements OnInit, AfterViewInit {
   protected map: AbstractMap = null;
@@ -46,7 +46,7 @@ export default abstract class AbstractGameBoardComponent implements OnInit, Afte
    */
   ngAfterViewInit() {
     setTimeout(() => {
-      let defaultTheme = GameThemes.getTheme(this.map.themeName, {
+      const defaultTheme = GameThemes.getTheme(this.map.themeName, {
         canvas: this.canvas,
         canvasBg: this.canvasBg,
         config: {
@@ -70,7 +70,7 @@ export default abstract class AbstractGameBoardComponent implements OnInit, Afte
     }
     // Check for a connection that goes through the tile
     const connections = this.getConnectionsFromCursorPos(e);
-    if (connections.length == 0) {
+    if (connections.length === 0) {
       return;
     }
     // drop one connection
@@ -127,24 +127,24 @@ export default abstract class AbstractGameBoardComponent implements OnInit, Afte
     this.design.init();
 
     // Set default value if no value has been set by design
-    if (this.canvasBg.nativeElement.width == 0) {
+    if (this.canvasBg.nativeElement.width === 0) {
       this.canvasBg.nativeElement.width = this.gameWidth_default;
     }
-    if (this.canvasBg.nativeElement.height == 0) {
+    if (this.canvasBg.nativeElement.height === 0) {
       this.canvasBg.nativeElement.height = this.gameHeight_default;
     }
 
     // if size has change adjust dimensions
     if (
-      (this.canvasBg.nativeElement.width != this.gameWidth) ||
-      (this.canvasBg.nativeElement.height != this.gameHeight)
+      (this.canvasBg.nativeElement.width !== this.gameWidth) ||
+      (this.canvasBg.nativeElement.height !== this.gameHeight)
     ) {
       this.gameWidth = this.canvasBg.nativeElement.width;
       this.gameHeight = this.canvasBg.nativeElement.height;
 
       // trigger recalculation of island positions
       const map = this.map.getData();
-      for(let i=0; i < map.length; i++) {
+      for (let i = 0; i < map.length; i++) {
         for (let j = 0; j < map[i].length; j++) {
           map[i][j].init = false;
         }
@@ -190,9 +190,9 @@ export default abstract class AbstractGameBoardComponent implements OnInit, Afte
    */
   protected clearGameBoard() {
     // clear drawing canvas
-    this.canvasContext.clearRect(0,0, this.gameWidth, this.gameHeight);
+    this.canvasContext.clearRect(0, 0, this.gameWidth, this.gameHeight);
     // clear background canvas
-    this.canvasBgContext.clearRect(0,0, this.gameWidth, this.gameHeight);
+    this.canvasBgContext.clearRect(0, 0, this.gameWidth, this.gameHeight);
   }
 
   /**
@@ -225,13 +225,13 @@ export default abstract class AbstractGameBoardComponent implements OnInit, Afte
 
     for (let i = 0; i < this.map.getData().length; i++) {
       // vertical lines
-      this.canvasBgContext.moveTo(this.gameWidth * (i+1) / this.map.getData().length, 0);
-      this.canvasBgContext.lineTo(this.gameWidth * (i+1) / this.map.getData().length, this.gameHeight);
+      this.canvasBgContext.moveTo(this.gameWidth * (i + 1) / this.map.getData().length, 0);
+      this.canvasBgContext.lineTo(this.gameWidth * (i + 1) / this.map.getData().length, this.gameHeight);
       this.canvasBgContext.stroke();
 
       // horizontal lines
-      this.canvasBgContext.moveTo(0, this.gameHeight * (i+1) / this.map.getData().length);
-      this.canvasBgContext.lineTo(this.gameWidth, this.gameHeight * (i+1) / this.map.getData().length);
+      this.canvasBgContext.moveTo(0, this.gameHeight * (i + 1) / this.map.getData().length);
+      this.canvasBgContext.lineTo(this.gameWidth, this.gameHeight * (i + 1) / this.map.getData().length);
       this.canvasBgContext.stroke();
     }
 
@@ -254,15 +254,15 @@ export default abstract class AbstractGameBoardComponent implements OnInit, Afte
       this.design.beforeDrawGameBoard()
         .then(() => {
           // distribute game window size amongst all map tiles and keep some space around (length+1)
-          const xPerRect = this.gameWidth/(map.length+1);
-          const yPerRect = this.gameHeight/(map.length+1);
+          const xPerRect = this.gameWidth / (map.length + 1);
+          const yPerRect = this.gameHeight / (map.length + 1);
 
           // clear connections
           this.drawnConnections = [];
 
           // Init islands
-          for(let i=0; i < map.length; i++) {
-            for(let j=0; j < map[i].length; j++) {
+          for (let i = 0; i < map.length; i++) {
+            for (let j = 0; j < map[i].length; j++) {
               const island = map[j][i]; // switch j and i to keep the order from array in rendering
               if (island.init) {
                 continue;
@@ -277,8 +277,8 @@ export default abstract class AbstractGameBoardComponent implements OnInit, Afte
           }
 
           // Draw islands
-          for(let i=0; i < map.length; i++) {
-            for(let j=0; j < map[i].length; j++) {
+          for (let i = 0; i < map.length; i++) {
+            for (let j = 0; j < map[i].length; j++) {
               this.design.drawIsland(map[j][i], this.drawnConnections);
             }
           }

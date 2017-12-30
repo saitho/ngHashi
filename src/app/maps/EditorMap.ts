@@ -1,6 +1,6 @@
-import {Island} from "../Island";
-import {AbstractMap} from "./AbstractMap";
-import {GameEngine, BoardDirections} from "../../shared/helper/GameEngine";
+import {Island} from '../Island';
+import {AbstractMap} from './AbstractMap';
+import {GameEngine, BoardDirections} from '../../shared/helper/GameEngine';
 
 export default class EditorMap extends AbstractMap {
   constructor() {
@@ -86,7 +86,7 @@ export default class EditorMap extends AbstractMap {
           GameEngine.connectIslands(
             this.data[editorConnection.pos.x][editorConnection.pos.y],
             this.data[otherIslandPos.x][otherIslandPos.y],
-            direction == 'left' ? BoardDirections.HORIZONTAL : BoardDirections.VERTICAL,
+            direction === 'left' ? BoardDirections.HORIZONTAL : BoardDirections.VERTICAL,
             true
           );
         });
@@ -96,14 +96,14 @@ export default class EditorMap extends AbstractMap {
 
   /**
    * Exports the editor map into a JSON string.
-   * Unlike the "regular" export this also contains the set connections.
+   * Unlike the 'regular' export this also contains the set connections.
    * @return {string}
    */
   public exportEditorObject() {
     const regular = this.exportObject();
 
     const data = [];
-    for(let i=0; i < this.data.length; i++) {
+    for (let i = 0; i < this.data.length; i++) {
       for (let j = 0; j < this.data[i].length; j++) {
         if (!this.data[i][j].countConnections()) {
           continue;
@@ -124,7 +124,7 @@ export default class EditorMap extends AbstractMap {
     return JSON.stringify({
       map: JSON.parse(regular),
       editor: {
-        "connections": data,
+        'connections': data,
       }
     });
   }

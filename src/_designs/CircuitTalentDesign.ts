@@ -1,8 +1,8 @@
-import {IDesignConfig} from "./AbstractDesign";
-import {Coords, Island} from "../app/Island";
-import {BoardDirections} from "../shared/helper/GameEngine";
-import {ElementRef} from "@angular/core";
-import {AbstractGraphicalDesign} from "./AbstractGraphicalDesign";
+import {IDesignConfig} from './AbstractDesign';
+import {Island} from '../app/Island';
+import {BoardDirections} from '../shared/helper/GameEngine';
+import {ElementRef} from '@angular/core';
+import {AbstractGraphicalDesign} from './AbstractGraphicalDesign';
 
 export class CircuitTalentDesign extends AbstractGraphicalDesign {
   constructor(canvas: ElementRef, canvasBg: ElementRef, config: IDesignConfig) {
@@ -64,7 +64,7 @@ export class CircuitTalentDesign extends AbstractGraphicalDesign {
    * @inheritDoc
    */
   drawIsland(island: Island, drawnConnections) {
-    if (island.bridges == 0) {
+    if (island.bridges === 0) {
       return;
     }
 
@@ -90,6 +90,6 @@ export class CircuitTalentDesign extends AbstractGraphicalDesign {
    * @inheritDoc
    */
   protected adjustOtherAxisValue(otherAxisValue: number, i: number, connectionsNum: number) {
-    return otherAxisValue - this.config.islandSize / 3 + 10 * (i+1);
+    return otherAxisValue - this.config.islandSize / 3 + 10 * (i + 1);
   }
 }

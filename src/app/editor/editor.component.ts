@@ -1,11 +1,10 @@
 import {Component, AfterViewInit} from '@angular/core';
-import EditorMap from "../maps/EditorMap";
-import {GameGUI} from "../../shared/helper/GameGUI";
-import AbstractGameBoardComponent from "../AbstractGameBoardComponent";
-import {AbstractDesign} from "../../_designs/AbstractDesign";
-import {BoardDirections} from "../../shared/helper/GameEngine";
-import {UrlEncodePipe} from "../../shared/pipes/UrlEncodePipe";
-import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import EditorMap from '../maps/EditorMap';
+import AbstractGameBoardComponent from '../AbstractGameBoardComponent';
+import {AbstractDesign} from '../../_designs/AbstractDesign';
+import {BoardDirections} from '../../shared/helper/GameEngine';
+import {UrlEncodePipe} from '../../shared/pipes/UrlEncodePipe';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-editor',
@@ -14,7 +13,7 @@ import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 })
 export class EditorComponent extends AbstractGameBoardComponent implements AfterViewInit {
   protected map = new EditorMap();
-  public setBridges: boolean = false;
+  public setBridges = false;
 
   constructor(
     private modalService: NgbModal
@@ -49,7 +48,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
   }
 
   /**
-   * Save current position and enable "bridge setting" mode
+   * Save current position and enable 'bridge setting' mode
    * triggered when the the player starts drawing the bridge (mousedown)
    * @inheritDoc
    */
@@ -64,9 +63,9 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
   }
 
   /**
-   * Disable "bridge setting" mode and pass the positions to the GameEngine
+   * Disable 'bridge setting' mode and pass the positions to the GameEngine
    * triggered when the the player stops drawing the bridge (mouseup)
-   * Note: disabling "started" was moved to mouseClick as this is triggered after mouseDown...
+   * Note: disabling 'started' was moved to mouseClick as this is triggered after mouseDown...
    * @inheritDoc
    */
   async stopBridgeDrawing() {
@@ -77,7 +76,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
     try {
       // pass start and stop ositions to GameEngine
       this.gui.putBridge(this.startPosition, this.stopPosition);
-    } catch(e) {
+    } catch (e) {
 
     }
     await this.drawGameBoard();
@@ -92,7 +91,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
     if (!this.setBridges || !this.started) {
       return;
     }
-    this.canvasContext.clearRect(0,0, 448, 448);
+    this.canvasContext.clearRect(0, 0, 448, 448);
     this.canvasContext.beginPath();
     this.canvasContext.moveTo(this.startPosition.x, this.startPosition.y);
     const dx = e.offsetX - this.startPosition.x;
@@ -115,14 +114,14 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
    */
   async mouseClick(e) {
     if (this.setBridges) {
-      // in "set bridges" mode only remove connections...
+      // in 'set bridges' mode only remove connections...
       this.removeConnectionOnCursorPos(e);
       return;
     }
 
     // add/remove island
-    let x = Math.floor(e.offsetX / (this.gameWidth/7));
-    let y = Math.floor(e.offsetY / (this.gameHeight/7));
+    const x = Math.floor(e.offsetX / (this.gameWidth / 7));
+    const y = Math.floor(e.offsetY / (this.gameHeight / 7));
     const island = this.map.getData()[y][x];
 
     if (island.bridges) {
@@ -146,7 +145,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
 
       island.bridges = 0;
     } else {
-      // if no bridges are set: set one "imaginary" bridge to make it show on the editor
+      // if no bridges are set: set one 'imaginary' bridge to make it show on the editor
 
       if (this.hasConnectionOnTile(x, y)) {
         // do not set bridge if a tile is used by a connection
@@ -168,8 +167,8 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
     const relevantConnections = this.drawnConnections.filter((connection) => {
       // remove connections where the axis that is perpendicular to the axis
       // of the  connection itself does not match the requirements
-      return !((connection.direction === BoardDirections.VERTICAL && connection.otherAxis != x) ||
-        (connection.direction === BoardDirections.HORIZONTAL && connection.otherAxis != y));
+      return !((connection.direction === BoardDirections.VERTICAL && connection.otherAxis !== x) ||
+        (connection.direction === BoardDirections.HORIZONTAL && connection.otherAxis !== y));
     });
 
     if (!relevantConnections.length) {
@@ -177,12 +176,9 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
       return false;
     }
 
-    for (let connection of relevantConnections) {
-      let start = connection.start;
-      let end = connection.end;
-
-      let connectionAxis = new Set();
-      for (let i = ++start; i < end; i++) {
+    for (const connection of relevantConnections) {
+      const connectionAxis = new Set();
+      for (let i = connection.start + 1; i < connection.end; i++) {
         connectionAxis.add(i);
       }
 
@@ -219,7 +215,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
     const urlEncode = new UrlEncodePipe();
     window.open(
       'https://github.com/saitho/hashi/issues/new?title=[Level]%20' + urlEncode.transform(this.exportData.title) +
-      '&body=```' + urlEncode.transform(this.exportData.json) +'```Path: ' + urlEncode.transform(this.exportData.path),
+      '&body=```' + urlEncode.transform(this.exportData.json) + '```Path: ' + urlEncode.transform(this.exportData.path),
       '_blank'
     );
   }
@@ -253,7 +249,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
    */
   async import(data) {
     try {
-      let json = JSON.parse(data);
+      const json = JSON.parse(data);
 
       if (
         !json.hasOwnProperty('map') ||
@@ -270,7 +266,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
       }
       this.map.importFromJSON(json);
       await this.drawGameBoard();
-    } catch(e) {
+    } catch (e) {
       alert('Invalid JSON.');
     }
   }
@@ -283,7 +279,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
       return;
     }
 
-    const data = "data:text/json;charset=utf-8," + encodeURIComponent(this.exportData.jsonEditor);
+    const data = 'data:text/json;charset=utf-8,' + encodeURIComponent(this.exportData.jsonEditor);
     const downloader = document.createElement('a');
 
     downloader.setAttribute('href', data);
@@ -300,7 +296,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
       alert('The map is invalid and can not be saved.');
       return false;
     }
-    if (!this.map.title || this.map.title == "") {
+    if (!this.map.title || this.map.title === '') {
       alert('Please enter a map title.');
       return false;
     }

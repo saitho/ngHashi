@@ -1,8 +1,8 @@
-import {AbstractDesign, IDesignConfig} from "./AbstractDesign";
-import {Coords, Island} from "../app/Island";
-import {BoardDirections} from "../shared/helper/GameEngine";
-import {ElementRef} from "@angular/core";
-import {AbstractGraphicalDesign} from "./AbstractGraphicalDesign";
+import {IDesignConfig} from './AbstractDesign';
+import {Coords, Island} from '../app/Island';
+import {BoardDirections} from '../shared/helper/GameEngine';
+import {ElementRef} from '@angular/core';
+import {AbstractGraphicalDesign} from './AbstractGraphicalDesign';
 
 export class SushiDesign extends AbstractGraphicalDesign {
   constructor(canvas: ElementRef, canvasBg: ElementRef, config: IDesignConfig) {
@@ -41,19 +41,19 @@ export class SushiDesign extends AbstractGraphicalDesign {
    * @inheritDoc
    */
   drawIsland(island: Island, drawnConnections) {
-    if (island.bridges == 0) {
+    if (island.bridges === 0) {
       return;
     }
 
     const img = this.imageStorage.island;
-    this.canvasBgContext.drawImage(img, island.xStart-img.width/5, island.yStart-img.height/5);
+    this.canvasBgContext.drawImage(img, island.xStart - img.width / 5, island.yStart - img.height / 5);
 
     // text
     this.canvasBgContext.fillStyle = 'white';
     this.canvasBgContext.fillText(
       island.bridges.toString(),
-      island.xStart+img.width/4,
-      island.yStart+img.height/2
+      island.xStart + img.width / 4,
+      island.yStart + img.height / 2
     );
 
     this.drawConnections(island, BoardDirections.HORIZONTAL, drawnConnections);
@@ -64,9 +64,9 @@ export class SushiDesign extends AbstractGraphicalDesign {
    * @inheritDoc
    */
   protected adjustOtherAxisValue(otherAxisValue: number, i: number, connectionsNum: number) {
-    let otherAxis = otherAxisValue + this.config.islandSize/2;
-    if (connectionsNum == 2) {
-      otherAxis = otherAxisValue + this.config.islandSize*(i+1)/3;
+    let otherAxis = otherAxisValue + this.config.islandSize / 2;
+    if (connectionsNum === 2) {
+      otherAxis = otherAxisValue + this.config.islandSize * (i + 1) / 3;
     }
     return otherAxis;
   }
@@ -76,7 +76,7 @@ export class SushiDesign extends AbstractGraphicalDesign {
    */
   protected drawConnectionLine(moveTo: Coords, lineTo: Coords, direction: BoardDirections) {
     let image = this.imageStorage.bridge_horizontal;
-    if (direction == BoardDirections.VERTICAL) {
+    if (direction === BoardDirections.VERTICAL) {
       image = this.imageStorage.bridge_vertical;
     }
 
@@ -84,7 +84,7 @@ export class SushiDesign extends AbstractGraphicalDesign {
     let y = lineTo.y;
     let imgW = image.width;
     let imgH = Math.abs(moveTo.y - lineTo.y);
-    if (direction == BoardDirections.HORIZONTAL) {
+    if (direction === BoardDirections.HORIZONTAL) {
       imgW = Math.abs(moveTo.x - lineTo.x);
       imgH = image.height;
       x = moveTo.x;

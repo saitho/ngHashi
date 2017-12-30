@@ -1,8 +1,8 @@
 import {Component, Input, AfterViewInit} from '@angular/core';
-import {AbstractMap} from "../maps/AbstractMap";
-import {ActivatedRoute, NavigationStart, Router} from "@angular/router";
-import {GameLevelsService} from "../../shared/services/GameLevelsService";
-import AbstractGameBoardComponent from "../AbstractGameBoardComponent";
+import {AbstractMap} from '../maps/AbstractMap';
+import {ActivatedRoute, NavigationStart, Router} from '@angular/router';
+import {GameLevelsService} from '../../shared/services/GameLevelsService';
+import AbstractGameBoardComponent from '../AbstractGameBoardComponent';
 
 @Component({
   selector: 'app-game',
@@ -13,7 +13,7 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
   @Input()
   protected map: AbstractMap = null;
 
-  public message: string = 'Have fun! :)';
+  public message = 'Have fun! :)';
   public islandSize = 30;
 
   constructor(private router: Router,
@@ -26,7 +26,7 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
       if (event instanceof NavigationStart) {
         this.map.stopTimer();
       }
-    })
+    });
   }
 
   /**
@@ -104,7 +104,9 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
    * @inheritDoc
    */
   duringBridgeDrawing(e) {
-    if (!this.started) return;
+    if (!this.started) {
+      return;
+    }
     this.canvasContext.clearRect(0, 0, this.gameWidth, this.gameHeight);
     this.canvasContext.beginPath();
     this.canvasContext.moveTo(this.startPosition.x, this.startPosition.y);

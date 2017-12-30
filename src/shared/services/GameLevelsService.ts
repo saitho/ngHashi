@@ -1,6 +1,6 @@
-import {AbstractMap} from "../../app/maps/AbstractMap";
-import {HttpClient} from "@angular/common/http";
-import {Injectable} from "@angular/core";
+import {AbstractMap} from '../../app/maps/AbstractMap';
+import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
 
 @Injectable()
 export class GameLevelsService {
@@ -9,7 +9,7 @@ export class GameLevelsService {
   protected init = false;
 
   private loadMap(path: string): Promise<any> {
-    let observable = this.http.get(path, {responseType: 'json'}).toPromise();
+    const observable = this.http.get(path, {responseType: 'json'}).toPromise();
     observable
       .then((result: any) => {
       const map = new AbstractMap();
@@ -20,12 +20,12 @@ export class GameLevelsService {
     return observable;
   }
 
-  private loadMaps(){
+  private loadMaps() {
     return Promise.all([
-      this.loadMap("_maps/wikipediaExample.json"),
-      this.loadMap("_maps/ngHashi.json"),
-      this.loadMap("_maps/sushi1.json"),
-      this.loadMap("_maps/miniPlatines.json")
+      this.loadMap('_maps/wikipediaExample.json'),
+      this.loadMap('_maps/ngHashi.json'),
+      this.loadMap('_maps/sushi1.json'),
+      this.loadMap('_maps/miniPlatines.json')
     ]);
   }
 

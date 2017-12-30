@@ -1,5 +1,5 @@
-import {Island} from "./Island";
-import {BoardDirections} from "../shared/helper/GameEngine";
+import {Island} from './Island';
+import {BoardDirections} from '../shared/helper/GameEngine';
 
 export interface IGameEngineConnection {
   direction: BoardDirections;

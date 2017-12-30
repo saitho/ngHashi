@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import {GameLevelsService} from "../../shared/services/GameLevelsService";
-import {AbstractMap} from "../maps/AbstractMap";
+import {GameLevelsService} from '../../shared/services/GameLevelsService';
+import {AbstractMap} from '../maps/AbstractMap';
 
 @Component({
   selector: 'app-level-select',

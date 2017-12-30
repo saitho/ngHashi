@@ -1,6 +1,6 @@
-import {Island} from "../../app/Island";
-import {NoAvailableIslandConnectionsError} from "../../app/game/Errors";
-import {IGameEngineConnection} from "../../app/Connection";
+import {Island} from '../../app/Island';
+import {NoAvailableIslandConnectionsError} from '../../app/game/Errors';
+import {IGameEngineConnection} from '../../app/Connection';
 
 export enum BoardDirections {
   HORIZONTAL = 1,
@@ -29,7 +29,7 @@ export class GameEngine {
   private static getIslandPos(island1: Island, island2: Island, direction: BoardDirections) {
     let island1_pos = '';
     let island2_pos = '';
-    switch(direction) {
+    switch (direction) {
       case BoardDirections.HORIZONTAL:
         if (island1.xEnd < island2.xStart) {
           // island1: right, island2: left
@@ -92,17 +92,14 @@ export class GameEngine {
       start = end;
       end = tmp;
     }
-    let wantedTiles = new Set();
+    const wantedTiles = new Set();
     for (let i = ++start; i < end; i++) {
       wantedTiles.add(i);
     }
 
-    for (let connection of relevantConnections) {
-      let start = connection.start;
-      let end = connection.end;
-
-      let connectionAxis = new Set();
-      for (let i = ++start; i < end; i++) {
+    for (const connection of relevantConnections) {
+      const connectionAxis = new Set();
+      for (let i = connection.start + 1; i < connection.end; i++) {
         connectionAxis.add(i);
       }
 
@@ -162,7 +159,7 @@ export class GameEngine {
     const islandPos = this.getIslandPos(island1, island2, direction);
     const island1_pos = islandPos[0];
     const island2_pos = islandPos[1];
-    if (island1.connections[island1_pos].length == 2 || island2.connections[island2_pos].length == 2) {
+    if (island1.connections[island1_pos].length === 2 || island2.connections[island2_pos].length === 2) {
       throw new NoAvailableIslandConnectionsError('A side of an island reached its maximum connections.');
     }
 

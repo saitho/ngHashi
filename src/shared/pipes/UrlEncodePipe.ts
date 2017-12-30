@@ -1,4 +1,4 @@
-import {Pipe} from '@angular/core';
+import {Pipe, PipeTransform} from '@angular/core';
 
 /**
  * | urlencode
@@ -6,7 +6,7 @@ import {Pipe} from '@angular/core';
 @Pipe({
   name: 'urlencode'
 })
-export class UrlEncodePipe {
+export class UrlEncodePipe implements PipeTransform {
   transform(value: string): string {
     return encodeURI(value);
   }

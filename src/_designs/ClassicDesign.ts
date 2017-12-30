@@ -1,7 +1,7 @@
-import {AbstractDesign, IDesignConfig} from "./AbstractDesign";
-import {Coords, Island} from "../app/Island";
-import {BoardDirections} from "../shared/helper/GameEngine";
-import {ElementRef} from "@angular/core";
+import {AbstractDesign, IDesignConfig} from './AbstractDesign';
+import {Island} from '../app/Island';
+import {BoardDirections} from '../shared/helper/GameEngine';
+import {ElementRef} from '@angular/core';
 
 export class ClassicDesign extends AbstractDesign {
   constructor(canvas: ElementRef, canvasBg: ElementRef, config: IDesignConfig) {
@@ -27,16 +27,16 @@ export class ClassicDesign extends AbstractDesign {
    * @inheritDoc
    */
   drawIsland(island: Island, drawnConnections) {
-    if (island.bridges == 0) {
+    if (island.bridges === 0) {
       return;
     }
 
     // circle
     this.canvasBgContext.beginPath();
     this.canvasBgContext.arc(
-      island.xStart+this.config.islandSize/2,
-      island.yStart+this.config.islandSize/2,
-      this.config.islandSize/2,
+      island.xStart + this.config.islandSize / 2,
+      island.yStart + this.config.islandSize / 2,
+      this.config.islandSize / 2,
       0,
       2 * Math.PI
     );
@@ -48,12 +48,12 @@ export class ClassicDesign extends AbstractDesign {
     this.canvasBgContext.closePath();
 
     // text
-    if (!this.editorMode || (island.bridges == island.countConnections())) {
+    if (!this.editorMode || (island.bridges === island.countConnections())) {
       this.canvasBgContext.fillStyle = 'black';
       this.canvasBgContext.fillText(
         island.bridges.toString(),
-        island.xStart+this.config.islandSize/2,
-        island.yStart+this.config.islandSize/2
+        island.xStart + this.config.islandSize / 2,
+        island.yStart + this.config.islandSize / 2
       );
     }
 
@@ -65,9 +65,9 @@ export class ClassicDesign extends AbstractDesign {
    * @inheritDoc
    */
   protected adjustOtherAxisValue(otherAxisValue: number, i: number, connectionsNum: number) {
-    let value = otherAxisValue + this.config.islandSize/2;
-    if (connectionsNum == 2) {
-      value = otherAxisValue + this.config.islandSize*(i+1)/3;
+    let value = otherAxisValue + this.config.islandSize / 2;
+    if (connectionsNum === 2) {
+      value = otherAxisValue + this.config.islandSize * (i + 1) / 3;
     }
     return value;
   }

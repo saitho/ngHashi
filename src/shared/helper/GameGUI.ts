@@ -1,9 +1,9 @@
-import {InvalidTurnError} from "../../app/game/Errors";
-import {BoardDirections, GameEngine} from "./GameEngine";
-import {Coords, Island} from "../../app/Island";
-import {Connection} from "../../app/Connection";
-import {AbstractMap} from "../../app/maps/AbstractMap";
-import EditorMap from "../../app/maps/EditorMap";
+import {InvalidTurnError} from '../../app/game/Errors';
+import {BoardDirections, GameEngine} from './GameEngine';
+import {Coords, Island} from '../../app/Island';
+import {Connection} from '../../app/Connection';
+import {AbstractMap} from '../../app/maps/AbstractMap';
+import EditorMap from '../../app/maps/EditorMap';
 
 /**
  * Deals with position (pixels...) related tasks
@@ -54,10 +54,10 @@ export class GameGUI {
 
   public getTile(x, y, islandsOnly = true): Island {
     const map = this.map.getData();
-    for(let i=0; i < map.length; i++) {
-      for(let j=0; j < map[i].length; j++) {
+    for (let i = 0; i < map.length; i++) {
+      for (let j = 0; j < map[i].length; j++) {
         const island = map[i][j];
-        if (island.bridges == 0 && islandsOnly) {
+        if (island.bridges === 0 && islandsOnly) {
           continue;
         }
         if (
@@ -76,9 +76,9 @@ export class GameGUI {
   }
 
   private getLineDirection(start: Coords, stop: Coords) {
-    if (start.x == stop.x) {
+    if (start.x === stop.x) {
       return BoardDirections.VERTICAL;
-    } else if (start.y == stop.y) {
+    } else if (start.y === stop.y) {
       return BoardDirections.HORIZONTAL;
     }
     return null;
@@ -114,7 +114,7 @@ export class GameGUI {
       start = tmp;
     }
 
-    let islands = new Set();
+    const islands = new Set();
     for (let i = start[axis]; i < stop[axis]; i++) {
       let tileX = i;
       let tileY = start[otherAxis];

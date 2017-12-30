@@ -1,8 +1,8 @@
-import {Coords, Island} from "../Island";
+import {Coords, Island} from '../Island';
 
 export class AbstractMap {
   public title: string;
-  public themeName: string = 'Nikoli Classic';
+  public themeName = 'Nikoli Classic';
   protected data: Array<Array<Island>>;
   public timer = 0;
   protected timerActive = null;
@@ -59,7 +59,7 @@ export class AbstractMap {
    */
   public exportObject() {
     const data = [];
-    for(let i=0; i < this.data.length; i++) {
+    for (let i = 0; i < this.data.length; i++) {
       const subarray = [];
       for (let j = 0; j < this.data[i].length; j++) {
         subarray.push(this.data[i][j].bridges);
@@ -67,9 +67,9 @@ export class AbstractMap {
       data.push(subarray);
     }
     return JSON.stringify({
-      "title": this.title,
-      "themeName": this.themeName,
-      "data": data,
+      'title': this.title,
+      'themeName': this.themeName,
+      'data': data,
     });
   }
 
@@ -87,7 +87,7 @@ export class AbstractMap {
           left: [],
           right: []
         };
-      })
+      });
     });
   }
 
@@ -96,7 +96,7 @@ export class AbstractMap {
    * @return {boolean}
    */
   public isSolved(): boolean {
-    for(let i=0; i < this.data.length; i++) {
+    for (let i = 0; i < this.data.length; i++) {
       for (let j = 0; j < this.data[i].length; j++) {
         const island: Island = this.data[i][j];
         if (!island.isComplete()) {
@@ -141,7 +141,7 @@ export class AbstractMap {
     let start = null;
     let counter = 0;
     // remove maps without bridges (= empty entries)
-    for (let i=0; i < map.length; i++) {
+    for (let i = 0; i < map.length; i++) {
       for (let j = 0; j < map[i].length; j++) {
         if (!map[i][j].bridges) {
           continue;

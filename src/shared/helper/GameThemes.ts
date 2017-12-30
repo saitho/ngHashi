@@ -1,7 +1,7 @@
-import {SushiDesign} from "../../_designs/SushiDesign";
-import {ClassicDesign} from "../../_designs/ClassicDesign";
-import {AbstractDesign, IDesignConfig} from "../../_designs/AbstractDesign";
-import {CircuitTalentDesign} from "../../_designs/CircuitTalentDesign";
+import {SushiDesign} from '../../_designs/SushiDesign';
+import {ClassicDesign} from '../../_designs/ClassicDesign';
+import {AbstractDesign, IDesignConfig} from '../../_designs/AbstractDesign';
+import {CircuitTalentDesign} from '../../_designs/CircuitTalentDesign';
 
 export class GameThemes {
   private static themes: {} = {
