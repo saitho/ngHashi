@@ -5,6 +5,9 @@
 /tmp
 /out-tsc
 
+# version information
+/build/_versions.ts
+
 # dependencies
 /node_modules
 

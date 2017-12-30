@@ -36,7 +36,7 @@ Then install the required dependencies using:
 npm install
 ```
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Run `npm start` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
 ## Running the tests
 
@@ -57,7 +57,7 @@ Make sure to activate TSLint in your IDE if available.
 ## Deployment
 
 Deploying the project usually involves building the project and deploying the build to the deployment server.
-Build the project with `ng build` and deploy the generated dist/ folder to your server.
+Build the project with `npm build` and deploy the generated dist/ folder to your server.
 
 **Note:** Usually you are able to set the *--prod* flag in order to build the app for production. However there are issues with the game that makes it currently impossible to use that.
 
