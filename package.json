@@ -1,6 +1,6 @@
 {
   "name": "hashi",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "engines": {
     "node": "9.3.0"
   },
