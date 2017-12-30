@@ -202,7 +202,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
     return new Promise<void>(resolve => {
       super.drawGameBoard()
         .then(() => {
-          this.valid = this.gui.getMap().isConnectedGraph();
+          this.valid = this.map.isConnectedGraph();
           resolve();
         })
         .catch(e => console.error(e));

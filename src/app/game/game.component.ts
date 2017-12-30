@@ -1,8 +1,9 @@
 import {Component, Input, AfterViewInit} from '@angular/core';
 import {AbstractMap} from "../maps/AbstractMap";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, NavigationStart, Router} from "@angular/router";
 import {GameLevelsService} from "../../shared/services/GameLevelsService";
 import AbstractGameBoardComponent from "../AbstractGameBoardComponent";
+
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
@@ -15,11 +16,17 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
   public message: string = 'Have fun! :)';
   public islandSize = 30;
 
-  constructor(
-    private route: ActivatedRoute,
-    private gameLevels: GameLevelsService
-  ) {
+  constructor(private router: Router,
+              private route: ActivatedRoute,
+              private gameLevels: GameLevelsService) {
     super();
+
+    // stop timer when navigation to an other route is started
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        this.map.stopTimer();
+      }
+    })
   }
 
   /**
@@ -48,7 +55,7 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
    */
   public async restart() {
     if (confirm('Do you really want to restart the game?')) {
-      this.gui.getMap().reset();
+      this.map.reset();
       await this.drawGameBoard();
     }
   }
@@ -82,7 +89,7 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
       // pass start and stop ositions to GameEngine
       this.gui.putBridge(this.startPosition, this.stopPosition);
       this.message = 'Bridge set successfully.';
-    } catch(e) {
+    } catch (e) {
       if (e.message) {
         this.message = e.message;
       } else {
@@ -98,7 +105,7 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
    */
   duringBridgeDrawing(e) {
     if (!this.started) return;
-    this.canvasContext.clearRect(0,0, this.gameWidth, this.gameHeight);
+    this.canvasContext.clearRect(0, 0, this.gameWidth, this.gameHeight);
     this.canvasContext.beginPath();
     this.canvasContext.moveTo(this.startPosition.x, this.startPosition.y);
     const dx = e.offsetX - this.startPosition.x;
@@ -123,8 +130,14 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
     return new Promise<void>(resolve => {
       super.drawGameBoard()
         .then(() => {
-          if (this.gui.getMap().isSolved()) {
+          if (this.map.isSolved()) {
             this.message = 'Level solved.';
+            this.map.stopTimer();
+          } else if (this.drawnConnections.length) {
+            // start timer if connections are drawn
+            // -> user sets first connection
+            // -> user returns to puzzle he already started
+            this.map.startTimer();
           }
           resolve();
         })

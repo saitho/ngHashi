@@ -1,5 +1,8 @@
 <section id="game" [style.width.px]="gameWidth" [style.height.px]="gameHeight">
-  <h2 *ngIf="gui.getMap()">{{gui.getMap().title}}</h2>
+  <section class="titleBar">
+    <h2 *ngIf="map">{{map.title}}</h2>
+    <span class="timer" *ngIf="map">{{map.timer|timerformat}}</span>
+  </section>
 
   <section class="statusBar">
     <div class="message" [innerText]="message"></div>
@@ -15,7 +18,7 @@
     </div>
   </section>
 
-  <div class="canvas-container" [hidden]="!gui.getMap()">
+  <div class="canvas-container" [hidden]="!map">
     <canvas #canvasBg id="background"></canvas>
     <canvas #canvasDraw
             id="draw"
@@ -25,7 +28,7 @@
             (mousemove)="duringBridgeDrawing($event)"
     ></canvas>
   </div>
-  <div [hidden]="gui.getMap()">
+  <div [hidden]="map">
     Loading...
   </div>
 </section>

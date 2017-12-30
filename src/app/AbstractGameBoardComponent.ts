@@ -143,7 +143,7 @@ export default abstract class AbstractGameBoardComponent implements OnInit, Afte
       this.gameHeight = this.canvasBg.nativeElement.height;
 
       // trigger recalculation of island positions
-      const map = this.gui.getMap().getData();
+      const map = this.map.getData();
       for(let i=0; i < map.length; i++) {
         for (let j = 0; j < map[i].length; j++) {
           map[i][j].init = false;
@@ -245,7 +245,7 @@ export default abstract class AbstractGameBoardComponent implements OnInit, Afte
   public drawGameBoard() {
     return new Promise<void>((resolve) => {
       this.started = false;
-      const map = this.gui.getMap().getData();
+      const map = this.map.getData();
       this.clearGameBoard();
 
       if (this.gameBoardConfig.enableGrid) {

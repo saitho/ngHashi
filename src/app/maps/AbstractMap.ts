@@ -4,7 +4,32 @@ export class AbstractMap {
   public title: string;
   public themeName: string = 'Nikoli Classic';
   protected data: Array<Array<Island>>;
+  public timer = 0;
+  protected timerActive = null;
   private depthSearchMarkers = new Set<Coords>();
+
+  /**
+   * Starts the timer
+   */
+  public startTimer() {
+    if (this.timerActive) {
+      return;
+    }
+    this.timerActive = setInterval(() => {
+      this.timer++;
+    }, 1000);
+  }
+
+  /**
+   * Stops the timer
+   */
+  public stopTimer() {
+    if (!this.timerActive) {
+      return;
+    }
+    clearInterval(this.timerActive);
+    this.timerActive = null;
+  }
 
   /**
    * Copy data from JSON object into this Map object
@@ -49,9 +74,11 @@ export class AbstractMap {
   }
 
   /**
-   * Resets bridges on every island
+   * Resets bridges on every island and the timer
    */
   public reset() {
+    this.stopTimer();
+    this.timer = 0;
     this.data.forEach(firstLevel => {
       firstLevel.forEach(item => {
         item.connections = {

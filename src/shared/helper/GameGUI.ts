@@ -23,14 +23,6 @@ export class GameGUI {
   }
 
   /**
-   * Gets the assigned Map object
-   * @return {AbstractMap}
-   */
-  public getMap() {
-    return this.map;
-  }
-
-  /**
    * Removes a bridge
    * @param {Connection} connection
    */
