@@ -9,6 +9,10 @@ import { EditorComponent } from './editor/editor.component';
 import {HttpClientModule} from "@angular/common/http";
 import {GameLevelsService} from "../shared/services/GameLevelsService";
 import {UrlEncodePipe} from "../shared/pipes/UrlEncodePipe";
+import {NgbModal, NgbModule} from "@ng-bootstrap/ng-bootstrap";
+import {NgbModalStack} from "@ng-bootstrap/ng-bootstrap/modal/modal-stack";
+import {NgbModalBackdrop} from "@ng-bootstrap/ng-bootstrap/modal/modal-backdrop";
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -19,12 +23,19 @@ import {UrlEncodePipe} from "../shared/pipes/UrlEncodePipe";
     UrlEncodePipe
   ],
   imports: [
+    NgbModule.forRoot(),
     BrowserModule,
+    FormsModule,
     AppRoutingModule,
     HttpClientModule
   ],
   providers: [
-    GameLevelsService
+    GameLevelsService,
+    NgbModal,
+    NgbModalStack
+  ],
+  entryComponents: [
+    NgbModalBackdrop
   ],
   bootstrap: [AppComponent]
 })
