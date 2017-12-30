@@ -1,7 +1,6 @@
 import {SushiDesign} from "../../_designs/SushiDesign";
 import {ClassicDesign} from "../../_designs/ClassicDesign";
 import {AbstractDesign, IDesignConfig} from "../../_designs/AbstractDesign";
-import {WurzelimperiumDesign} from "../../_designs/WurzelimperiumDesign";
 import {CircuitTalentDesign} from "../../_designs/CircuitTalentDesign";
 
 export class GameThemes {
@@ -9,12 +8,7 @@ export class GameThemes {
     'Nikoli Classic': ClassicDesign,
     'Circuit-Talent': CircuitTalentDesign,
     'Sushi': SushiDesign,
-    'Wurzelimperium': WurzelimperiumDesign,
   };
-
-  public static getThemes(): string[] {
-    return Object.keys(this.themes);
-  }
 
   public static getTheme(themeName: string, args: {canvas; canvasBg; config: IDesignConfig}|AbstractDesign): AbstractDesign {
     if (args instanceof AbstractDesign) {
