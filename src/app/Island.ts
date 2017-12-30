@@ -25,6 +25,10 @@ export class Island {
     right: []
   };
 
+  /**
+   * Sums all connections
+   * @return {number}
+   */
   countConnections() {
     return this.connections.top.length +
       this.connections.bottom.length +
@@ -32,14 +36,11 @@ export class Island {
       this.connections.right.length;
   }
 
+  /**
+   * Checks the island has the required number of bridges
+   * @return {boolean}
+   */
   isComplete(): boolean {
     return this.bridges == this.countConnections();
-  }
-
-  getSymbol() {
-    if (this.bridges) {
-      return this.bridges;
-    }
-    return '';
   }
 }

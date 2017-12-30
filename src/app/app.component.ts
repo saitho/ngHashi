@@ -1,5 +1,4 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
-import {GameComponent} from "./game/game.component";
+import {Component} from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -7,5 +6,4 @@ import {GameComponent} from "./game/game.component";
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'app';
 }

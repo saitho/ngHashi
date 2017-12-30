@@ -11,10 +11,21 @@ export class GameEngine {
 
   protected static connections: IGameEngineConnection[];
 
+  /**
+   * Sets island connections
+   * @param {IGameEngineConnection[]} connections
+   */
   public static setConnections(connections: IGameEngineConnection[]) {
     this.connections = connections;
   }
 
+  /**
+   * Returns the relevant keys for the connections of two islands
+   * @param {Island} island1
+   * @param {Island} island2
+   * @param {BoardDirections} direction
+   * @return {[string , string]}
+   */
   private static getIslandPos(island1: Island, island2: Island, direction: BoardDirections) {
     let island1_pos = '';
     let island2_pos = '';
@@ -47,8 +58,14 @@ export class GameEngine {
     return [island1_pos, island2_pos];
   }
 
+  /**
+   * Checks if a connection is obstructed by another connection
+   * @param {Island} island1
+   * @param {Island} island2
+   * @param {BoardDirections} direction
+   * @return {boolean}
+   */
   private static connectionObstructed(island1: Island, island2: Island, direction: BoardDirections): boolean {
-
     const relevantConnections = this.connections.filter((connection) => {
       return connection.direction !== direction;
     });
@@ -104,6 +121,13 @@ export class GameEngine {
     return false;
   }
 
+  /**
+   * Disconnects two islands
+   * @param {Island} island1
+   * @param {Island} island2
+   * @param {BoardDirections} direction
+   * @param {boolean} editorMode
+   */
   public static disconnectIslands(island1: Island, island2: Island, direction: BoardDirections, editorMode = false) {
     const islandPos = this.getIslandPos(island1, island2, direction);
     const island1_pos = islandPos[0];
@@ -120,6 +144,13 @@ export class GameEngine {
     }
   }
 
+  /**
+   * Connects two islands
+   * @param {Island} island1
+   * @param {Island} island2
+   * @param {BoardDirections} direction
+   * @param {boolean} editorMode
+   */
   public static connectIslands(island1: Island, island2: Island, direction: BoardDirections, editorMode = false) {
     // Check if maximum connections are reached
     if (

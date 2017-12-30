@@ -73,6 +73,10 @@ export default class EditorMap extends AbstractMap {
     ];
   }
 
+  /**
+   * Adjustments for special editor format also containing the bridges
+   * @inheritDoc
+   */
   public importFromJSON(object: any) {
     super.importFromJSON(object.map);
     object.editor.connections.forEach(editorConnection => {
@@ -90,6 +94,11 @@ export default class EditorMap extends AbstractMap {
     });
   }
 
+  /**
+   * Exports the editor map into a JSON string.
+   * Unlike the "regular" export this also contains the set connections.
+   * @return {string}
+   */
   public exportEditorObject() {
     const regular = this.exportObject();
 

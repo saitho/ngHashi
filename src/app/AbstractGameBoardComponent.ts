@@ -30,9 +30,20 @@ export default abstract class AbstractGameBoardComponent implements OnInit, Afte
    */
   protected drawnConnections: Connection[] = [];
 
-  gui: GameGUI = new GameGUI();
+  protected gui: GameGUI = new GameGUI();
 
+  /**
+   * Assign canvas contexts
+   */
+  ngOnInit() {
+    this.canvasBgContext = this.canvasBg.nativeElement.getContext('2d');
+    this.canvasContext = this.canvas.nativeElement.getContext('2d');
+  }
 
+  /**
+   * Entry point
+   * Load default theme and initialize game
+   */
   ngAfterViewInit() {
     setTimeout(() => {
       let defaultTheme = GameThemes.getTheme(this.map.themeName, {
@@ -47,7 +58,12 @@ export default abstract class AbstractGameBoardComponent implements OnInit, Afte
     });
   }
 
-  protected removeConnectionOnCursorPos(e) {
+  /**
+   * Removes a connection that is on the cursor position
+   * @param e
+   * @return {Promise<void>}
+   */
+  protected async removeConnectionOnCursorPos(e) {
     if (this.started) {
       this.started = false;
       return;
@@ -59,9 +75,14 @@ export default abstract class AbstractGameBoardComponent implements OnInit, Afte
     }
     // drop one connection
     this.gui.removeBridge(connections[0]);
-    this.drawGameBoard();
+    await this.drawGameBoard();
   }
 
+  /**
+   * Returns an array of connections that are on the cursor position
+   * @param e
+   * @return {Connection[]}
+   */
   protected getConnectionsFromCursorPos(e): Connection[] {
     return this.drawnConnections.filter((connection) => {
       let offsetType, offsetTypeRange = '';
@@ -87,6 +108,11 @@ export default abstract class AbstractGameBoardComponent implements OnInit, Afte
     });
   }
 
+  /**
+   * Invoked after the view was initialized
+   * Sets and initializes design and game map
+   * @param {AbstractDesign} design
+   */
   protected initGame(design: AbstractDesign) {
     this.design = design;
     this.gui.setMap(this.map);
@@ -131,10 +157,37 @@ export default abstract class AbstractGameBoardComponent implements OnInit, Afte
     this.drawGameBoard();
   }
 
+  /**
+   * Invoked on mouse click on drawing canvas
+   * Used for removing lines functionality
+   * @param e
+   */
   public abstract mouseClick(e);
+
+  /**
+   * Invoked on mouse release on drawing canvas
+   * Used for drawing bridges
+   * @param e
+   */
   public abstract startBridgeDrawing(e);
+
+  /**
+   * Invoked on mouse click on drawing canvas
+   * Used for drawing bridges
+   * @param e
+   */
   public abstract stopBridgeDrawing(e);
+
+  /**
+   * Invoked on mouse down on drawing canvas
+   * Used for updating the drawing canvas while drawing a bridge
+   * @param e
+   */
   public abstract duringBridgeDrawing(e);
+
+  /**
+   * Clears both canvases
+   */
   protected clearGameBoard() {
     // clear drawing canvas
     this.canvasContext.clearRect(0,0, this.gameWidth, this.gameHeight);
@@ -142,6 +195,9 @@ export default abstract class AbstractGameBoardComponent implements OnInit, Afte
     this.canvasBgContext.clearRect(0,0, this.gameWidth, this.gameHeight);
   }
 
+  /**
+   * Draws a grid onto the background canvas
+   */
   protected drawGrid() {
     this.canvasBgContext.lineWidth = 2;
     this.canvasBgContext.beginPath();
@@ -182,6 +238,10 @@ export default abstract class AbstractGameBoardComponent implements OnInit, Afte
     this.canvasBgContext.closePath();
   }
 
+  /**
+   * Draws the game board onto the background canvas
+   * @return {Promise<void>}
+   */
   public drawGameBoard() {
     return new Promise<void>((resolve) => {
       this.started = false;
@@ -229,10 +289,5 @@ export default abstract class AbstractGameBoardComponent implements OnInit, Afte
           console.log('Error in beforeDrawGameBoard hook', error);
         });
     });
-  }
-
-  ngOnInit() {
-    this.canvasBgContext = this.canvasBg.nativeElement.getContext('2d');
-    this.canvasContext = this.canvas.nativeElement.getContext('2d');
   }
 }

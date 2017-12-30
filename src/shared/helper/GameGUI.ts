@@ -1,6 +1,6 @@
 import {InvalidTurnError} from "../../app/game/Errors";
 import {BoardDirections, GameEngine} from "./GameEngine";
-import {Island} from "../../app/Island";
+import {Coords, Island} from "../../app/Island";
 import {Connection} from "../../app/Connection";
 import {AbstractMap} from "../../app/maps/AbstractMap";
 import EditorMap from "../../app/maps/EditorMap";
@@ -14,21 +14,38 @@ export class GameGUI {
   constructor() {
   }
 
+  /**
+   * Sets the Map object
+   * @param {AbstractMap} map
+   */
   public setMap(map: AbstractMap) {
     this.map = map;
   }
 
+  /**
+   * Gets the assigned Map object
+   * @return {AbstractMap}
+   */
   public getMap() {
     return this.map;
   }
 
+  /**
+   * Removes a bridge
+   * @param {Connection} connection
+   */
   public removeBridge(connection: Connection) {
     GameEngine.disconnectIslands(connection.island, connection.connectedIsland, connection.direction, (this.map instanceof EditorMap));
   }
 
-  public putBridge(x1, y1, x2, y2) {
-    const direction = this.getLineDirection(x1, y1, x2, y2);
-    const islands = this.getIslandInRange(x1, y1, x2, y2);
+  /**
+   * Sets a bridge at screen coords
+   * @param {Coords} start
+   * @param {Coords} stop
+   */
+  public putBridge(start: Coords, stop: Coords) {
+    const direction = this.getLineDirection(start, stop);
+    const islands = this.getIslandInRange(start, stop);
     if (
       (islands.size !== 2 || direction === null) &&
       !(this.map instanceof EditorMap)
@@ -66,51 +83,60 @@ export class GameGUI {
     return !(this.getTile(x, y, islandsOnly) == null);
   }
 
-  private getLineDirection(x1, y1, x2, y2) {
-    if (x1 == x2) {
+  private getLineDirection(start: Coords, stop: Coords) {
+    if (start.x == stop.x) {
       return BoardDirections.VERTICAL;
-    } else if (y1 == y2) {
+    } else if (start.y == stop.y) {
       return BoardDirections.HORIZONTAL;
     }
     return null;
   }
 
-  private getIslandInRange(x1, y1, x2, y2) {
-    let islands = new Set();
+  /**
+   * Returns islands within an area
+   * Used to check if connection goes to the nearest isl
+   * @param {Coords} start
+   * @param {Coords} stop
+   * @return {Set<Island>}
+   */
+  private getIslandInRange(start: Coords, stop: Coords): Set<Island> {
+    let axis, otherAxis;
 
-    const direction = this.getLineDirection(x1, y1, x2, y2);
+    const direction = this.getLineDirection(start, stop);
     switch (direction) {
       case BoardDirections.VERTICAL:
-        if (y2 < y1) {
-          const tmp = y2;
-          y2 = y1;
-          y1 = tmp;
-        }
-        for (let i = y1; i < y2; i++) {
-          const island = this.getTile(x1, i);
-          if (island == null) {
-            continue;
-          }
-          islands.add(island);
-        }
+        axis = 'y';
+        otherAxis = 'x';
         break;
       case BoardDirections.HORIZONTAL:
-        if (x2 < x1) {
-          const tmp = x2;
-          x2 = x1;
-          x1 = tmp;
-        }
-        for (let i = x1; i < x2; i++) {
-          const island = this.getTile(i, y1);
-          if (island == null) {
-            continue;
-          }
-          islands.add(island);
-        }
+        axis = 'x';
+        otherAxis = 'y';
         break;
       default:
         throw new Error('Undefined direction.');
     }
+
+    if (stop[axis] < start[axis]) {
+      const tmp = stop;
+      stop = start;
+      start = tmp;
+    }
+
+    let islands = new Set();
+    for (let i = start[axis]; i < stop[axis]; i++) {
+      let tileX = i;
+      let tileY = start[otherAxis];
+      if (direction === BoardDirections.VERTICAL) {
+        tileX = start[otherAxis];
+        tileY = i;
+      }
+      const island = this.getTile(tileX, tileY);
+      if (island == null) {
+        continue;
+      }
+      islands.add(island);
+    }
+
     return islands;
   }
 }

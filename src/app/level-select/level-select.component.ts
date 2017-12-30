@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import {GameLevelsService} from "../../shared/services/GameLevelsService";
 import {AbstractMap} from "../maps/AbstractMap";
 
@@ -7,16 +7,10 @@ import {AbstractMap} from "../maps/AbstractMap";
   templateUrl: './level-select.component.html',
   styleUrls: ['./level-select.component.css']
 })
-export class LevelSelectComponent implements OnInit {
+export class LevelSelectComponent {
   levels: AbstractMap[];
 
-  constructor(
-    private gameLevels: GameLevelsService
-  ) {
+  constructor(private gameLevels: GameLevelsService) {
     this.levels = gameLevels.getLevels();
   }
-
-  ngOnInit() {
-  }
-
 }

@@ -22,6 +22,9 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
     super();
   }
 
+  /**
+   * Set map from ID or encoded JSON data
+   */
   ngAfterViewInit() {
     this.route.params.subscribe((params) => {
       setTimeout(() => {
@@ -39,10 +42,10 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
     });
   }
 
-  public getDesign() {
-    return this.design;
-  }
-
+  /**
+   * Reset the map
+   * @return {Promise<void>}
+   */
   public async restart() {
     if (confirm('Do you really want to restart the game?')) {
       this.gui.getMap().reset();
@@ -51,18 +54,15 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
   }
 
   /**
-   * unset "started" here
-   * - as onClick is triggered after onMouseDown
-   * - to avoid removing a line while drawing one and hovering on an existing line while releasing the mouse button
-   * @param e
+   * @inheritDoc
+   * @see removeConnectionOnCursorPos
    */
   mouseClick(e) {
     this.removeConnectionOnCursorPos(e);
   }
 
   /**
-   * Save current position and enable "bridge setting" mode
-   * triggered when the the player starts drawing the bridge (mousedown)
+   * @inheritDoc
    */
   startBridgeDrawing(e) {
     this.startPosition.x = e.offsetX;
@@ -71,9 +71,7 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
   }
 
   /**
-   * Disable "bridge setting" mode and pass the positions to the GameEngine
-   * triggered when the the player stops drawing the bridge (mouseup)
-   * Note: disabling "started" was moved to mouseClick as this is triggered after mouseDown...
+   * @inheritDoc
    */
   async stopBridgeDrawing() {
     if (!this.started) {
@@ -82,7 +80,7 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
 
     try {
       // pass start and stop ositions to GameEngine
-      this.gui.putBridge(this.startPosition.x, this.startPosition.y, this.stopPosition.x, this.stopPosition.y);
+      this.gui.putBridge(this.startPosition, this.stopPosition);
       this.message = 'Bridge set successfully.';
     } catch(e) {
       if (e.message) {
@@ -96,8 +94,7 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
   }
 
   /**
-   * triggered while the bridge is being drawn by the player (mousemove)
-   * @param e
+   * @inheritDoc
    */
   duringBridgeDrawing(e) {
     if (!this.started) return;
@@ -120,7 +117,7 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
   }
 
   /**
-   * draws the game board
+   * @inheritDoc
    */
   drawGameBoard() {
     return new Promise<void>(resolve => {

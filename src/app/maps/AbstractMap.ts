@@ -4,7 +4,12 @@ export class AbstractMap {
   public title: string;
   public themeName: string = 'Nikoli Classic';
   protected data: Array<Array<Island>>;
+  private depthSearchMarkers = new Set<Coords>();
 
+  /**
+   * Copy data from JSON object into this Map object
+   * @param object
+   */
   public importFromJSON(object: any) {
     const data: Array<Array<Island>> = [];
     let i = 0;
@@ -23,6 +28,10 @@ export class AbstractMap {
     }
   }
 
+  /**
+   * Create a JSON string from the current Map
+   * @return {string}
+   */
   public exportObject() {
     const data = [];
     for(let i=0; i < this.data.length; i++) {
@@ -56,6 +65,7 @@ export class AbstractMap {
   }
 
   /**
+   * Checks if map is solved
    * @return {boolean}
    */
   public isSolved(): boolean {
@@ -70,11 +80,18 @@ export class AbstractMap {
     return this.isConnectedGraph();
   }
 
+  /**
+   * Returns map data
+   * @return {Array<Array<Island>>}
+   */
   public getData() {
     return this.data;
   }
 
-  private depthSearchMarkers = new Set<Coords>();
+  /**
+   * Performs depthSearch algorithm for one island
+   * @param {Island} island
+   */
   private depthSearch(island: Island) {
     if (this.depthSearchMarkers.has(island.tileCoords)) {
       return;
@@ -85,6 +102,10 @@ export class AbstractMap {
     });
   }
 
+  /**
+   * Checks if all islands are connected
+   * @return {boolean}
+   */
   public isConnectedGraph() {
     // use depth search to also check if we have a connected graph
     const map = this.data;
