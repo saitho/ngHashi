@@ -14,6 +14,7 @@ import {NgbModalStack} from '@ng-bootstrap/ng-bootstrap/modal/modal-stack';
 import {NgbModalBackdrop} from '@ng-bootstrap/ng-bootstrap/modal/modal-backdrop';
 import {FormsModule} from '@angular/forms';
 import {TimerFormatPipe} from '../shared/pipes/TimerFormatPipe';
+import { GameHelpComponent } from './game-help/game-help.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import {TimerFormatPipe} from '../shared/pipes/TimerFormatPipe';
     LevelSelectComponent,
     EditorComponent,
     UrlEncodePipe,
-    TimerFormatPipe
+    TimerFormatPipe,
+    GameHelpComponent
   ],
   imports: [
     NgbModule.forRoot(),
