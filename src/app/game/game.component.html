@@ -1,16 +1,20 @@
 <section id="game" [style.width.px]="gameWidth" [style.height.px]="gameHeight">
   <h2 *ngIf="gui.getMap()">{{gui.getMap().title}}</h2>
-  <div [innerText]="message"></div>
-  <section>
-    <button (click)="restart()">
-      <i class="fa fa-repeat" aria-hidden="true"></i>
-      Restart game
-    </button>
-    <button routerLink="/level_select">
-      <i class="fa fa-list" aria-hidden="true"></i>
-      Go to level selection
-    </button>
+
+  <section class="statusBar">
+    <div class="message" [innerText]="message"></div>
+    <div class="actions">
+      <button (click)="restart()">
+        <i class="fa fa-repeat" aria-hidden="true"></i>
+        Restart game
+      </button>
+      <button routerLink="/level_select">
+        <i class="fa fa-list" aria-hidden="true"></i>
+        Go to level selection
+      </button>
+    </div>
   </section>
+
   <div class="canvas-container" [hidden]="!gui.getMap()">
     <canvas #canvasBg id="background"></canvas>
     <canvas #canvasDraw

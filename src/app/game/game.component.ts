@@ -83,6 +83,7 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
     try {
       // pass start and stop ositions to GameEngine
       this.gui.putBridge(this.startPosition.x, this.startPosition.y, this.stopPosition.x, this.stopPosition.y);
+      this.message = 'Bridge set successfully.';
     } catch(e) {
       if (e.message) {
         this.message = e.message;

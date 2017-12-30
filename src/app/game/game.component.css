@@ -17,3 +17,15 @@ canvas#draw {
 .canvas-container {
   position: relative;
 }
+
+section.statusBar {
+  display: flex;
+}
+
+section.statusBar div.message {
+  flex: 0.5 0 0;
+}
+section.statusBar div.actions {
+  flex: 1 0 0;
+  text-align: right;
+}
