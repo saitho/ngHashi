@@ -1,7 +1,6 @@
 import {AbstractDesign, IDesignConfig} from "./AbstractDesign";
-import {Island} from "../app/Island";
+import {Coords, Island} from "../app/Island";
 import {BoardDirections} from "../shared/helper/GameEngine";
-import {Connection} from "../app/Connection";
 import {ElementRef} from "@angular/core";
 
 export class ClassicDesign extends AbstractDesign {
@@ -9,9 +8,10 @@ export class ClassicDesign extends AbstractDesign {
     super(canvas, canvasBg, config);
   }
 
-  public init() {
-  }
-
+  /**
+   * @inheritDoc
+   * @inheritDoc
+   */
   public beforeDrawGameBoard(): Promise<void> {
     return new Promise<void>((resolve) => {
       // set font for background canvas
@@ -23,9 +23,8 @@ export class ClassicDesign extends AbstractDesign {
   }
 
   /**
-   * draws an island onto the background canvas
-   * @param {Island} island
-   * @param {Connection[]} drawnConnections
+   * @inheritDoc
+   * @inheritDoc
    */
   drawIsland(island: Island, drawnConnections) {
     if (island.bridges == 0) {
@@ -63,46 +62,13 @@ export class ClassicDesign extends AbstractDesign {
   }
 
   /**
-   * draws connections of an island on background canvas
-   * @param island
-   * @param direction
-   * @param drawnConnections
+   * @inheritDoc
    */
-  drawConnections(island: Island, direction: BoardDirections, drawnConnections: Connection[]) {
-    let islandOtherAxisVar, valueName;
-    if (direction == BoardDirections.HORIZONTAL) {
-      // draw right connections on vertical horizontal
-      valueName = 'right';
-      islandOtherAxisVar = 'yStart';
-    } else if (direction == BoardDirections.VERTICAL) {
-      // draw top connections on vertical direction
-      valueName = 'top';
-      islandOtherAxisVar = 'xStart';
-    } else {
-      throw new Error('Unknown direction.');
+  protected adjustOtherAxisValue(otherAxisValue: number, i: number, connectionsNum: number) {
+    let value = otherAxisValue + this.config.islandSize/2;
+    if (connectionsNum == 2) {
+      value = otherAxisValue + this.config.islandSize*(i+1)/3;
     }
-
-    let connections = island.connections[valueName];
-    for (let i = 0; i < connections.length; i++) {
-
-      let otherAxis = island[islandOtherAxisVar] + this.config.islandSize/2;
-      if (connections.length == 2) {
-        otherAxis = island[islandOtherAxisVar] + this.config.islandSize*(i+1)/3;
-      }
-
-      const connection = this.generateConnection(island, connections[i], direction, otherAxis);
-      drawnConnections.push(connection);
-
-      this.canvasBgContext.beginPath();
-      if (connection.direction == BoardDirections.HORIZONTAL) {
-        this.canvasBgContext.moveTo(connection.startPx, connection.otherAxisPx);
-        this.canvasBgContext.lineTo(connection.endPx, connection.otherAxisPx);
-      } else if (connection.direction == BoardDirections.VERTICAL) {
-        this.canvasBgContext.moveTo(connection.otherAxisPx, connection.startPx);
-        this.canvasBgContext.lineTo(connection.otherAxisPx, connection.endPx);
-      }
-      this.canvasBgContext.stroke();
-      this.canvasBgContext.closePath();
-    }
+    return value;
   }
 }

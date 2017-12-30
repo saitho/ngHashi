@@ -1,17 +1,11 @@
-import {Island} from "../app/Island";
+import {Coords, Island} from "../app/Island";
 import {ElementRef} from "@angular/core";
 import {BoardDirections} from "../shared/helper/GameEngine";
+import {Connection} from "../app/Connection";
 
-interface IImageStorage {
-  background: HTMLImageElement,
-  island: HTMLImageElement,
-  island_completed: HTMLImageElement,
-  bridge_horizontal: HTMLImageElement,
-  bridge_vertical: HTMLImageElement,
-  bridge_horizontal_pattern: CanvasPattern,
-  bridge_vertical_pattern: CanvasPattern
-}
-
+/**
+ * Structure of the Design configuration object
+ */
 export interface IDesignConfig {
   islandBorderSize: number;
   islandSize: number;
@@ -24,61 +18,6 @@ export abstract class AbstractDesign {
   protected canvasContext: CanvasRenderingContext2D;
   protected canvas: HTMLCanvasElement;
   protected editorMode = false;
-
-  public enableEditorMode() {
-    this.editorMode = true;
-  }
-  public disableEditorMode() {
-    this.editorMode = false;
-  }
-
-  protected generateConnection(island: Island, connectedIsland: Island, direction: BoardDirections, otherAxis: number) {
-    let islandStartVar, connectedIslandEndName, tileVar, tileVarOtherAxis;
-    if (direction == BoardDirections.HORIZONTAL) {
-      // draw right connections on vertical horizontal
-      islandStartVar = 'xEnd';
-      connectedIslandEndName = 'xStart';
-      tileVar = 'y';
-      tileVarOtherAxis = 'x';
-    } else if (direction == BoardDirections.VERTICAL) {
-      // draw top connections on vertical direction
-      islandStartVar = 'yStart';
-      connectedIslandEndName = 'yEnd';
-      tileVar = 'x';
-      tileVarOtherAxis = 'y';
-    } else {
-      throw new Error('Unknown direction.');
-    }
-
-    let connection = {
-      direction: direction,
-      island: island,
-      connectedIsland: connectedIsland,
-      start: island.tileCoords[tileVar],
-      end: connectedIsland.tileCoords[tileVar],
-      otherAxis: island.tileCoords[tileVarOtherAxis],
-      startPx: island[islandStartVar],
-      endPx: connectedIsland[connectedIslandEndName],
-      otherAxisPx: otherAxis,
-    };
-    if (connection.start > connection.end) {
-      // make sure the smallest number is start point
-      const tmp = connection.end;
-      connection.end = connection.start;
-      connection.start = tmp;
-    }
-    return connection;
-  }
-
-  protected imageStorage: IImageStorage = {
-    background: null,
-    island: null,
-    island_completed: null,
-    bridge_horizontal: null,
-    bridge_vertical: null,
-    bridge_horizontal_pattern: null,
-    bridge_vertical_pattern: null
-  };
 
   constructor(canvas: ElementRef|AbstractDesign, canvasBg: ElementRef, config: IDesignConfig) {
     if (canvas instanceof AbstractDesign) {
@@ -98,9 +37,70 @@ export abstract class AbstractDesign {
     this.canvasBgContext = this.canvasBg.getContext('2d');
   }
 
+  /**
+   * Enabling editor mode might change how the design will handle islands
+   */
+  public enableEditorMode() {
+    this.editorMode = true;
+  }
+
+  /**
+   * Generates a connection object used by the design
+   * @param {Island} island
+   * @param {Island} connectedIsland
+   * @param {BoardDirections} direction
+   * @param {number} otherAxis
+   * @return {Connection}
+   */
+  protected generateConnection(island: Island, connectedIsland: Island, direction: BoardDirections, otherAxis: number) {
+    let islandStartVar, connectedIslandEndName, tileVar, tileVarOtherAxis;
+    if (direction == BoardDirections.HORIZONTAL) {
+      // draw right connections on vertical horizontal
+      islandStartVar = 'xEnd';
+      connectedIslandEndName = 'xStart';
+      tileVar = 'y';
+      tileVarOtherAxis = 'x';
+    } else if (direction == BoardDirections.VERTICAL) {
+      // draw top connections on vertical direction
+      islandStartVar = 'yStart';
+      connectedIslandEndName = 'yEnd';
+      tileVar = 'x';
+      tileVarOtherAxis = 'y';
+    } else {
+      throw new Error('Unknown direction.');
+    }
+
+    let connection: Connection = {
+      direction: direction,
+      island: island,
+      connectedIsland: connectedIsland,
+      start: island.tileCoords[tileVar],
+      end: connectedIsland.tileCoords[tileVar],
+      otherAxis: island.tileCoords[tileVarOtherAxis],
+      startPx: island[islandStartVar],
+      endPx: connectedIsland[connectedIslandEndName],
+      otherAxisPx: otherAxis,
+    };
+    if (connection.start > connection.end) {
+      // make sure the smallest number is start point
+      const tmp = connection.end;
+      connection.end = connection.start;
+      connection.start = tmp;
+    }
+    return connection;
+  }
+
+  /**
+   * Invoked in AbstractGameComponent after the contexts are set
+   */
   public init() {
   }
 
+  /**
+   * Requests an image from a URL
+   * @param imageUrl
+   * @return {Promise<HTMLImageElement>}
+   */
   protected preloadImage(imageUrl) {
     return new Promise<HTMLImageElement>((resolve, reject) => {
       const img = new Image();
@@ -114,15 +114,82 @@ export abstract class AbstractDesign {
     });
   }
 
+  /**
+   * Invoked before the game board is drawn in AbstractGameBoardComponent
+   * @return {Promise<void>}
+   */
   public beforeDrawGameBoard(): Promise<void> {
     return new Promise<void>((resolve) => {
       resolve();
     });
   }
 
+  /**
+   * draws an island onto the background canvas
+   * Invoked after initialization of all islands in AbstractGameBoardComponent
+   * @param {Island} island
+   * @param drawnConnections
+   */
   public abstract drawIsland(island: Island, drawnConnections);
 
-  public getConfig() {
-    return this.config;
+  /**
+   * Manipulates a given value to enable adjusting the space between two lines
+   * @param {number} otherAxisValue
+   * @param {number} i
+   * @param {number} connectionsNum
+   */
+  protected abstract adjustOtherAxisValue(otherAxisValue: number, i: number, connectionsNum: number): number;
+
+  /**
+   * Draws a connection on the background canvas
+   * @param {Coords} moveTo
+   * @param {Coords} lineTo
+   * @param {BoardDirections} direction
+   */
+  protected drawConnectionLine(moveTo: Coords, lineTo: Coords, direction: BoardDirections) {
+    this.canvasBgContext.beginPath();
+    this.canvasBgContext.moveTo(moveTo.x, moveTo.y);
+    this.canvasBgContext.lineTo(lineTo.x, lineTo.y);
+    this.canvasBgContext.stroke();
+    this.canvasBgContext.closePath();
+  }
+
+  /**
+   * draws connections of an island on background canvas
+   * @param island
+   * @param direction
+   * @param drawnConnections
+   */
+  protected drawConnections(island: Island, direction: BoardDirections, drawnConnections: Connection[]) {
+    let islandOtherAxisVar, valueName;
+    if (direction == BoardDirections.HORIZONTAL) {
+      // draw right connections on vertical horizontal
+      valueName = 'right';
+      islandOtherAxisVar = 'yStart';
+    } else if (direction == BoardDirections.VERTICAL) {
+      // draw top connections on vertical direction
+      valueName = 'top';
+      islandOtherAxisVar = 'xStart';
+    } else {
+      throw new Error('Unknown direction.');
+    }
+
+    let connections = island.connections[valueName];
+    for (let i = 0; i < connections.length; i++) {
+      let otherAxis = this.adjustOtherAxisValue(island[islandOtherAxisVar], i, connections.length);
+      const connection = this.generateConnection(island, connections[i], direction, otherAxis);
+      drawnConnections.push(connection);
+
+      let moveTo: Coords;
+      let lineTo: Coords;
+      if (connection.direction == BoardDirections.HORIZONTAL) {
+        moveTo = {x: connection.startPx, y: connection.otherAxisPx};
+        lineTo = {x: connection.endPx, y: connection.otherAxisPx};
+      } else if (connection.direction == BoardDirections.VERTICAL) {
+        moveTo = {x: connection.otherAxisPx, y: connection.startPx};
+        lineTo = {x: connection.otherAxisPx, y: connection.endPx};
+      }
+      this.drawConnectionLine(moveTo, lineTo, connection.direction);
+    }
   }
 }
