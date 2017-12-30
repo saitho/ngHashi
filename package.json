@@ -1,6 +1,6 @@
 {
-  "name": "hashi",
-  "version": "1.0.0",
+  "name": "nghashi",
+  "version": "1.1.0",
   "engines": {
     "node": "9.3.0"
   },

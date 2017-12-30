@@ -1,5 +1,22 @@
 # Changelog
 
+## Version 1.1.0
+
+### Features
+
+* Timer to keep track of the time spent on a level
+* Printing functionality for maps
+* Show deployed version in logo title
+
+### Tasks
+
+* Moves instructions to game-help component
+* TSLint cleanup
+
+### Bugfixes
+
+* Fix test execution
+
 ## Version 1.0.0
 
 ### Features
