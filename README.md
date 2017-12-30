@@ -57,7 +57,7 @@ Make sure to activate TSLint in your IDE if available.
 ## Deployment
 
 Deploying the project usually involves building the project and deploying the build to the deployment server.
-Build the project with `npm build` and deploy the generated dist/ folder to your server.
+Build the project with `npm run-script build` and deploy the generated dist/ folder to your server.
 
 **Note:** Usually you are able to set the *--prod* flag in order to build the app for production. However there are issues with the game that makes it currently impossible to use that.
 
