@@ -1,3 +1,19 @@
+<!-- Help Modal -->
+<ng-template #helpModal let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Help</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-game-help></app-game-help>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="d()">Close</button>
+  </div>
+</ng-template>
+
 <section id="game" [style.width.px]="gameWidth" [style.height.px]="gameHeight">
   <section class="titleBar">
     <h2 *ngIf="map">{{map.title}}</h2>
@@ -7,13 +23,17 @@
   <section class="statusBar">
     <div class="message" [innerText]="message"></div>
     <div class="actions">
-      <button (click)="restart()">
+      <button (click)="help(helpModal)" ngbTooltip="Help">
+        <i class="fa fa-question" aria-hidden="true"></i>
+      </button>
+      <button (click)="print()" ngbTooltip="Print">
+        <i class="fa fa-print" aria-hidden="true"></i>
+      </button>
+      <button (click)="restart()" ngbTooltip="Restart game">
         <i class="fa fa-repeat" aria-hidden="true"></i>
-        Restart game
       </button>
       <button routerLink="/level_select">
-        <i class="fa fa-list" aria-hidden="true"></i>
-        Go to level selection
+        <i class="fa fa-list" aria-hidden="true" ngbTooltip="Go to level selection"></i>
       </button>
     </div>
   </section>

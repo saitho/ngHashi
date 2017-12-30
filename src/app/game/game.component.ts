@@ -3,6 +3,7 @@ import {AbstractMap} from '../maps/AbstractMap';
 import {ActivatedRoute, NavigationStart, Router} from '@angular/router';
 import {GameLevelsService} from '../../shared/services/GameLevelsService';
 import AbstractGameBoardComponent from '../AbstractGameBoardComponent';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-game',
@@ -18,6 +19,7 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
 
   constructor(private router: Router,
               private route: ActivatedRoute,
+              private modalService: NgbModal,
               private gameLevels: GameLevelsService) {
     super();
 
@@ -98,6 +100,47 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
     }
 
     await this.drawGameBoard();
+  }
+
+  /**
+   * Shows the modal for data import
+   * @param content
+   */
+  help(content) {
+    this.modalService.open(content).result.then((result) => {
+      console.log(result);
+    }, (reason) => {
+      console.log(reason);
+    });
+  }
+
+  /**
+   * Open print dialogue for the current map
+   */
+  print() {
+    const dataUrl = this.canvasBg.nativeElement.toDataURL();
+    // todo: try to include rules from game-help component...
+    const windowContent = '<!DOCTYPE html><html>' +
+      '<head><title>ngHashi - Puzzle: ' + this.map.title + '</title></head><body>' +
+      '<h2>Game rules</h2>' +
+      '<ul>\n' +
+      '  <li>The number of bridges incident on an island matches that island\'s number</li>\n' +
+      '  <li>Bridges can be set horizontally and vertically</li>\n' +
+      '  <li>Each side of an island can take 2 bridges at its maximum</li>\n' +
+      '  <li>Bridges must not cross other bridges or islands</li>\n' +
+      '  <li>At the end all islands are connected</li>\n' +
+      '</ul>' +
+      '<img src="' + dataUrl + '">' +
+      '</body></html>';
+    const printWin = window.open('', '', 'width=800,height=800');
+    printWin.document.open();
+    printWin.document.write(windowContent);
+    printWin.document.close();
+    window.setTimeout(() => {
+      printWin.focus();
+      printWin.print();
+      printWin.close();
+    }, 1000);
   }
 
   /**
