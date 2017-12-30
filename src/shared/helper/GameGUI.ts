@@ -3,7 +3,7 @@ import {BoardDirections, GameEngine} from "./GameEngine";
 import {Island} from "../../app/Island";
 import {Connection} from "../../app/Connection";
 import {AbstractMap} from "../../app/maps/AbstractMap";
-import BlankMap from "../../app/maps/BlankMap";
+import EditorMap from "../../app/maps/EditorMap";
 
 /**
  * Deals with position (pixels...) related tasks
@@ -23,7 +23,7 @@ export class GameGUI {
   }
 
   public removeBridge(connection: Connection) {
-    GameEngine.disconnectIslands(connection.island, connection.connectedIsland, connection.direction, (this.map instanceof BlankMap));
+    GameEngine.disconnectIslands(connection.island, connection.connectedIsland, connection.direction, (this.map instanceof EditorMap));
   }
 
   public putBridge(x1, y1, x2, y2) {
@@ -31,7 +31,7 @@ export class GameGUI {
     const islands = this.getIslandInRange(x1, y1, x2, y2);
     if (
       (islands.size !== 2 || direction === null) &&
-      !(this.map instanceof BlankMap)
+      !(this.map instanceof EditorMap)
     ) {
       throw new InvalidTurnError();
     }
@@ -40,7 +40,7 @@ export class GameGUI {
     const iter = islands.entries();
     const island1 = iter.next().value[0];
     const island2 = iter.next().value[0];
-    GameEngine.connectIslands(island1, island2, direction, (this.map instanceof BlankMap));
+    GameEngine.connectIslands(island1, island2, direction, (this.map instanceof EditorMap));
   }
 
   public getTile(x, y, islandsOnly = true): Island {

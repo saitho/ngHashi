@@ -2,7 +2,7 @@ import {Island} from "../Island";
 import {AbstractMap} from "./AbstractMap";
 import {GameEngine, BoardDirections} from "../../shared/helper/GameEngine";
 
-export default class BlankMap extends AbstractMap {
+export default class EditorMap extends AbstractMap {
   constructor() {
     super();
     this.title = '';

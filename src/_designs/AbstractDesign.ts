@@ -1,6 +1,6 @@
-import {Island} from "../../Island";
+import {Island} from "../app/Island";
 import {ElementRef} from "@angular/core";
-import {BoardDirections} from "../../../shared/helper/GameEngine";
+import {BoardDirections} from "../shared/helper/GameEngine";
 
 interface IImageStorage {
   background: HTMLImageElement,

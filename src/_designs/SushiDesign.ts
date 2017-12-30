@@ -1,4 +1,4 @@
-import {AbstractDesign, IDesignConfig} from "../app/game/Designs/AbstractDesign";
+import {AbstractDesign, IDesignConfig} from "./AbstractDesign";
 import {Island} from "../app/Island";
 import {BoardDirections} from "../shared/helper/GameEngine";
 import {Connection} from "../app/Connection";

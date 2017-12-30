@@ -1,7 +1,7 @@
 import {GameGUI} from "../shared/helper/GameGUI";
 import {AbstractMap} from "./maps/AbstractMap";
 import {AfterViewInit, ElementRef, OnInit, ViewChild} from "@angular/core";
-import {AbstractDesign} from "./game/Designs/AbstractDesign";
+import {AbstractDesign} from "../_designs/AbstractDesign";
 import {Connection} from "./Connection";
 import {GameThemes} from "../shared/helper/GameThemes";
 import {BoardDirections, GameEngine} from "../shared/helper/GameEngine";

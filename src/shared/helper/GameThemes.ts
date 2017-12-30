@@ -1,6 +1,6 @@
 import {SushiDesign} from "../../_designs/SushiDesign";
 import {ClassicDesign} from "../../_designs/ClassicDesign";
-import {AbstractDesign, IDesignConfig} from "../../app/game/Designs/AbstractDesign";
+import {AbstractDesign, IDesignConfig} from "../../_designs/AbstractDesign";
 import {WurzelimperiumDesign} from "../../_designs/WurzelimperiumDesign";
 import {CircuitTalentDesign} from "../../_designs/CircuitTalentDesign";
 

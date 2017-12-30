@@ -1,8 +1,8 @@
 import {Component, AfterViewInit} from '@angular/core';
-import BlankMap from "../maps/BlankMap";
+import EditorMap from "../maps/EditorMap";
 import {GameGUI} from "../../shared/helper/GameGUI";
 import AbstractGameBoardComponent from "../AbstractGameBoardComponent";
-import {AbstractDesign} from "../game/Designs/AbstractDesign";
+import {AbstractDesign} from "../../_designs/AbstractDesign";
 import {BoardDirections} from "../../shared/helper/GameEngine";
 import {UrlEncodePipe} from "../../shared/pipes/UrlEncodePipe";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
@@ -14,7 +14,7 @@ import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 })
 export class EditorComponent extends AbstractGameBoardComponent implements AfterViewInit {
   gui: GameGUI = new GameGUI();
-  protected map = new BlankMap();
+  protected map = new EditorMap();
   public setBridges: boolean = false;
 
   constructor(
