@@ -1,32 +1,87 @@
-# Project
+# ngHashi
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.4.9.
+ngHashi is a Angular implementation of the Japanese puzzle game Hashi, originally designed by Nikoli.
 
-## Angular command list
+## Key features
 
-### Development server
+* 4 Hashi levels (maps)
+  * progress saved within window (lost when refreshing the page)
+  * timer that tracks how long you spent on a level
+* Hashi editor for creating own maps
+  * Map validity checking through depth search
+  * Import and export created maps (JSON)
+  * Send in your levels to GitHub
+
+## Getting Started
+
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+
+### Prerequisites
+
+First of all you will need NodeJS - get it here: https://nodejs.org/en/
+We recommend getting the latest version if you want to make sure the project runs well.
+
+### Installing
+
+Next you will require Angular CLI 1.6.1 in order to run the project locally.
+Install Angular CLI via:
+
+```
+npm install -g @angular/cli
+```
+
+Then install the required dependencies using:
+
+```
+npm install
+```
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-### Code scaffolding
+## Running the tests
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+### Unit Tests
 
-### Build
+No automated tests have been configured for this project yet.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+### Coding style tests
 
-### Running unit tests
+This project uses TSLint. Run TSLint checks with the following command:
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+```
+ng lint
+```
 
-### Running end-to-end tests
+Make sure to activate TSLint in your IDE if available.
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+## Deployment
 
-### Further help
+Deploying the project usually involves building the project and deploying the build to the deployment server.
+Build the project with `ng build` and deploy the generated dist/ folder to your server.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+**Note:** Usually you are able to set the *--prod* flag in order to build the app for production. However there are issues with the game that makes it currently impossible to use that.
+
+**Tip:** This deployment strategy was implemented for a deployment to Heroku using GitLab CI (see .gitlab-ci.yml).
+
+## Built With
+
+* [Angular 5](https://angular.io/) - The web framework used
+* [NPM](https://www.npmjs.com/) - Dependency Management
+* [Bootstrap](https://getbootstrap.com/) - Styling
+* [ngBootstrap](https://ng-bootstrap.github.io) - Bootstrap components for use with Angular
+* [Font Awesome](http://fontawesome.io/) - Icons
+
+## Versioning
+
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+
+## Authors
+
+* **Mario Lubenka** - *Initial work* - [saitho](https://github.com/saitho)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
 ## Workflows
 
