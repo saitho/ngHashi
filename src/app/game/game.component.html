@@ -42,10 +42,9 @@
     <canvas #canvasBg id="background"></canvas>
     <canvas #canvasDraw
             id="draw"
-            (click)="mouseClick($event)"
-            (down)="startBridgeDrawing($event)"
-            (up)="stopBridgeDrawing()"
-            (move)="duringBridgeDrawing($event)"
+            (down)="onTouchDown($event)"
+            (up)="onTouchUp($event)"
+            (move)="onTouchMove($event)"
     ></canvas>
   </div>
   <div [hidden]="map">

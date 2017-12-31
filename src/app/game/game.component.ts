@@ -63,50 +63,10 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
   }
 
   /**
-   * @inheritDoc
-   * @see removeConnectionOnCursorPos
-   */
-  mouseClick(e) {
-    this.removeConnectionOnCursorPos(e);
-  }
-
-  /**
-   * @inheritDoc
-   */
-  startBridgeDrawing(e) {
-    this.startPosition.x = e.offsetX;
-    this.startPosition.y = e.offsetY;
-    this.started = this.gui.hasIsland(e.offsetX, e.offsetY);
-  }
-
-  /**
-   * @inheritDoc
-   */
-  async stopBridgeDrawing() {
-    if (!this.started) {
-      return;
-    }
-
-    try {
-      // pass start and stop ositions to GameEngine
-      this.gui.putBridge(this.startPosition, this.stopPosition);
-      this.message = 'Bridge set successfully.';
-    } catch (e) {
-      if (e.message) {
-        this.message = e.message;
-      } else {
-        this.message = 'Invalid turn.';
-      }
-    }
-
-    await this.drawGameBoard();
-  }
-
-  /**
    * Shows the modal for data import
    * @param content
    */
-  help(content) {
+  public help(content) {
     this.modalService.open(content).result.then((result) => {
       console.log(result);
     }, (reason) => {
@@ -117,7 +77,7 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
   /**
    * Open print dialogue for the current map
    */
-  print() {
+  public print() {
     const dataUrl = this.canvasBg.nativeElement.toDataURL();
     // todo: try to include rules from game-help component...
     const windowContent = '<!DOCTYPE html><html>' +
@@ -146,8 +106,70 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
   /**
    * @inheritDoc
    */
-  duringBridgeDrawing(e) {
-    if (!this.started) {
+  public drawGameBoard() {
+    return new Promise<void>(resolve => {
+      super.drawGameBoard()
+        .then(() => {
+          if (this.map.isSolved()) {
+            this.message = 'Level solved.';
+            this.map.stopTimer();
+          } else if (this.drawnConnections.length) {
+            // start timer if connections are drawn
+            // -> user sets first connection
+            // -> user returns to puzzle he already started
+            this.map.startTimer();
+          }
+          resolve();
+        })
+        .catch(e => console.error(e));
+    });
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public onTouchDown(e) {
+    if (!(e instanceof PointerEvent)) {
+      return;
+    }
+    const hasIsland = this.gui.hasIsland(e.offsetX, e.offsetY);
+    if (hasIsland) {
+      this.startPosition.x = e.offsetX;
+      this.startPosition.y = e.offsetY;
+      this.started = true;
+    } else {
+      this.removeConnectionOnCursorPos(e);
+    }
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public async onTouchUp(e) {
+    if (!(e instanceof PointerEvent) || !this.started) {
+      return;
+    }
+
+    try {
+      // pass start and stop ositions to GameEngine
+      this.gui.putBridge(this.startPosition, this.stopPosition);
+      this.message = 'Bridge set successfully.';
+    } catch (e) {
+      if (e.message) {
+        this.message = e.message;
+      } else {
+        this.message = 'Invalid turn.';
+      }
+    }
+
+    await this.drawGameBoard();
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public onTouchMove(e) {
+    if (!(e instanceof PointerEvent) || !this.started) {
       return;
     }
     this.canvasContext.clearRect(0, 0, this.gameWidth, this.gameHeight);
@@ -166,27 +188,5 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
     }
     this.canvasContext.stroke();
     this.canvasContext.closePath();
-  }
-
-  /**
-   * @inheritDoc
-   */
-  drawGameBoard() {
-    return new Promise<void>(resolve => {
-      super.drawGameBoard()
-        .then(() => {
-          if (this.map.isSolved()) {
-            this.message = 'Level solved.';
-            this.map.stopTimer();
-          } else if (this.drawnConnections.length) {
-            // start timer if connections are drawn
-            // -> user sets first connection
-            // -> user returns to puzzle he already started
-            this.map.startTimer();
-          }
-          resolve();
-        })
-        .catch(e => console.error(e));
-    });
   }
 }

@@ -43,82 +43,11 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
    * Sets active tool
    * @param {string} tool
    */
-  setTool(tool: string) {
+  public setTool(tool: string) {
     this.setBridges = (tool === 'bridges');
   }
 
-  /**
-   * Save current position and enable 'bridge setting' mode
-   * triggered when the the player starts drawing the bridge (mousedown)
-   * @inheritDoc
-   */
-  startBridgeDrawing(e) {
-    if (!this.setBridges) {
-      return;
-    }
-    this.startPosition.x = e.offsetX;
-    this.startPosition.y = e.offsetY;
-
-    this.started = true;
-  }
-
-  /**
-   * Disable 'bridge setting' mode and pass the positions to the GameEngine
-   * triggered when the the player stops drawing the bridge (mouseup)
-   * Note: disabling 'started' was moved to mouseClick as this is triggered after mouseDown...
-   * @inheritDoc
-   */
-  async stopBridgeDrawing() {
-    if (!this.setBridges || !this.started) {
-      return;
-    }
-
-    try {
-      // pass start and stop ositions to GameEngine
-      this.gui.putBridge(this.startPosition, this.stopPosition);
-    } catch (e) {
-
-    }
-    await this.drawGameBoard();
-  }
-
-  /**
-   * triggered while the bridge is being drawn by the player (mousemove)
-   * @inheritDoc
-   * @param e
-   */
-  duringBridgeDrawing(e) {
-    if (!this.setBridges || !this.started) {
-      return;
-    }
-    this.canvasContext.clearRect(0, 0, 448, 448);
-    this.canvasContext.beginPath();
-    this.canvasContext.moveTo(this.startPosition.x, this.startPosition.y);
-    const dx = e.offsetX - this.startPosition.x;
-    const dy = e.offsetY - this.startPosition.y;
-    if (Math.abs(dx) > Math.abs(dy)) {
-      this.canvasContext.lineTo(e.offsetX, this.startPosition.y);
-      this.stopPosition.x = e.offsetX;
-      this.stopPosition.y = this.startPosition.y;
-    } else {
-      this.canvasContext.lineTo(this.startPosition.x, e.offsetY);
-      this.stopPosition.x = this.startPosition.x;
-      this.stopPosition.y = e.offsetY;
-    }
-    this.canvasContext.stroke();
-    this.canvasContext.closePath();
-  }
-
-  /**
-   * @inheritDoc
-   */
-  async mouseClick(e) {
-    if (this.setBridges) {
-      // in 'set bridges' mode only remove connections...
-      this.removeConnectionOnCursorPos(e);
-      return;
-    }
-
+  protected async toggleIsland(e) {
     // add/remove island
     const x = Math.floor(e.offsetX / (this.gameWidth / 7));
     const y = Math.floor(e.offsetY / (this.gameHeight / 7));
@@ -194,7 +123,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
   /**
    * @inheritDoc
    */
-  drawGameBoard() {
+  public drawGameBoard() {
     return new Promise<void>(resolve => {
       super.drawGameBoard()
         .then(() => {
@@ -208,7 +137,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
   /**
    * Opens a new window with a prefilled GitHub issue containing the map data
    */
-  submitGitHub() {
+  public submitGitHub() {
     if (!this.save()) {
       return;
     }
@@ -223,7 +152,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
   /**
    * Opens the game view in a new window for test playing the map (or sharing with friends)
    */
-  playMap() {
+  public playMap() {
     if (!this.save()) {
       return;
     }
@@ -234,7 +163,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
    * Shows the modal for data import
    * @param content
    */
-  importModal(content) {
+  public importModal(content) {
     this.modalService.open(content).result.then((result) => {
       console.log(result);
     }, (reason) => {
@@ -274,7 +203,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
   /**
    * Exports a valid created map into a downloadable JSON file
    */
-  export() {
+  public export() {
     if (!this.save()) {
       return;
     }
@@ -291,7 +220,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
    * Saves the current map
    * @return {boolean}
    */
-  save() {
+  public save() {
     if (!this.valid) {
       alert('The map is invalid and can not be saved.');
       return false;
@@ -310,5 +239,76 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
       path: path
     };
     return true;
+  }
+
+  /**
+   * Save current position and enable 'bridge setting' mode
+   * triggered when the the player starts drawing the bridge (mousedown)
+   * @inheritDoc
+   */
+  public async onTouchDown(e) {
+    if (!(e instanceof PointerEvent)) {
+      return;
+    }
+
+    if (!this.setBridges) {
+      await this.toggleIsland(e);
+      return;
+    }
+
+    if (!this.gui.hasIsland(e.offsetX, e.offsetY)) {
+      this.removeConnectionOnCursorPos(e);
+      return;
+    }
+    this.startPosition.x = e.offsetX;
+    this.startPosition.y = e.offsetY;
+    this.started = true;
+  }
+
+  /**
+   * Disable 'bridge setting' mode and pass the positions to the GameEngine
+   * triggered when the the player stops drawing the bridge (mouseup)
+   * Note: disabling 'started' was moved to mouseClick as this is triggered after mouseDown...
+   * @inheritDoc
+   */
+  public async onTouchUp(e) {
+    if (!(e instanceof PointerEvent) || !this.setBridges || !this.started) {
+      return;
+    }
+
+    try {
+      // pass start and stop ositions to GameEngine
+      this.gui.putBridge(this.startPosition, this.stopPosition);
+    } catch (e) {
+
+    }
+    await this.drawGameBoard();
+  }
+
+  /**
+   * triggered while the bridge is being drawn by the player (mousemove)
+   * @inheritDoc
+   * @param e
+   */
+  public onTouchMove(e) {
+    if (!(e instanceof PointerEvent) || !this.setBridges || !this.started) {
+      return;
+    }
+    this.canvasContext.clearRect(0, 0, 448, 448);
+    this.canvasContext.beginPath();
+    this.canvasContext.moveTo(this.startPosition.x, this.startPosition.y);
+    const dx = e.offsetX - this.startPosition.x;
+    const dy = e.offsetY - this.startPosition.y;
+    if (Math.abs(dx) > Math.abs(dy)) {
+      this.canvasContext.lineTo(e.offsetX, this.startPosition.y);
+      this.stopPosition.x = e.offsetX;
+      this.stopPosition.y = this.startPosition.y;
+    } else {
+      this.canvasContext.lineTo(this.startPosition.x, e.offsetY);
+      this.stopPosition.x = this.startPosition.x;
+      this.stopPosition.y = e.offsetY;
+    }
+    this.canvasContext.stroke();
+    this.canvasContext.closePath();
   }
 }

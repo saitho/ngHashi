@@ -158,32 +158,25 @@ export default abstract class AbstractGameBoardComponent implements OnInit, Afte
   }
 
   /**
-   * Invoked on mouse click on drawing canvas
-   * Used for removing lines functionality
-   * @param e
-   */
-  public abstract mouseClick(e);
-
-  /**
    * Invoked on mouse release on drawing canvas
    * Used for drawing bridges
    * @param e
    */
-  public abstract startBridgeDrawing(e);
+  public abstract onTouchDown(e);
 
   /**
    * Invoked on mouse click on drawing canvas
    * Used for drawing bridges
    * @param e
    */
-  public abstract stopBridgeDrawing(e);
+  public abstract onTouchUp(e);
 
   /**
    * Invoked on mouse down on drawing canvas
    * Used for updating the drawing canvas while drawing a bridge
    * @param e
    */
-  public abstract duringBridgeDrawing(e);
+  public abstract onTouchMove(e);
 
   /**
    * Clears both canvases
