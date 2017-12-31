@@ -1,5 +1,22 @@
 # Changelog
 
+## Version 1.2.0
+
+### Features
+
+* Use ng-appversion for displaying the app version
+* Use forked version of ng2-events to provide compatiblity with mobile devices
+
+### Task
+
+* Refactoring of image preloading in graphical designs
+* Refactoring of pixel coords datatype of Island class
+* Adds UML diagram
+
+### Bugfix
+
+* Fixes wrong command in README
+
 ## Version 1.1.0
 
 ### Features

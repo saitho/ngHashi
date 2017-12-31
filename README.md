@@ -7,10 +7,12 @@ ngHashi is a Angular implementation of the Japanese puzzle game Hashi, originall
 * 4 Hashi levels (maps)
   * progress saved within window (lost when refreshing the page)
   * timer that tracks how long you spent on a level
+  * print levels if you want to solve them on the go or give them to your kids
 * Hashi editor for creating own maps
   * Map validity checking through depth search
   * Import and export created maps (JSON)
   * Send in your levels to GitHub
+* works on computers and tablets
 
 ## Getting Started
 
