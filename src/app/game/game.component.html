@@ -43,9 +43,9 @@
     <canvas #canvasDraw
             id="draw"
             (click)="mouseClick($event)"
-            (mousedown)="startBridgeDrawing($event)"
-            (mouseup)="stopBridgeDrawing()"
-            (mousemove)="duringBridgeDrawing($event)"
+            (down)="startBridgeDrawing($event)"
+            (up)="stopBridgeDrawing()"
+            (move)="duringBridgeDrawing($event)"
     ></canvas>
   </div>
   <div [hidden]="map">

@@ -15,6 +15,7 @@ import {NgbModalBackdrop} from '@ng-bootstrap/ng-bootstrap/modal/modal-backdrop'
 import {FormsModule} from '@angular/forms';
 import {TimerFormatPipe} from '../shared/pipes/TimerFormatPipe';
 import { GameHelpComponent } from './game-help/game-help.component';
+import TouchEventModule from 'ng2-events';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { GameHelpComponent } from './game-help/game-help.component';
     BrowserModule,
     FormsModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    TouchEventModule
   ],
   providers: [
     GameLevelsService,
