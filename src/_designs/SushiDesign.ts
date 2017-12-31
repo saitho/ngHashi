@@ -40,14 +40,18 @@ export class SushiDesign extends AbstractGraphicalDesign {
     }
 
     const img = this.imageStorage.island;
-    this.canvasBgContext.drawImage(img, island.xStart - img.width / 5, island.yStart - img.height / 5);
+    this.canvasBgContext.drawImage(
+      img,
+      island.pxCoordsStart.x - img.width / 5,
+      island.pxCoordsStart.y - img.height / 5
+    );
 
     // text
     this.canvasBgContext.fillStyle = 'white';
     this.canvasBgContext.fillText(
       island.bridges.toString(),
-      island.xStart + img.width / 4,
-      island.yStart + img.height / 2
+      island.pxCoordsStart.x + img.width / 4,
+      island.pxCoordsStart.y + img.height / 2
     );
 
     this.drawConnections(island, BoardDirections.HORIZONTAL, drawnConnections);

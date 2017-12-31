@@ -66,14 +66,18 @@ export class CircuitTalentDesign extends AbstractGraphicalDesign {
     if (island.isComplete()) {
       img = this.imageStorage.island_completed;
     }
-    this.canvasBgContext.drawImage(img, island.xStart - img.width / 5, island.yStart - img.height / 5);
+    this.canvasBgContext.drawImage(
+      img,
+      island.pxCoordsStart.x - img.width / 5,
+      island.pxCoordsStart.y - img.height / 5
+    );
 
     // text
     this.canvasBgContext.fillStyle = 'white';
     this.canvasBgContext.fillText(
       island.bridges.toString(),
-      island.xStart + 3,
-      island.yStart + 7
+      island.pxCoordsStart.x + 3,
+      island.pxCoordsStart.y + 7
     );
 
     this.drawConnections(island, BoardDirections.HORIZONTAL, drawnConnections);

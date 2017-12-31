@@ -8,15 +8,15 @@ import {BoardDirections, GameEngine} from '../shared/helper/GameEngine';
 
 export default abstract class AbstractGameBoardComponent implements OnInit, AfterViewInit {
   protected map: AbstractMap = null;
-  @ViewChild('canvasBg') canvasBg: ElementRef;
-  @ViewChild('canvasDraw') canvas: ElementRef;
-  gameWidth_default = 600;
-  gameHeight_default = 600;
+  @ViewChild('canvasBg') protected canvasBg: ElementRef;
+  @ViewChild('canvasDraw') protected canvas: ElementRef;
+  protected gameWidth_default = 600;
+  protected gameHeight_default = 600;
   abstract islandSize;
   gameWidth;
   gameHeight;
-  canvasContext: CanvasRenderingContext2D;
-  canvasBgContext: CanvasRenderingContext2D;
+  protected canvasContext: CanvasRenderingContext2D;
+  protected canvasBgContext: CanvasRenderingContext2D;
   protected design: AbstractDesign;
   protected started = false;
   protected startPosition = {x: -300, y: -300};
@@ -260,10 +260,14 @@ export default abstract class AbstractGameBoardComponent implements OnInit, Afte
               if (island.init) {
                 continue;
               }
-              island.xStart = xPerRect * this.gameBoardConfig.perRectMultiplier + i * (xPerRect + this.gameBoardConfig.perRectOffset);
-              island.yStart = yPerRect * this.gameBoardConfig.perRectMultiplier + j * (yPerRect + this.gameBoardConfig.perRectOffset);
-              island.xEnd = island.xStart + this.islandSize;
-              island.yEnd = island.yStart + this.islandSize;
+              island.pxCoordsStart = {
+                x: xPerRect * this.gameBoardConfig.perRectMultiplier + i * (xPerRect + this.gameBoardConfig.perRectOffset),
+                y: yPerRect * this.gameBoardConfig.perRectMultiplier + j * (yPerRect + this.gameBoardConfig.perRectOffset)
+              };
+              island.pxCoordsEnd = {
+                x: island.pxCoordsStart.x + this.islandSize,
+                y: island.pxCoordsStart.y + this.islandSize
+              };
               island.tileCoords = {x: j, y: i};
               island.init = true;
             }

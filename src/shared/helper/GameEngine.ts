@@ -7,6 +7,9 @@ export enum BoardDirections {
   VERTICAL = 2
 }
 
+/**
+ * todo: resolve static variables into something that makes more sense...
+ */
 export class GameEngine {
 
   protected static connections: IGameEngineConnection[];
@@ -31,7 +34,7 @@ export class GameEngine {
     let island2_pos = '';
     switch (direction) {
       case BoardDirections.HORIZONTAL:
-        if (island1.xEnd < island2.xStart) {
+        if (island1.pxCoordsEnd.x < island2.pxCoordsStart.x) {
           // island1: right, island2: left
           island1_pos = 'right';
           island2_pos = 'left';
@@ -42,7 +45,7 @@ export class GameEngine {
         }
         break;
       case BoardDirections.VERTICAL:
-        if (island1.yEnd < island2.yStart) {
+        if (island1.pxCoordsEnd.y < island2.pxCoordsStart.y) {
           // island1: bottom, island2: top
           island1_pos = 'bottom';
           island2_pos = 'top';

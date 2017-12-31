@@ -53,19 +53,21 @@ export abstract class AbstractDesign {
    * @return {Connection}
    */
   protected generateConnection(island: Island, connectedIsland: Island, direction: BoardDirections, otherAxis: number) {
-    let islandStartVar, connectedIslandEndName, tileVar, tileVarOtherAxis;
+    let otherAxisTile, startPx, endPx, start, end;
     if (direction === BoardDirections.HORIZONTAL) {
       // draw right connections on horizontal direction
-      islandStartVar = 'xEnd';
-      connectedIslandEndName = 'xStart';
-      tileVar = 'y';
-      tileVarOtherAxis = 'x';
+      start = island.tileCoords.y;
+      end = connectedIsland.tileCoords.y;
+      startPx = island.pxCoordsEnd.x;
+      endPx = connectedIsland.pxCoordsStart.x;
+      otherAxisTile = island.tileCoords.x;
     } else if (direction === BoardDirections.VERTICAL) {
       // draw top connections on vertical direction
-      islandStartVar = 'yStart';
-      connectedIslandEndName = 'yEnd';
-      tileVar = 'x';
-      tileVarOtherAxis = 'y';
+      start = island.tileCoords.x;
+      end = connectedIsland.tileCoords.x;
+      startPx = island.pxCoordsStart.y;
+      endPx = connectedIsland.pxCoordsEnd.y;
+      otherAxisTile = island.tileCoords.y;
     } else {
       throw new Error('Unknown direction.');
     }
@@ -74,11 +76,11 @@ export abstract class AbstractDesign {
       direction: direction,
       island: island,
       connectedIsland: connectedIsland,
-      start: island.tileCoords[tileVar],
-      end: connectedIsland.tileCoords[tileVar],
-      otherAxis: island.tileCoords[tileVarOtherAxis],
-      startPx: island[islandStartVar],
-      endPx: connectedIsland[connectedIslandEndName],
+      start: start,
+      end: end,
+      otherAxis: otherAxisTile,
+      startPx: startPx,
+      endPx: endPx,
       otherAxisPx: otherAxis,
     };
     if (connection.start > connection.end) {
@@ -161,22 +163,21 @@ export abstract class AbstractDesign {
    * @param drawnConnections
    */
   protected drawConnections(island: Island, direction: BoardDirections, drawnConnections: Connection[]) {
-    let islandOtherAxisVar, valueName;
+    let axisValue, connections;
     if (direction === BoardDirections.HORIZONTAL) {
       // draw right connections on vertical horizontal
-      valueName = 'right';
-      islandOtherAxisVar = 'yStart';
+      connections = island.connections.right;
+      axisValue = island.pxCoordsStart.y;
     } else if (direction === BoardDirections.VERTICAL) {
       // draw top connections on vertical direction
-      valueName = 'top';
-      islandOtherAxisVar = 'xStart';
+      connections = island.connections.top;
+      axisValue = island.pxCoordsStart.x;
     } else {
       throw new Error('Unknown direction.');
     }
 
-    const connections = island.connections[valueName];
     for (let i = 0; i < connections.length; i++) {
-      const otherAxis = this.adjustOtherAxisValue(island[islandOtherAxisVar], i, connections.length);
+      const otherAxis = this.adjustOtherAxisValue(axisValue, i, connections.length);
       const connection = this.generateConnection(island, connections[i], direction, otherAxis);
       drawnConnections.push(connection);
 

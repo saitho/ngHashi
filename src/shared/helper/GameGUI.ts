@@ -60,9 +60,10 @@ export class GameGUI {
         if (island.bridges === 0 && islandsOnly) {
           continue;
         }
+        // check both directions (e.g. left and right OR top and bottom)
         if (
-          (island.xStart <= x && island.xEnd > x) &&
-          (island.yStart <= y && island.yEnd > y)
+          (island.pxCoordsStart.x <= x && island.pxCoordsEnd.x > x) &&
+          (island.pxCoordsStart.y <= y && island.pxCoordsEnd.y > y)
         ) {
           return island;
         }

@@ -32,8 +32,8 @@ export class ClassicDesign extends AbstractDesign {
     // circle
     this.canvasBgContext.beginPath();
     this.canvasBgContext.arc(
-      island.xStart + this.config.islandSize / 2,
-      island.yStart + this.config.islandSize / 2,
+      island.pxCoordsStart.x + this.config.islandSize / 2,
+      island.pxCoordsStart.y + this.config.islandSize / 2,
       this.config.islandSize / 2,
       0,
       2 * Math.PI
@@ -50,8 +50,8 @@ export class ClassicDesign extends AbstractDesign {
       this.canvasBgContext.fillStyle = 'black';
       this.canvasBgContext.fillText(
         island.bridges.toString(),
-        island.xStart + this.config.islandSize / 2,
-        island.yStart + this.config.islandSize / 2
+        island.pxCoordsStart.x + this.config.islandSize / 2,
+        island.pxCoordsStart.y + this.config.islandSize / 2
       );
     }
 

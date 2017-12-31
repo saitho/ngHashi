@@ -12,11 +12,8 @@ export class Island {
   bridges: number;
 
   tileCoords: Coords;
-
-  xStart: number;
-  xEnd: number;
-  yStart: number;
-  yEnd: number;
+  pxCoordsStart: Coords;
+  pxCoordsEnd: Coords;
 
   connections: {top: Array<Island>; bottom: Array<Island>; left: Array<Island>; right: Array<Island>} = {
     top: [],
