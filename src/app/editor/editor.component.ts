@@ -247,7 +247,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
    * @inheritDoc
    */
   public async onTouchDown(e) {
-    if (!(e instanceof PointerEvent)) {
+    if (e.offsetX === undefined || e.offsetY === undefined) {
       return;
     }
 
@@ -272,7 +272,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
    * @inheritDoc
    */
   public async onTouchUp(e) {
-    if (!(e instanceof PointerEvent) || !this.setBridges || !this.started) {
+    if (e.offsetX === undefined || e.offsetY === undefined || !this.setBridges || !this.started) {
       return;
     }
 
@@ -291,7 +291,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
    * @param e
    */
   public onTouchMove(e) {
-    if (!(e instanceof PointerEvent) || !this.setBridges || !this.started) {
+    if (e.offsetX === undefined || e.offsetY === undefined || !this.setBridges || !this.started) {
       return;
     }
     this.canvasContext.clearRect(0, 0, 448, 448);

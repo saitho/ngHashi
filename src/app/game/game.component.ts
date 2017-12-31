@@ -129,7 +129,7 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
    * @inheritDoc
    */
   public onTouchDown(e) {
-    if (!(e instanceof PointerEvent)) {
+    if (e.offsetX === undefined || e.offsetY === undefined) {
       return;
     }
     const hasIsland = this.gui.hasIsland(e.offsetX, e.offsetY);
@@ -146,7 +146,7 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
    * @inheritDoc
    */
   public async onTouchUp(e) {
-    if (!(e instanceof PointerEvent) || !this.started) {
+    if (e.offsetX === undefined || e.offsetY === undefined || !this.started) {
       return;
     }
 
@@ -169,7 +169,7 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
    * @inheritDoc
    */
   public onTouchMove(e) {
-    if (!(e instanceof PointerEvent) || !this.started) {
+    if (e.offsetX === undefined || e.offsetY === undefined || !this.started) {
       return;
     }
     this.canvasContext.clearRect(0, 0, this.gameWidth, this.gameHeight);
