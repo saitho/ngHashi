@@ -176,7 +176,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
    * @param data
    * @return {Promise<void>}
    */
-  async import(data) {
+  public async import(data) {
     try {
       const json = JSON.parse(data);
 
@@ -220,7 +220,7 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
    * Saves the current map
    * @return {boolean}
    */
-  public save() {
+  protected save() {
     if (!this.valid) {
       alert('The map is invalid and can not be saved.');
       return false;

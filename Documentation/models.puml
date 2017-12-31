@@ -1,0 +1,168 @@
+@startuml
+
+package Angular {
+  interface AfterViewInit {
+    + ngAfterViewInit()
+  }
+  interface OnInit {
+    + ngOnInit()
+  }
+}
+
+
+class EditorComponent extends AbstractGameBoardComponent {
+  # map: EditorMap
+  + setBridges: boolean = false
+  + islandSize: number
+  + gameWidth: number
+  + gameHeight: number
+  + valid: boolean = false
+  + exportData
+  # initGame(design: AbstractDesign)
+  + setTool(tool: string)
+  # toggleIsland(e) {async}
+  - hasConnectionOnTile(x: number, y: number): boolean
+  + drawGameBoard()
+  + submitGitHub()
+  + playMap()
+  + importModal(content)
+  + import(data) {async}
+  + export()
+  # save()
+  + onTouchDown(e)
+  + onTouchUp(e)
+  + onTouchMove(e)
+}
+class GameComponent extends AbstractGameBoardComponent implements AfterViewInit {
+  # map: AbstractMap
+  + message: string
+  + islandSize: number
+  + ngAfterViewInit()
+  + restart() {async}
+  + help(content)
+  + print()
+  + drawGameBoard()
+  + onTouchDown(e)
+  + onTouchUp(e)
+  + onTouchMove(e)
+}
+class GameHelpComponent
+class LevelSelectComponent {
+  levels: AbstractMap[]
+}
+abstract class AbstractGameBoardComponent implements OnInit, AfterViewInit {
+  # map: AbstractMap
+  # canvasBg: ElementRef
+  # canvas: ElementRef
+  # canvasContext: CanvasRenderingContext2D
+  # canvasBgContext: CanvasRenderingContext2D
+  # gameWidth_default: number
+  # gameHeight_default: number
+  + islandSize: number {abstract}
+  + gameWidth: number
+  + gameHeight: number
+  # design: AbstractDesign
+  # started: boolean
+  # startPosition: Coords
+  # stopPosition: Coords
+  # gameBoardConfig
+
+  + ngOnInit()
+  + ngAfterViewInit()
+  # removeConnectionOnCursorPos(e) {async}
+  # getConnectionsFromCursorPos(e): Connection[]
+  # initGame(design: AbstractDesign)
+  + onTouchDown(e) {abstract}
+  + onTouchUp(e) {abstract}
+  + onTouchMove(e) {abstract}
+  # clearGameBoard()
+  # drawGrid()
+  + drawGameBoard()
+}
+AbstractGameBoardComponent --> Coords
+
+AbstractGameBoardComponent --> GameGUI
+AbstractGameBoardComponent --> GameEngine
+AbstractGameBoardComponent - "0..*" Connection : "drawnConnections"
+
+class GameGUI {
+  - map: AbstractMap
+  + setMap(map: AbstractMap)
+  + removeBridge(connection: Connection)
+  + putBridge(start: Coords, stop: Coords)
+  + getTile(x, y, islandsOnly = true): Island
+  + hasIsland(x, y, islandsOnly = true): boolean
+  - getLineDirection(start: Coords, stop: Coords)
+  - getIslandInRange(start: Coords, stop: Coords): Set<Island>
+}
+GameGUI --> Coords
+
+GameGUI -> GameEngine
+
+class GameEngine {
+  # connections: IGameEngineConnection[] {static}
+  + setConnections(connections: IGameEngineConnection[]) {static}
+  - getIslandPos(island1: Island, island2: Island, direction: BoardDirections) {static}
+  - connectionObstructed(island1: Island, island2: Island, direction: BoardDirections): boolean {static}
+  + connectIslands(island1: Island, island2: Island, direction: BoardDirections, editorMode = false) {static}
+  + disconnectIslands(island1: Island, island2: Island, direction: BoardDirections, editorMode = false) {static}
+}
+
+GameEngine --> "0..*" IGameEngineConnection
+
+interface IGameEngineConnection {
+  direction: BoardDirections;
+  start:  number;
+  end: number;
+  otherAxis: number;
+  island: Island;
+  connectedIsland: Island;
+}
+
+interface Connection extends IGameEngineConnection {
+  startPx:  number;
+  endPx: number;
+  otherAxisPx: number;
+}
+
+class AbstractMap {
+  + title: string
+  + themeName: string
+  # data: Array<Array<Island>>
+  + timer: number
+  # timerActive: boolean
+  - depthSearchMarkers: Set<Coords>
+  + startTimer()
+  + stopTimer()
+  + importFromJSON(object: any)
+  + exportObject()
+  + reset()
+  + isSolved(): boolean
+  + getData(): Array<Array<Island>>
+  - depthSearch(island: Island)
+  + isConnectedGraph(): boolean
+}
+AbstractMap --> Coords
+
+AbstractMap --> Island
+
+interface Coords {
+  x: number
+  y: number
+}
+
+class Island {
+  constructor(bridges: number = 0)
+  + init: boolean = false
+  + bridges: number
+  + tileCoords: Coords
+  + pxCoordsStart: Coords
+  + pxCoordsEnd: Coords
+  + connections: object
+  + countConnections(): number
+  + isComplete(): boolean
+}
+
+Island --> Coords
+
+@enduml
