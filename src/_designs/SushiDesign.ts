@@ -21,19 +21,13 @@ export class SushiDesign extends AbstractGraphicalDesign {
     return new Promise<void>((resolve) => {
       this.canvasContext.lineWidth = 3;
 
-      const island = this.preloadImage('assets/design/sushi/sushi.png');
-      const bridge_horizontal = this.preloadImage('assets/design/sushi/chopsticks_horizontal.png');
-      const bridge_vertical = this.preloadImage('assets/design/sushi/chopsticks.png');
-
-      Promise.all([island, bridge_horizontal, bridge_vertical])
-        .then((values) => {
-        this.imageStorage.island = values[0];
-        this.imageStorage.bridge_horizontal = values[1];
-        this.imageStorage.bridge_vertical = values[2];
-        resolve();
-      }).catch((error) => {
-        console.log(error);
-      });
+      this.preloadImages([
+        { name: 'island', url: 'assets/design/sushi/sushi.png' },
+        { name: 'bridge_horizontal', url: 'assets/design/sushi/chopsticks_horizontal.png' },
+        { name: 'bridge_vertical', url: 'assets/design/sushi/chopsticks.png' },
+      ])
+        .then(() => resolve())
+        .catch((error) => console.error('Error while preloading the images-'));
     });
   }
 

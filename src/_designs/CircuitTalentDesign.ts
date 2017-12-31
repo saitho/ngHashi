@@ -30,33 +30,27 @@ export class CircuitTalentDesign extends AbstractGraphicalDesign {
       this.canvasContext.lineWidth = 5;
       this.canvasContext.strokeStyle = 'black';
 
-      const background = this.preloadImage('assets/design/circuittalent/background.jpg');
-      const island = this.preloadImage('assets/design/circuittalent/chip.jpg');
-      const island_completed = this.preloadImage('assets/design/circuittalent/chip_completed.jpg');
-      const bridge_horizontal = this.preloadImage('assets/design/circuittalent/connection_horizontal.jpg');
-      const bridge_vertical = this.preloadImage('assets/design/circuittalent/connection.jpg');
+      this.preloadImages([
+        { name: 'background', url: 'assets/design/circuittalent/background.jpg' },
+        { name: 'island', url: 'assets/design/circuittalent/chip.jpg' },
+        { name: 'island_completed', url: 'assets/design/circuittalent/chip_completed.jpg' },
+        { name: 'bridge_horizontal', url: 'assets/design/circuittalent/connection_horizontal.jpg' },
+        { name: 'bridge_vertical', url: 'assets/design/circuittalent/connection.jpg' }
+      ])
+        .then(() => {
+        this.imageStorage.bridge_horizontal_pattern = this.canvasBgContext.createPattern(
+          this.imageStorage.bridge_horizontal,
+          'repeat'
+        );
+        this.imageStorage.bridge_vertical_pattern = this.canvasBgContext.createPattern(
+          this.imageStorage.bridge_vertical,
+          'repeat'
+        );
 
-      Promise.all([background, island, island_completed, bridge_horizontal, bridge_vertical])
-        .then((values) => {
-          this.imageStorage.background = values[0];
-          this.imageStorage.island = values[1];
-          this.imageStorage.island_completed = values[2];
-          this.imageStorage.bridge_horizontal = values[3];
-          this.imageStorage.bridge_vertical = values[4];
-          this.imageStorage.bridge_horizontal_pattern = this.canvasBgContext.createPattern(
-            this.imageStorage.bridge_horizontal,
-            'repeat'
-          );
-          this.imageStorage.bridge_vertical_pattern = this.canvasBgContext.createPattern(
-            this.imageStorage.bridge_vertical,
-            'repeat'
-          );
-
-          this.canvasBgContext.drawImage(this.imageStorage.background, 0, 0);
-          resolve();
-        }).catch((error) => {
-        console.log(error);
-      });
+        this.canvasBgContext.drawImage(this.imageStorage.background, 0, 0);
+        resolve();
+      })
+        .catch((error) => console.error('Error preloading the images...'));
     });
   }
 

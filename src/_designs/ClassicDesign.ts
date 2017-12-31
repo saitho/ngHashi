@@ -10,7 +10,6 @@ export class ClassicDesign extends AbstractDesign {
 
   /**
    * @inheritDoc
-   * @inheritDoc
    */
   public beforeDrawGameBoard(): Promise<void> {
     return new Promise<void>((resolve) => {
@@ -23,7 +22,6 @@ export class ClassicDesign extends AbstractDesign {
   }
 
   /**
-   * @inheritDoc
    * @inheritDoc
    */
   drawIsland(island: Island, drawnConnections) {

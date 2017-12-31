@@ -55,7 +55,7 @@ export abstract class AbstractDesign {
   protected generateConnection(island: Island, connectedIsland: Island, direction: BoardDirections, otherAxis: number) {
     let islandStartVar, connectedIslandEndName, tileVar, tileVarOtherAxis;
     if (direction === BoardDirections.HORIZONTAL) {
-      // draw right connections on vertical horizontal
+      // draw right connections on horizontal direction
       islandStartVar = 'xEnd';
       connectedIslandEndName = 'xStart';
       tileVar = 'y';
@@ -141,7 +141,7 @@ export abstract class AbstractDesign {
   protected abstract adjustOtherAxisValue(otherAxisValue: number, i: number, connectionsNum: number): number;
 
   /**
-   * Draws a connection on the background canvas
+   * Draws a simple connection line on the background canvas
    * @param {Coords} moveTo
    * @param {Coords} lineTo
    * @param {BoardDirections} direction
