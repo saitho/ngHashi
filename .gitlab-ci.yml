@@ -1,26 +1,77 @@
 image: node:latest
 
 variables:
-  HEROKU_DEPLOY: "ittalents-hashi"
+  HEROKU_DEPLOY_STAGING: "ittalents-hashi-dev"
+  HEROKU_DEPLOY_PROD: "ittalents-hashi"
 
 stages:
 - build
 - test
 - deploy
 
-build:
+build_frontend:
   stage: build
   script:
+   - cd frontend/
    - npm install --unsafe-perm
    - npm install -g @angular/cli --unsafe-perm
    - npm run-script build
   artifacts:
     paths:
-    - dist/
+    - frontend/dist/
   only:
   - master
 
-deploy:
+build_backend:
+  stage: build
+  script:
+   - cd backend/
+   - npm install gulp-cli
+   - npm install
+   - ./node_modules/gulp-cli/bin/gulp.js build
+  artifacts:
+    paths:
+    - backend/dist/
+  only:
+  - master
+
+unit_tests_backend:
+  stage: test
+  script:
+   - cd api/
+   - npm install gulp-cli
+   - npm install
+   - ./node_modules/gulp-cli/bin/gulp.js run:tests:coverage
+
+acceptance_tests_backend:
+  stage: test
+  script:
+   - cd api/
+   - npm install gulp-cli
+   - npm install
+   - ./node_modules/gulp-cli/bin/gulp.js run:tests --acceptance
+
+deploy_staging:
+  type: deploy
+  script:
+  - rm -r .git
+  - cp backend/package.json ./
+  - cp backend/dist/ ./
+  - cp frontend/dist/ ./dist/frontend_dist/
+  - git init
+  - git config user.name "GitLab CI"
+  - git config user.email "info@virtual-soft.de"
+  - git add package.json dist/ config -f
+  - git commit -m "GitLab CI deployment from branch $CI_COMMIT_REF_NAME ($CI_COMMIT_SHA)"
+  - git remote add heroku https://heroku:$HEROKU_API_KEY_STAGING@git.heroku.com/$HEROKU_DEPLOY_STAGING.git
+  - git push heroku master --force
+  only:
+  - next
+  environment:
+    name: staging
+    url: https://$HEROKU_DEPLOY_STAGING.herokuapp.com/
+
+deploy_production:
   type: deploy
   script:
   - rm -r .git
@@ -30,10 +81,11 @@ deploy:
   - 'echo "{\"root\": \"dist/\", \"clean_urls\": true, \"routes\": { \"/**\": \"index.html\" }}" > ./static.json'
   - git add ./dist static.json -f
   - git commit -m "GitLab CI deployment from branch $CI_COMMIT_REF_NAME ($CI_COMMIT_SHA)"
-  - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_DEPLOY.git
+  - git remote add heroku https://heroku:$HEROKU_API_KEY_PROD@git.heroku.com/$HEROKU_DEPLOY_PROD.git
   - git push heroku master --force
   only:
   - master
   environment:
     name: production
-    url: https://$HEROKU_DEPLOY.herokuapp.com/
+    url: https://$HEROKU_DEPLOY_PROD.herokuapp.com/
+  when: manual
