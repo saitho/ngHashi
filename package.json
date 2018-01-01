@@ -2,6 +2,12 @@
   "scripts": {
     "start": "echo 'Use one of the following commands: npm run-script start:frontend, npm run-script start:backend'",
     "start:frontend": "cd frontend && ng serve",
-    "start:backend": "cd backend && gulp watch"
+    "start:backend": "cd backend && gulp watch",
+    "install": "npm run-script install:frontend && npm run-script install:backend",
+    "install:frontend": "cd frontend && npm install",
+    "install:backend": "cd backend && npm install",
+    "lint": "",
+    "lint:frontend": "cd frontend && ng lint",
+    "lint:backend": "cd backend && gulp tslint"
   }
 }

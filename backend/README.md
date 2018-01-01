@@ -1,24 +1,13 @@
-# ngHashi - Frontend
+# ngHashi - Backend
 
 ## Key features
 
-* 4 Hashi levels (maps)
-  * progress saved within window (lost when refreshing the page)
-  * timer that tracks how long you spent on a level
-  * print levels if you want to solve them on the go or give them to your kids
-* Hashi editor for creating own maps
-  * Map validity checking through depth search
-  * Import and export created maps (JSON)
-  * Send in your levels to GitHub
-* works on computers and tablets
+* ...
 
 ## Built With
 
-* [Angular 5](https://angular.io/) - The web framework used
+* [ExpressJS](http://expressjs.com/) - Server software
 * [NPM](https://www.npmjs.com/) - Dependency Management
-* [Bootstrap](https://getbootstrap.com/) - Styling
-* [ngBootstrap](https://ng-bootstrap.github.io) - Bootstrap components for use with Angular
-* [Font Awesome](http://fontawesome.io/) - Icons
 
 ## Authors
 
