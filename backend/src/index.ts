@@ -1,10 +1,12 @@
 import * as express from 'express';
+import * as cors from 'cors';
 import * as config from 'config';
 import ApiRouter from './ApiRouter';
 const app = express();
 
 const env = process.env.NODE_ENV || 'development';
 
+app.use(cors());
 app.use('/api', new ApiRouter().getRouter());
 
 if (env === 'production') {

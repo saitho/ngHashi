@@ -8,15 +8,11 @@ export abstract class AbstractRouter {
   }
 
   returnSuccess(res: Response, data: any) {
-    res.status(200).json(data);
+    res.status(200).json({ success: true, data: data});
   }
 
   returnError(res: Response, code: number, message: string) {
     res.status(code).json( { success: false, message: message} );
-  }
-
-  returnControllerError(res: Response, e: Error) {
-    this.returnError(res, 500, e.message);
   }
 
   extractValidAttributes(validAttributes: string[], src: any) {
