@@ -1,0 +1,27 @@
+{
+   "compilerOptions": {
+      "lib": [
+         "es6"
+      ],
+      "target": "es6",
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "outDir": "dist",
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "sourceMap": true,
+      "declaration": true,
+      "noImplicitAny": false,
+      "strictNullChecks": true,
+      "noUnusedLocals": true,
+      "noUnusedParameters": false,
+      "inlineSources": true,
+      "typeRoots": ["node_modules/@types", "./typings"]
+   },
+   "files": [
+      "src/app.ts"
+   ],
+   "include": [
+      "src/**/*"
+   ]
+}

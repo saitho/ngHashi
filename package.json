@@ -2,6 +2,6 @@
   "scripts": {
     "start": "echo 'Use one of the following commands: npm run-script start:frontend, npm run-script start:backend'",
     "start:frontend": "cd frontend && ng serve",
-    "start:backend": "cd backend && gulp serve"
+    "start:backend": "cd backend && gulp watch"
   }
 }
