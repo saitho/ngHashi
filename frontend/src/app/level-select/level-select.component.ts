@@ -11,6 +11,8 @@ export class LevelSelectComponent {
   levels: AbstractMap[];
 
   constructor(private gameLevels: GameLevelsService) {
-    this.levels = gameLevels.getLevels();
+    gameLevels.loadLevels().subscribe((maps) => {
+      this.levels = maps;
+    });
   }
 }

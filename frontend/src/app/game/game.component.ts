@@ -44,9 +44,11 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
           this.map.importFromJSON(mapData);
         } else {
           // treat as id
-          this.map = this.gameLevels.getLevel(params.id - 1);
+          this.gameLevels.loadLevel(Number(params.id)).subscribe((map) => {
+            this.map = map;
+            super.ngAfterViewInit();
+          });
         }
-        super.ngAfterViewInit();
       });
     });
   }

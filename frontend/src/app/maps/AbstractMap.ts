@@ -96,6 +96,9 @@ export class AbstractMap {
    * @return {boolean}
    */
   public isSolved(): boolean {
+    if (!this.data) {
+      return false;
+    }
     for (let i = 0; i < this.data.length; i++) {
       for (let j = 0; j < this.data[i].length; j++) {
         const island: Island = this.data[i][j];
