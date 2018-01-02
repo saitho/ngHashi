@@ -1,8 +1,8 @@
 image: node:latest
 
 variables:
-  HEROKU_DEPLOY_STAGING: "ittalents-hashi-dev"
-  HEROKU_DEPLOY_PROD: "ittalents-hashi"
+  HEROKU_DEPLOY_STAGING: "nghashi-dev"
+  HEROKU_DEPLOY_PROD: "nghashi-prod"
 
 stages:
 - build
