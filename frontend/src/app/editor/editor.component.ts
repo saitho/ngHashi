@@ -12,7 +12,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./editor.component.css']
 })
 export class EditorComponent extends AbstractGameBoardComponent implements AfterViewInit {
-  protected map = new EditorMap();
+  public map = new EditorMap();
   public setBridges = false;
 
   constructor(

@@ -12,7 +12,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 })
 export class GameComponent extends AbstractGameBoardComponent implements AfterViewInit {
   @Input()
-  protected map: AbstractMap = null;
+  public map: AbstractMap = null;
 
   public message = 'Have fun! :)';
   public islandSize = 30;

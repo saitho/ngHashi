@@ -7,7 +7,7 @@ import {GameThemes} from '../shared/helper/GameThemes';
 import {BoardDirections, GameEngine} from '../shared/helper/GameEngine';
 
 export default abstract class AbstractGameBoardComponent implements OnInit, AfterViewInit {
-  protected map: AbstractMap = null;
+  public map: AbstractMap = null;
   @ViewChild('canvasBg') protected canvasBg: ElementRef;
   @ViewChild('canvasDraw') protected canvas: ElementRef;
   protected gameWidth_default = 600;

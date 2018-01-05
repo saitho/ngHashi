@@ -34,7 +34,7 @@ class EditorComponent extends AbstractGameBoardComponent {
   + onTouchMove(e)
 }
 class GameComponent extends AbstractGameBoardComponent implements AfterViewInit {
-  # map: AbstractMap
+  + map: AbstractMap
   + message: string
   + islandSize: number
   + ngAfterViewInit()
@@ -51,7 +51,7 @@ class LevelSelectComponent {
   levels: AbstractMap[]
 }
 abstract class AbstractGameBoardComponent implements OnInit, AfterViewInit {
-  # map: AbstractMap
+  + map: AbstractMap
   # canvasBg: ElementRef
   # canvas: ElementRef
   # canvasContext: CanvasRenderingContext2D
