@@ -2,8 +2,9 @@
   "name": "nghashi-backend",
   "version": "1.0.0",
   "description": "Backend for ngHashi",
-  "main": "dist/index.js",
+  "main": "dist/src/index.js",
   "scripts": {
+    "start": "node ./dist/src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -27,6 +28,7 @@
     "gulp-sourcemaps": "^2.6.2",
     "gulp-tslint": "^8.1.2",
     "gulp-typescript": "^3.2.3",
+    "nyc": "^11.4.1",
     "path": "^0.12.7",
     "rimraf": "^2.6.2",
     "run-sequence": "^2.2.0",

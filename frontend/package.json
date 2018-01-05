@@ -7,9 +7,9 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "prestart": "node ./node_modules/ng-appversion/index.js",
+    "prestart": "node ./node_modules/ng-appversion/index.js --force-git",
     "start": "ng serve",
-    "prebuild": "node ./node_modules/ng-appversion/index.js",
+    "prebuild": "node ./node_modules/ng-appversion/index.js --force-git",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
@@ -32,8 +32,8 @@
     "bootstrap": "^4.0.0-alpha.6",
     "core-js": "^2.4.1",
     "font-awesome": "^4.7.0",
-    "ng-appversion": "^1.1.0",
-    "ng2-events": "git+https://github.com/saitho/ng2-events-npmTemp.git",
+    "ng-appversion": "git+https://github.com/saitho/ng-appversion.git",
+    "ng2-events": "^4.1.0",
     "rxjs": "^5.4.2",
     "typescript": "2.4.2",
     "zone.js": "^0.8.14"

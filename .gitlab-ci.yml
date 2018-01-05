@@ -21,6 +21,7 @@ build_frontend:
     - frontend/dist/
   only:
   - master
+  - next
 
 build_backend:
   stage: build
@@ -34,34 +35,37 @@ build_backend:
     - backend/dist/
   only:
   - master
+  - next
 
-unit_tests_backend:
-  stage: test
-  script:
-   - cd api/
-   - npm install gulp-cli
-   - npm install
-   - ./node_modules/gulp-cli/bin/gulp.js run:tests:coverage
-
-acceptance_tests_backend:
-  stage: test
-  script:
-   - cd api/
-   - npm install gulp-cli
-   - npm install
-   - ./node_modules/gulp-cli/bin/gulp.js run:tests --acceptance
+#unit_tests_backend:
+#  stage: test
+#  script:
+#   - cd backend/
+#   - npm install gulp-cli
+#   - npm install
+#   - ./node_modules/gulp-cli/bin/gulp.js run:tests:coverage
+#
+#acceptance_tests_backend:
+#  stage: test
+#  script:
+#   - cd backend/
+#   - npm install gulp-cli
+#   - npm install
+#   - ./node_modules/gulp-cli/bin/gulp.js run:tests --acceptance
 
 deploy_staging:
   type: deploy
   script:
-  - rm -r .git
-  - cp backend/package.json ./
-  - cp backend/dist/ ./
-  - cp frontend/dist/ ./dist/frontend_dist/
+  - mkdir heroku_deploy &&  cd heroku_deploy
+  - cp ../backend/package.json ./
+  - cp -R ../backend/dist/ ./dist/
+  - cp -R ../backend/config/ ./config/
+  - cp -R ../backend/_maps/ ./_maps/
+  - cp -R ../frontend/dist/ ./dist_frontend/
   - git init
   - git config user.name "GitLab CI"
   - git config user.email "info@virtual-soft.de"
-  - git add package.json dist/ config -f
+  - git add package.json dist/ dist_frontend/ config/ _maps/ -f
   - git commit -m "GitLab CI deployment from branch $CI_COMMIT_REF_NAME ($CI_COMMIT_SHA)"
   - git remote add heroku https://heroku:$HEROKU_API_KEY_STAGING@git.heroku.com/$HEROKU_DEPLOY_STAGING.git
   - git push heroku master --force

@@ -10,7 +10,8 @@ app.use(cors());
 app.use('/api', new ApiRouter().getRouter());
 
 if (env === 'production') {
-  app.use(express.static('dist_frontend'));
+  // serve contents of backend/dist_frontend when built
+  app.use(express.static(__dirname + '/../../dist_frontend'));
 } else {
   app.get('/', function (req, res) {
     res.send('This is where the server will serve the frontend app on production!');

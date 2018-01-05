@@ -2,6 +2,8 @@ import {Request, Response, Router} from 'express';
 import {AbstractRouter} from './AbstractRouter';
 import * as fs from 'fs';
 
+const MAPFOLDER = __dirname + '/../../_maps/';
+
 export default class CustomerRouter extends AbstractRouter {
   constructor() {
     super();
@@ -22,8 +24,8 @@ export default class CustomerRouter extends AbstractRouter {
       .get((req, res: Response) => {
         const output: any[] = [];
         let i = 1;
-        fs.readdirSync('_maps').forEach(file => {
-          const map = this.readMapFile('_maps/' + file);
+        fs.readdirSync(MAPFOLDER).forEach(file => {
+          const map = this.readMapFile(MAPFOLDER + file);
           output.push({
             id: i,
             title: map.title,
@@ -41,13 +43,13 @@ export default class CustomerRouter extends AbstractRouter {
           this.returnError(res, 500, 'Invalid ID.');
           return;
         }
-        const maps = fs.readdirSync('_maps');
+        const maps = fs.readdirSync(MAPFOLDER);
         if (mapId > maps.length) {
           // error
           this.returnError(res, 404, 'Map not found.');
           return;
         }
-        this.returnSuccess(res, this.readMapFile('_maps/' + maps[ mapId - 1 ]));
+        this.returnSuccess(res, this.readMapFile(MAPFOLDER + maps[ mapId - 1 ]));
       });
   }
 
