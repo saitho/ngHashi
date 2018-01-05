@@ -1,13 +1,18 @@
 {
+  "license": "MIT",
+  "repository": "https://github.com/saitho/ngHashi",
   "scripts": {
     "start": "echo 'Use one of the following commands: npm run-script start:frontend, npm run-script start:backend'",
     "start:frontend": "cd frontend && ng serve",
     "start:backend": "cd backend && gulp watch",
     "install": "npm run-script install:frontend && npm run-script install:backend",
-    "install:frontend": "cd frontend && npm install",
+    "install:frontend": "cd frontend && npm install --unsafe-perm",
     "install:backend": "cd backend && npm install",
     "lint": "",
     "lint:frontend": "cd frontend && ng lint",
-    "lint:backend": "cd backend && gulp tslint"
+    "lint:backend": "cd backend && gulp tslint",
+    "build": "npm run-script build:frontend && npm run-script build:backend",
+    "build:backend": "cd backend && npm run-script build",
+    "build:frontend": "cd frontend && npm run-script build"
   }
 }

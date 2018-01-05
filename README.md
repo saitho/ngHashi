@@ -11,7 +11,7 @@ We recommend getting the latest version if you want to make sure the project run
 You can install the dependencies for both backend and frontend with this command:
 
 ```
-npm run-script install
+npm install
 ```
 
 ## Running the frontend dev server
@@ -63,14 +63,14 @@ npm run-script lint:frontend
 
 Make sure to activate TSLint in your IDE if available.
 
-
-
-
-
 ## Deployment
 
-Deploying the project usually involves building the project and deploying the build to the deployment server.
-Build the project with `npm run-script build` and deploy the generated dist/ folder to your server.
+The Angular frontend app will be served via the backend's Express server in production mode.
+For that the compiled Angular app has to be placed into the folder *frontend_dist/* inside the backend's *dist/* folder.
+
+1. Run npm `npm run-script build` to build the applications. This will generate a */dist* folder for each project.
+2. Copy the contents of the folder `frontend/dist/` ito `backend/dist/dist_frontend`.
+3. Deploy the folder `backend/dist/` onto your server.
 
 **Note:** Usually you are able to set the *--prod* flag in order to build the app for production. However there are issues with the game that makes it currently impossible to use that.
 

@@ -12,10 +12,9 @@ stages:
 build_frontend:
   stage: build
   script:
-   - cd frontend/
-   - npm install --unsafe-perm
    - npm install -g @angular/cli --unsafe-perm
-   - npm run-script build
+   - npm run-script install:frontend
+   - npm run-script build:frontend
   artifacts:
     paths:
     - frontend/dist/
@@ -26,10 +25,9 @@ build_frontend:
 build_backend:
   stage: build
   script:
-   - cd backend/
-   - npm install gulp-cli
-   - npm install
-   - ./node_modules/gulp-cli/bin/gulp.js build
+   - npm install gulp-cli -g
+   - npm run-script install:backend
+   - npm run-script build:backend
   artifacts:
     paths:
     - backend/dist/
@@ -40,18 +38,18 @@ build_backend:
 #unit_tests_backend:
 #  stage: test
 #  script:
+#   - npm install gulp-cli -g
+#   - npm run-script install:backend
 #   - cd backend/
-#   - npm install gulp-cli
-#   - npm install
-#   - ./node_modules/gulp-cli/bin/gulp.js run:tests:coverage
+#   - gulp run:tests:coverage
 #
 #acceptance_tests_backend:
 #  stage: test
 #  script:
+#   - npm install gulp-cli -g
+#   - npm run-script install:backend
 #   - cd backend/
-#   - npm install gulp-cli
-#   - npm install
-#   - ./node_modules/gulp-cli/bin/gulp.js run:tests --acceptance
+#   - gulp run:tests --acceptance
 
 deploy_staging:
   type: deploy
