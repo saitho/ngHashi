@@ -13,6 +13,8 @@
     "lint:backend": "cd backend && gulp tslint",
     "build": "npm run-script build:frontend && npm run-script build:backend",
     "build:backend": "cd backend && npm run-script build",
-    "build:frontend": "cd frontend && npm run-script build"
+    "build:backend:prod": "cd backend && npm run-script build",
+    "build:frontend": "cd frontend && npm run-script build",
+    "build:frontend:prod": "cd frontend && npm run-script build:prod"
   }
 }

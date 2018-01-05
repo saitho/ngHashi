@@ -11,6 +11,7 @@
     "start": "ng serve",
     "prebuild": "node ./node_modules/ng-appversion/index.js --force-git",
     "build": "ng build",
+    "build:prod": "node ./node_modules/ng-appversion/index.js --force-git && ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

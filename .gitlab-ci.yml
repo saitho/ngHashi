@@ -14,7 +14,7 @@ build_frontend:
   script:
    - npm install -g @angular/cli --unsafe-perm
    - npm run-script install:frontend
-   - npm run-script build:frontend
+   - npm run-script build:frontend:prod
   artifacts:
     paths:
     - frontend/dist/
@@ -27,7 +27,7 @@ build_backend:
   script:
    - npm install gulp-cli -g
    - npm run-script install:backend
-   - npm run-script build:backend
+   - npm run-script build:backend:prod
   artifacts:
     paths:
     - backend/dist/
