@@ -1,4 +1,4 @@
-import {Component, Input, AfterViewInit} from '@angular/core';
+import {Component, Input, AfterViewInit, ElementRef, ViewChild} from '@angular/core';
 import {AbstractMap} from '../maps/AbstractMap';
 import {ActivatedRoute, NavigationStart, Router} from '@angular/router';
 import {GameLevelsService} from '../../shared/services/GameLevelsService';
@@ -13,6 +13,10 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 export class GameComponent extends AbstractGameBoardComponent implements AfterViewInit {
   @Input()
   public map: AbstractMap = null;
+  @ViewChild('canvasBg')
+  protected canvasBg: ElementRef;
+  @ViewChild('canvasDraw')
+  protected canvas: ElementRef;
 
   public message = 'Have fun! :)';
   public islandSize = 30;
@@ -80,6 +84,7 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
    * Open print dialogue for the current map
    */
   public print() {
+    console.log('print', this.canvasBg, this.canvas);
     const dataUrl = this.canvasBg.nativeElement.toDataURL();
     // todo: try to include rules from game-help component...
     const windowContent = '<!DOCTYPE html><html>' +

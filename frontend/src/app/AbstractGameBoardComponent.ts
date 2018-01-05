@@ -8,8 +8,10 @@ import {BoardDirections, GameEngine} from '../shared/helper/GameEngine';
 
 export default abstract class AbstractGameBoardComponent implements OnInit, AfterViewInit {
   public map: AbstractMap = null;
-  @ViewChild('canvasBg') protected canvasBg: ElementRef;
-  @ViewChild('canvasDraw') protected canvas: ElementRef;
+
+  protected canvasBg: ElementRef;
+  protected canvas: ElementRef;
+
   protected gameWidth_default = 600;
   protected gameHeight_default = 600;
   abstract islandSize;
@@ -36,6 +38,9 @@ export default abstract class AbstractGameBoardComponent implements OnInit, Afte
    * Assign canvas contexts
    */
   ngOnInit() {
+    if (this.canvasBg === null || this.canvas === null) {
+      throw new Error('Add @ViewChild to canvas and canvasBg in the child class.');
+    }
     this.canvasBgContext = this.canvasBg.nativeElement.getContext('2d');
     this.canvasContext = this.canvas.nativeElement.getContext('2d');
   }
