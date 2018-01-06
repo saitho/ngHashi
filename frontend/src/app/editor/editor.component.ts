@@ -1,4 +1,4 @@
-import {Component, AfterViewInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import EditorMap from '../maps/EditorMap';
 import AbstractGameBoardComponent from '../AbstractGameBoardComponent';
 import {AbstractDesign} from '../../_designs/AbstractDesign';
@@ -11,15 +11,34 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.css']
 })
-export class EditorComponent extends AbstractGameBoardComponent implements AfterViewInit {
+export class EditorComponent extends AbstractGameBoardComponent implements OnInit, AfterViewInit {
   public map = new EditorMap();
   public setBridges = false;
+
+  @ViewChild('canvasBg')
+  protected canvasBg: ElementRef;
+  @ViewChild('canvasDraw')
+  protected canvas: ElementRef;
 
   constructor(
     private modalService: NgbModal
   ) {
     super();
     this.gameBoardConfig = {enableGrid: true, perRectMultiplier: 0.25, perRectOffset: 10};
+  }
+
+  /**
+   * Otherwise it does not work...
+   */
+  ngOnInit() {
+    super.ngOnInit();
+  }
+
+  /**
+   * Otherwise it does not work...
+   */
+  ngAfterViewInit() {
+    super.ngAfterViewInit();
   }
 
   islandSize = 50;
@@ -164,9 +183,9 @@ export class EditorComponent extends AbstractGameBoardComponent implements After
    * @param content
    */
   public importModal(content) {
-    this.modalService.open(content).result.then((result) => {
-      console.log(result);
-    }, (reason) => {
+    this.modalService.open(content).result.then(
+      () => {},
+      (reason) => {
       console.log(reason);
     });
   }

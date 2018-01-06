@@ -84,7 +84,6 @@ export class GameComponent extends AbstractGameBoardComponent implements AfterVi
    * Open print dialogue for the current map
    */
   public print() {
-    console.log('print', this.canvasBg, this.canvas);
     const dataUrl = this.canvasBg.nativeElement.toDataURL();
     // todo: try to include rules from game-help component...
     const windowContent = '<!DOCTYPE html><html>' +
