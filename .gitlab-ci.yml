@@ -35,21 +35,21 @@ build_backend:
   - master
   - next
 
-#unit_tests_backend:
-#  stage: test
-#  script:
-#   - npm install gulp-cli -g
-#   - npm run-script install:backend
-#   - cd backend/
-#   - gulp run:tests:coverage
-#
-#acceptance_tests_backend:
-#  stage: test
-#  script:
-#   - npm install gulp-cli -g
-#   - npm run-script install:backend
-#   - cd backend/
-#   - gulp run:tests --acceptance
+unit_tests_backend:
+  stage: test
+  script:
+   - npm install gulp-cli -g
+   - npm run-script install:backend
+   - cd backend/
+   - gulp run:tests:coverage
+
+acceptance_tests_backend:
+  stage: test
+  script:
+   - npm install gulp-cli -g
+   - npm run-script install:backend
+   - cd backend/
+   - gulp run:tests --acceptance
 
 deploy_staging:
   type: deploy
